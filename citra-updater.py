@@ -202,6 +202,8 @@ class Pokemon:
                 query+= " and pokemonsuffix is null"
             case 555: ### Darmanitan
                 match form:
+                    case 0 | 2:
+                        query+= " and pokemonsuffix is null"
                     case 8 | 10:
                         query+= " and pokemonsuffix = 'zen'"
             case 585: ### Deerling
@@ -257,8 +259,14 @@ class Pokemon:
                         query+= " and pokemonsuffix = 'blade'"
             case 711: ### Gourgeist
                 match form:
-                    case 16 | 18:
+                    case 8 | 10:
                         query+= " and pokemonsuffix = 'average'"
+                    case 16 | 18:
+                        query+= " and pokemonsuffix = 'large'"
+                    case 24 | 26:
+                        query+= " and pokemonsuffix = 'super'"
+                    case _:
+                        query+= " and pokemonsuffix is null"
             case 716: ### Xerneas
                 query+= " and pokemonsuffix is null"
             case 718: ### Zygarde only needed for gen 7
@@ -713,9 +721,9 @@ def analyze_statuses(self):
     # print('Toxic:', self.badlypoisoned())
     print('end statuses')
 
-def calcPower(pkmn,move):
+def calcPower(pkmn,move,hp1,hp2):
     if move in ('Eruption','Water Spout'):
-        return int(int(pkmn.cur_hp)/int(pkmn.maxhp)*150)
+        return int(int(hp1)/int(hp2)*150)
     elif move['name']=='Return':
         return round(pkmn.friendship/2.5)
     elif move['name']=="Frustration":
@@ -727,17 +735,17 @@ def calcPower(pkmn,move):
     elif move['name'] in ("Crush Grip","Wring Out"):
         return ">HP"
     elif move['name'] in ("Flail","Reversal"):
-        if int(pkmn.cur_hp)/int(pkmn.maxhp)>=.6875:
+        if int(hp1)/int(hp2)>=.6875:
             return 20
-        elif int(pkmn.cur_hp)/int(pkmn.maxhp)>=.3542:
+        elif int(hp1)/int(hp2)>=.3542:
             return 40
-        elif int(pkmn.cur_hp)/int(pkmn.maxhp)>=.2083:
+        elif int(hp1)/int(hp2)>=.2083:
             return 80
-        elif int(pkmn.cur_hp)/int(pkmn.maxhp)>=.1042:
+        elif int(hp1)/int(hp2)>=.1042:
             return 100
-        elif int(pkmn.cur_hp)/int(pkmn.maxhp)>=.0417:
+        elif int(hp1)/int(hp2)>=.0417:
             return 150
-        elif int(pkmn.cur_hp)/int(pkmn.maxhp)<.0417:
+        elif int(hp1)/int(hp2)<.0417:
             return 200
         else:
             return "ERR"
@@ -904,8 +912,8 @@ def abil_popup(l):
 
     window.close()
 
-    print('[GUI_POPUP] event:', event)
-    print('[GUI_POPUP] values:', values)
+    # print('[GUI_POPUP] event:', event)
+    # print('[GUI_POPUP] values:', values)
 
     if values and values['-abilpopup-']:
         return values['-abilpopup-']
@@ -1150,6 +1158,8 @@ def run():
                         window['-note-e-'].update(trackdata[enemymon]['notes'])
                     elif event == '-addabil-e-':
                         abil = sg.popup_get_text('Enter ability:', title='Ability')
+                        if abil != abil:
+                            abil = ''
                         trackdata[enemymon]['abilities'].append(abil)
                         window['-abillist-e-'].update(trackdata[enemymon]['abilities'])
                         window['-ability-e-'].update(abil)
@@ -1159,7 +1169,9 @@ def run():
                         trackdata[enemymon]['abilities'].remove(remabil)
                         window['-abillist-e-'].update(trackdata[enemymon]['abilities'])
                     elif event == '-clearnotes-':
-                        notesclear()
+                        confirm = sg.popup_ok_cancel('Clear tracker data?', title='Confirm')
+                        if confirm == 'OK':
+                            notesclear()
                     partyadd,enemyadd,ppadd,curoppnum,enctype,mongap=getaddresses(c)
                     # print("loops" + str(loops))
                     loops+=1
@@ -1401,7 +1413,7 @@ def run():
                                                 modimage="X"
                                         else:
                                             modimage="6"
-                                        movepower = calcPower(pkmn,move)
+                                        movepower = calcPower(pkmn,move,hpnum[0],hpnum[1])
                                         acc = '-' if not move['acc'] else int(move['acc'])
                                         contact = ('Y' if move['contact'] else 'N')
                                         window['-mv{}type-'.format(pkmn.moves.index(move) + 1)].update(resize('images/categories/{}.png'.format(move["category"]), (27,20)))
@@ -1572,7 +1584,7 @@ def run():
                                             if move['type'] == type[0]:
                                                 stab = move['type']
                                                 continue
-                                        movepower = calcPower(pkmn,move)
+                                        movepower = calcPower(pkmn,move,1,1)
                                         acc = '-' if not move['acc'] else int(move['acc'])
                                         contact = ('Y' if move['contact'] else 'N')
                                         if move['name'] not in trackdata[pkmn.name]['moves']:
@@ -1622,16 +1634,6 @@ def run():
                                 ### MOVES ########
                                 totallearn,nextmove,learnedcount,learnstr = pkmn.getMoves(gamegroupid)
                                 nmove = (' - ' if not nextmove else nextmove)
-                                for move in pkmn.moves:
-                                    stab = ''
-                                    movetyp=movetype(pkmn,move,pkmn.held_item_num)
-                                    for type in pkmn.types:
-                                        if move['type'] == type[0]:
-                                            stab = move['type']
-                                            continue
-                                    movepower = calcPower(pkmn,move)
-                                    acc = '-' if not move['acc'] else int(move['acc'])
-                                    contact = ('Y' if move['contact'] else 'N')
                                 ### UPDATING TRACKER INFO ###
                                 # print(slot)
                                 attackchange,defchange,spatkchange,spdefchange,speedchange = pkmn.getStatChanges()
@@ -1701,7 +1703,7 @@ def run():
                                             stab = move['type']
                                             # print(stab)
                                             continue
-                                    movepower = calcPower(pkmn,move)
+                                    movepower = calcPower(pkmn,move,pkmn.cur_hp,pkmn.maxhp)
                                     acc = '-' if not move['acc'] else int(move['acc'])
                                     contact = ('Y' if move['contact'] else 'N')
                                     window['-mv{}type-'.format(pkmn.moves.index(move) + 1)].update(resize('images/categories/{}.png'.format(move["category"]), (27,20)), visible = True)
