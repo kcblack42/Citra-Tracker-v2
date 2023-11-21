@@ -23,7 +23,7 @@ try:
 except ImportError:
     import Image
 # import Image
-
+from notesclearkcb import notesclear
 
 # pysimplegui settings et al
 track_title = 'Ironmon Tracker'
@@ -245,6 +245,8 @@ class Pokemon:
                 query+= " and pokemonsuffix is null"
             case 678: ### Meowstic
                 match form:
+                    case 0 | 8:
+                        query+= " and pokemonsuffix is null"
                     case 10:
                         query+= " and pokemonsuffix = 'f'"
             case 681: ### Aegislash
@@ -261,6 +263,8 @@ class Pokemon:
                 query+= " and pokemonsuffix is null"
             case 718: ### Zygarde only needed for gen 7
                 match form:
+                    case 4:
+                        query+= " and pokemonsuffix is null"
                     case 12:
                         query+= " and pokemonsuffix = '10'"
                     case 20 | 36:
@@ -1065,6 +1069,7 @@ def run():
             [sg.Text(key='-abillist-e-', justification='l', font=('Franklin Gothic Medium', font_sizes[2]))],
             [sg.Text(key='-prevmoves-e-', justification='l', font=('Franklin Gothic Medium', font_sizes[2]), size=(50, 3))],
             # [sg.Text(key='-mv4ctc-e-', size=1, justification='c')],
+            [sg.Button('Clear Notes', key='-clearnotes-', font=('Franklin Gothic Medium', font_sizes[2]), auto_size_button=True)]
         ]
 
         layout = [[
@@ -1103,28 +1108,7 @@ def run():
         slotchoice = ''
         enemymon = ''
         enemydict = {"abilities": [], "stats": ["", "", "", "", "", ""], "notes": "", "levels": [], "moves": []}
-        typetable={
-            "Normal":[1,1,1,1,1,.5,1,0,.5,1,1,1,1,1,1,1,1,1,1],
-            "Fighting":[2,1,.5,.5,1,2,.5,0,2,1,1,1,1,.5,2,1,2,.5,1],
-            "Flying":[1,2,1,1,1,.5,2,1,.5,1,1,2,.5,1,1,1,1,1,1],
-            "Poison":[1,1,1,.5,.5,.5,1,.5,0,1,1,2,1,1,1,1,1,2,1],
-            "Ground":[1,1,0,2,1,2,.5,1,2,2,1,.5,2,1,1,1,1,1,1],
-            "Rock":[1,.5,2,1,.5,1,2,1,.5,2,1,1,1,1,2,1,1,1,1],
-            "Bug":[1,.5,.5,.5,1,1,1,.5,.5,.5,1,2,1,2,1,1,2,.5,1],
-            "Ghost":[0,1,1,1,1,1,1,2,1,1,1,1,1,2,1,1,.5,1,1],
-            "Steel":[1,1,1,1,1,2,1,1,.5,.5,.5,1,.5,1,2,1,1,2,1],
-            "Fire":[1,1,1,1,1,.5,2,1,2,.5,.5,2,1,1,2,.5,1,1,1],
-            "Water":[1,1,1,1,2,2,1,1,1,2,.5,.5,1,1,1,.5,1,1,1],
-            "Grass":[1,1,.5,.5,2,2,.5,1,.5,.5,2,.5,1,1,1,.5,1,1,1],
-            "Electric":[1,1,2,1,0,1,1,1,1,1,2,.5,.5,1,1,.5,1,1,1],
-            "Psychic":[1,2,1,2,1,1,1,1,.5,1,1,1,1,.5,1,1,0,1,1],
-            "Ice":[1,1,2,1,2,1,1,1,.5,.5,.5,2,1,1,.5,2,1,1,1],
-            "Dragon":[1,1,1,1,1,1,1,1,.5,1,1,1,1,1,1,2,1,0,1],
-            "Dark":[1,.5,1,1,1,1,1,2,1,1,1,1,1,2,1,1,.5,.5,1],
-            "Fairy":[1,2,1,.5,1,1,1,1,.5,.5,1,1,1,1,1,2,2,1,1],
-            "Null":[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
-            "-":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-        }
+        change = ''
         while (True):
             try:
                 if c.is_connected():
@@ -1168,11 +1152,14 @@ def run():
                         abil = sg.popup_get_text('Enter ability:', title='Ability')
                         trackdata[enemymon]['abilities'].append(abil)
                         window['-abillist-e-'].update(trackdata[enemymon]['abilities'])
-                        window['-abillist-e-'].update(abil)
+                        window['-ability-e-'].update(abil)
+                        change = 'abil'
                     elif event == '-remabil-e-':
                         remabil = abil_popup(enemydict['abilities'])
                         trackdata[enemymon]['abilities'].remove(remabil)
                         window['-abillist-e-'].update(trackdata[enemymon]['abilities'])
+                    elif event == '-clearnotes-':
+                        notesclear()
                     partyadd,enemyadd,ppadd,curoppnum,enctype,mongap=getaddresses(c)
                     # print("loops" + str(loops))
                     loops+=1
@@ -1348,14 +1335,13 @@ def run():
                                     window['-spdef-'].set_tooltip('EV: ' + str(pkmn.evspdef))
                                     window['-speed-'].Update(pkmn.speed, text_color=natureformatting(naturelist, 4))
                                     window['-speed-'].set_tooltip('EV: ' + str(pkmn.evspeed))
-                                    try:
+                                    if 0 <= int.from_bytes(c.read_memory((ppadd+(mongap*(pk-1))-20),1)) <= 12:
+                                        # trying to fix a weird error that it rarely throws regarding -attmod-, one may fix all because it seems like its all or nothing
                                         window['-attmod-'].Update('images/modifiers/modifier{}.png'.format(int.from_bytes(c.read_memory((ppadd+(mongap*(pk-1))-20),1))), visible = True)
                                         window['-defmod-'].Update('images/modifiers/modifier{}.png'.format(int.from_bytes(c.read_memory((ppadd+(mongap*(pk-1))-19),1))), visible = True)
                                         window['-spattmod-'].Update('images/modifiers/modifier{}.png'.format(int.from_bytes(c.read_memory((ppadd+(mongap*(pk-1))-18),1))), visible = True)
                                         window['-spdefmod-'].Update('images/modifiers/modifier{}.png'.format(int.from_bytes(c.read_memory((ppadd+(mongap*(pk-1))-17),1))), visible = True)
                                         window['-speedmod-'].Update('images/modifiers/modifier{}.png'.format(int.from_bytes(c.read_memory((ppadd+(mongap*(pk-1))-16),1))), visible = True)
-                                    except:
-                                        print(Exception)
                                     window['-bst-'].Update(pkmn.bst)
                                     window['-movehdr-'].update('Moves {}/{} ({})'.format(learnedcount, totallearn, nmove))
                                     window['-movehdr-'].set_tooltip(learnstr)
@@ -1371,6 +1357,28 @@ def run():
                                                 stab = move['type']
                                                 continue
                                         #defines the columns for the arrays corresponding to the type hit
+                                        typetable={
+                                            "Normal":[1,1,1,1,1,.5,1,0,.5,1,1,1,1,1,1,1,1,1,1],
+                                            "Fighting":[2,1,.5,.5,1,2,.5,0,2,1,1,1,1,.5,2,1,2,.5,1],
+                                            "Flying":[1,2,1,1,1,.5,2,1,.5,1,1,2,.5,1,1,1,1,1,1],
+                                            "Poison":[1,1,1,.5,.5,.5,1,.5,0,1,1,2,1,1,1,1,1,2,1],
+                                            "Ground":[1,1,0,2,1,2,.5,1,2,2,1,.5,2,1,1,1,1,1,1],
+                                            "Rock":[1,.5,2,1,.5,1,2,1,.5,2,1,1,1,1,2,1,1,1,1],
+                                            "Bug":[1,.5,.5,.5,1,1,1,.5,.5,.5,1,2,1,2,1,1,2,.5,1],
+                                            "Ghost":[0,1,1,1,1,1,1,2,1,1,1,1,1,2,1,1,.5,1,1],
+                                            "Steel":[1,1,1,1,1,2,1,1,.5,.5,.5,1,.5,1,2,1,1,2,1],
+                                            "Fire":[1,1,1,1,1,.5,2,1,2,.5,.5,2,1,1,2,.5,1,1,1],
+                                            "Water":[1,1,1,1,2,2,1,1,1,2,.5,.5,1,1,1,.5,1,1,1],
+                                            "Grass":[1,1,.5,.5,2,2,.5,1,.5,.5,2,.5,1,1,1,.5,1,1,1],
+                                            "Electric":[1,1,2,1,0,1,1,1,1,1,2,.5,.5,1,1,.5,1,1,1],
+                                            "Psychic":[1,2,1,2,1,1,1,1,.5,1,1,1,1,.5,1,1,0,1,1],
+                                            "Ice":[1,1,2,1,2,1,1,1,.5,.5,.5,2,1,1,.5,2,1,1,1],
+                                            "Dragon":[1,1,1,1,1,1,1,1,.5,1,1,1,1,1,1,2,1,0,1],
+                                            "Dark":[1,.5,1,1,1,1,1,2,1,1,1,1,1,2,1,1,.5,.5,1],
+                                            "Fairy":[1,2,1,.5,1,1,1,1,.5,.5,1,1,1,1,1,2,2,1,1],
+                                            "Null":[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+                                            "-":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+                                        }
                                         typedic={"Normal":0,"Fighting":1,"Flying":2,"Poison":3,"Ground":4,"Rock":5,"Bug":6,"Ghost":7,"Steel":8,"Fire":9,"Water":10,"Grass":11,"Electric":12,"Psychic":13,"Ice":14,"Dragon":15,"Dark":16,"Fairy":17,"Null":18}
                                         typemult=1
                                         if movetyp!=None:
@@ -1473,6 +1481,9 @@ def run():
                                         window['-ability-e-'].set_tooltip(str(pkmn.ability['description']))
                                         if pkmn.abilityname not in trackdata[pkmn.name]['abilities']:
                                             trackdata[pkmn.name]['abilities'].append(pkmn.abilityname)
+                                    elif change == 'abil':
+                                        window['-ability-e-'].set_tooltip('')
+                                        change = ''
                                     else:
                                         window['-ability-e-'].Update('Unknown Ability')
                                     if pkmn.level not in trackdata[pkmn.name]['levels']:
@@ -1509,14 +1520,12 @@ def run():
                                     window['-spdef-e-'].update('[{}]'.format(trackdata[pkmn.name]['stats'][4]))
                                     window['-speed-e-'].update('[{}]'.format(trackdata[pkmn.name]['stats'][5]))
                                     window['-bst-e-'].Update(pkmn.bst)
-                                    try: # occasionally get some weird error where it tries to throw a much larger number for modifier than it should
+                                    if 0 <= int.from_bytes(c.read_memory((ppadd+(mongap*(pk-1))-20),1)) <= 12:
                                         window['-attmod-e-'].Update('images/modifiers/modifier{}.png'.format(int.from_bytes(c.read_memory((ppadd+(mongap*(pk-1))-20),1))), visible = True)
                                         window['-defmod-e-'].Update('images/modifiers/modifier{}.png'.format(int.from_bytes(c.read_memory((ppadd+(mongap*(pk-1))-19),1))), visible = True)
                                         window['-spattmod-e-'].Update('images/modifiers/modifier{}.png'.format(int.from_bytes(c.read_memory((ppadd+(mongap*(pk-1))-18),1))), visible = True)
                                         window['-spdefmod-e-'].Update('images/modifiers/modifier{}.png'.format(int.from_bytes(c.read_memory((ppadd+(mongap*(pk-1))-17),1))), visible = True)
                                         window['-speedmod-e-'].Update('images/modifiers/modifier{}.png'.format(int.from_bytes(c.read_memory((ppadd+(mongap*(pk-1))-16),1))), visible = True)
-                                    except:
-                                        print(Exception)
                                     window['-movehdr-e-'].update('Moves {}/{} ({})'.format(learnedcount, totallearn, nmove))
                                     window['-movehdr-e-'].set_tooltip(learnstr)
                                     window['-movepphdr-e-'].update('PP')
@@ -1538,31 +1547,31 @@ def run():
                                     nmove = (' - ' if not nextmove else nextmove)
                                     movect = 0
                                     for move in pkmn.moves:
+                                        if int.from_bytes(c.read_memory(ppadd+(mongap*(pk-1))+(14*(pkmn.moves).index(move)),1))==int.from_bytes(c.read_memory(ppadd+1+(mongap*(pk-1))+(14*(pkmn.moves).index(move)),1)): 
+                                            continue
+                                        # if movetyp!=None:
+                                        #     for type in currmon.types:
+                                        #         typemult=typemult*(typetable[movetyp][typedic[type]])
+                                        # if move["category"]!="Non-Damaging":
+                                        #     if typemult==.25:
+                                        #         modimage="4"
+                                        #     elif typemult==.5:
+                                        #         modimage="5"
+                                        #     elif typemult==1:
+                                        #         modimage="6"
+                                        #     elif typemult==2:
+                                        #         modimage="7"
+                                        #     elif typemult==4:
+                                        #         modimage="8"
+                                        #     elif typemult==0:
+                                        #         modimage="X"
+                                        # else:
+                                        #     modimage="6"
                                         stab = ''
                                         for type in pkmn.types:
                                             if move['type'] == type[0]:
                                                 stab = move['type']
                                                 continue
-                                        if int.from_bytes(c.read_memory(ppadd+(mongap*(pk-1))+(14*(pkmn.moves).index(move)),1))==int.from_bytes(c.read_memory(ppadd+1+(mongap*(pk-1))+(14*(pkmn.moves).index(move)),1)): 
-                                            continue
-                                        if movetyp!=None:
-                                            for type in currmon.types:
-                                                typemult=typemult*(typetable[movetyp][typedic[type]])
-                                        if move["category"]!="Non-Damaging":
-                                            if typemult==.25:
-                                                modimage="4"
-                                            elif typemult==.5:
-                                                modimage="5"
-                                            elif typemult==1:
-                                                modimage="6"
-                                            elif typemult==2:
-                                                modimage="7"
-                                            elif typemult==4:
-                                                modimage="8"
-                                            elif typemult==0:
-                                                modimage="X"
-                                        else:
-                                            modimage="6"
                                         movepower = calcPower(pkmn,move)
                                         acc = '-' if not move['acc'] else int(move['acc'])
                                         contact = ('Y' if move['contact'] else 'N')
@@ -1583,7 +1592,7 @@ def run():
                                         window['-mv{}text-e-'.format(movect)].update(move["name"], text_color=typeformatting(move['type']), visible = True)
                                         window['-mv{}text-e-'.format(movect)].set_tooltip(move["description"])
                                         window['-mv{}pp-e-'.format(movect)].update('{}/{}'.format(int.from_bytes(c.read_memory(ppadd+(mongap*(pk-1))+(14*(pkmn.moves).index(move)),1)), move["maxpp"]), visible = True)
-                                        window['-mv{}mod-e-'.format(movect)].update('images/modifiers/modifier{}.png'.format(modimage), visible = True)
+                                        # window['-mv{}mod-e-'.format(movect)].update('images/modifiers/modifier{}.png'.format(modimage), visible = True)
                                         if stab == move['type']:
                                             window['-mv{}bp-e-'.format(movect)].update(movepower, text_color=typeformatting(move['type']), visible = True)
                                         else:

@@ -462,3 +462,62 @@
 2023-11-20 23:35:49.447605: list index out of range
 2023-11-20 23:58:49.070022: cannot access local variable 'battlewildoppadd' where it is not associated with a value
 2023-11-20 23:59:02.083626: cannot access local variable 'battlewildoppadd' where it is not associated with a value
+2023-11-21 09:57:27.114504: ('Rock',)
+2023-11-21 09:57:40.228262: ('Rock',)
+2023-11-21 09:57:53.336204: ('Rock',)
+2023-11-21 10:01:34.793433: ('Fairy',)
+2023-11-21 10:01:47.907747: ('Fairy',)
+2023-11-21 10:02:01.023347: ('Fairy',)
+2023-11-21 10:02:14.120808: ('Fairy',)
+2023-11-21 10:02:27.221193: ('Fairy',)
+2023-11-21 10:02:40.323526: ('Fairy',)
+2023-11-21 10:02:53.436779: ('Fairy',)
+2023-11-21 10:03:06.559232: ('Fairy',)
+2023-11-21 10:03:19.675471: ('Fairy',)
+2023-11-21 10:03:32.796038: ('Fairy',)
+2023-11-21 10:03:45.912511: ('Fairy',)
+2023-11-21 10:04:06.390621: ('Fairy',)
+2023-11-21 10:04:19.486245: ('Fairy',)
+2023-11-21 10:04:32.585386: ('Fairy',)
+2023-11-21 10:04:45.680404: ('Fairy',)
+2023-11-21 10:04:58.780819: ('Fairy',)
+2023-11-21 10:05:11.885472: ('Fairy',)
+2023-11-21 10:05:24.992921: ('Fairy',)
+2023-11-21 10:05:36.385322: ('Fairy',)
+2023-11-21 10:05:49.490238: ('Fairy',)
+2023-11-21 10:06:02.588900: ('Fairy',)
+2023-11-21 10:06:15.687002: ('Fairy',)
+2023-11-21 10:06:28.795976: ('Fairy',)
+2023-11-21 10:08:43.990954: ('Water',)
+2023-11-21 10:08:57.091624: ('Water',)
+2023-11-21 10:09:10.189894: ('Water',)
+2023-11-21 10:09:31.652799: ('Water',)
+2023-11-21 10:09:44.759002: ('Water',)
+2023-11-21 10:09:57.867161: ('Water',)
+2023-11-21 10:16:39.009818: cannot access local variable 'abil' where it is not associated with a value
+2023-11-21 10:21:19.136948: descriptor 'lower' for 'str' objects doesn't apply to a 'list' object
+2023-11-21 10:21:32.214253: descriptor 'lower' for 'str' objects doesn't apply to a 'list' object
+2023-11-21 10:21:45.299184: descriptor 'lower' for 'str' objects doesn't apply to a 'list' object
+2023-11-21 10:23:26.512477: list index out of range
+2023-11-21 10:36:27.902832: 'change'
+2023-11-21 10:36:40.977909: 'change'
+2023-11-21 10:36:54.060244: 'change'
+2023-11-21 10:37:07.146954: 'change'
+2023-11-21 10:37:20.229102: 'change'
+2023-11-21 10:37:33.324154: 'change'
+2023-11-21 10:37:46.412687: 'change'
+2023-11-21 10:37:59.491204: 'change'
+2023-11-21 10:38:12.576698: 'change'
+2023-11-21 10:38:25.673166: 'change'
+2023-11-21 10:38:38.773095: 'change'
+2023-11-21 10:38:51.863901: 'change'
+2023-11-21 10:41:17.102072: list index out of range
+2023-11-21 10:55:47.016709: list index out of range
+2023-11-21 11:03:00.569013: list index out of range
+2023-11-21 11:07:35.618227: cannot unpack non-iterable NoneType object
+2023-11-21 11:37:18.269042: 'NoneType' object is not subscriptable
+2023-11-21 11:37:31.377268: 'NoneType' object is not subscriptable
+2023-11-21 11:37:44.489548: 'NoneType' object is not subscriptable
+2023-11-21 11:37:57.595077: 'NoneType' object is not subscriptable
+2023-11-21 11:38:10.665305: 'NoneType' object is not subscriptable
+2023-11-21 11:44:13.288002: cannot access local variable 'battlewildoppadd' where it is not associated with a value
