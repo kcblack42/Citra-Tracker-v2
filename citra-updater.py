@@ -23,7 +23,7 @@ try:
 except ImportError:
     import Image
 # import Image
-from notesclearkcb import notesclear
+from notesclear import notesclear
 
 # pysimplegui settings et al
 track_title = 'Ironmon Tracker'
