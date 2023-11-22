@@ -965,10 +965,10 @@ def run():
 
         botcol1 = [
             [sg.Text(key='-movehdr-', justification='l')],
-            [sg.Image(key='-mv1type-'), sg.Text(key='-mv1text-')],
-            [sg.Image(key='-mv2type-'), sg.Text(key='-mv2text-')],
-            [sg.Image(key='-mv3type-'), sg.Text(key='-mv3text-')],
-            [sg.Image(key='-mv4type-'), sg.Text(key='-mv4text-')],
+            [sg.Image(key='-mv1type-'), sg.Text(key='-mv1text-', size=12)],
+            [sg.Image(key='-mv2type-'), sg.Text(key='-mv2text-', size=12)],
+            [sg.Image(key='-mv3type-'), sg.Text(key='-mv3text-', size=12)],
+            [sg.Image(key='-mv4type-'), sg.Text(key='-mv4text-', size=12)],
         ]
         botcol2 = [
             [sg.Text(key='-movepphdr-', size=5, justification='c')],
@@ -998,6 +998,10 @@ def run():
             [sg.Text(key='-mv3ctc-', size=1, justification='c')],
             [sg.Text(key='-mv4ctc-', size=1, justification='c')],
         ]
+        botcol7 = [
+            [sg.Button('Clear Notes', key='-clearnotes-', font=('Franklin Gothic Medium', font_sizes[2]), auto_size_button=True)]
+        ]
+
 
         topcol1a = [
             [sg.Text(key='-slot-e-'),],
@@ -1077,12 +1081,11 @@ def run():
             [sg.Text(key='-abillist-e-', justification='l', font=('Franklin Gothic Medium', font_sizes[2]))],
             [sg.Text(key='-prevmoves-e-', justification='l', font=('Franklin Gothic Medium', font_sizes[2]), size=(50, 3))],
             # [sg.Text(key='-mv4ctc-e-', size=1, justification='c')],
-            [sg.Button('Clear Notes', key='-clearnotes-', font=('Franklin Gothic Medium', font_sizes[2]), auto_size_button=True)]
         ]
 
         layout = [[
             sg.Column([[
-                sg.Column(topcol1, key='-TLCOL1-', size=(250, 380)), 
+                sg.Column(topcol1, key='-TLCOL1-', size=(225, 380)), 
                 sg.Column(topcol2, key='-TLCOL2-'), 
                 sg.Column(topcol3, element_justification='right', key='-TLCOL3-')
             ], 
@@ -1092,10 +1095,11 @@ def run():
                 sg.Column(botcol4), 
                 sg.Column(botcol5),
                 sg.Column(botcol6),
+                sg.Column(botcol7, key='-bc7-'),
             ]], size=(425, 700)), 
             sg.VerticalSeparator(key='-vs-'),
             sg.Column([[
-                sg.Column(topcol1a, size=(250, 380), key='-tc1a-e-', visible = False), 
+                sg.Column(topcol1a, size=(225, 380), key='-tc1a-e-', visible = False), 
                 sg.Column(topcol2a, size=(70, 350), key='-tc2a-e-', visible = False), 
                 sg.Column(topcol3a, size=(60, 350), element_justification='right', key='-tc3a-e-', visible = False)
             ], 
@@ -1427,7 +1431,7 @@ def run():
                                             window['-mv{}bp-'.format(pkmn.moves.index(move) + 1)].update(movepower, text_color='white')
                                         window['-mv{}acc-'.format(pkmn.moves.index(move) + 1)].update(acc)
                                         window['-mv{}ctc-'.format(pkmn.moves.index(move) + 1)].update(contact)
-                                elif (pkmn in party2) & (party.index(pkmn)+1 == 7): # this works for singles in XY, needs testing for all other games; only access first mon stuff, may want to figure out a way to include double battle (may not work for multis)
+                                elif (pkmn in party2) & (((gen == 6) & (party.index(pkmn)+1 == 7)) | ((gen == 7) & (party.index(pkmn)+1 == 13))): # this works for singles in XY, needs testing for all other games; only access first mon stuff, may want to figure out a way to include double battle (may not work for multis)
                                 # elif ((pkmn in party2) & (party.index(pkmn)+1 == 7)) | ((enctype == 't') & (party.index(pkmn)+1 == 1)): # this works for singles in XY, needs testing for all other games; only access first mon stuff, may want to figure out a way to include double battle (may not work for multis)
                                     # print(pkmn.name, ';;;', pkmn.species, ';;;', party.index(pkmn)+1)
                                     if (emon != pkmn) & (emon == emon): # washing the data on mon change
@@ -1443,6 +1447,7 @@ def run():
                                             window['-mv{}bp-e-'.format(ct)].update(visible = False)
                                             window['-mv{}acc-e-'.format(ct)].update(visible = False)
                                             window['-mv{}ctc-e-'.format(ct)].update(visible = False)
+                                        change = ''
                                     for type in pkmn.types:
                                         window['-typeimg{}-e-'.format(pkmn.types.index(type) + 1)].Update(resize('images/types/{}.png'.format(type[0]), (27, 24)), visible = True)
                                         window['-typename{}-e-'.format(pkmn.types.index(type) + 1)].Update('{}'.format(type[0]), text_color=typeformatting(type[0]), visible = True)
@@ -1495,7 +1500,6 @@ def run():
                                             trackdata[pkmn.name]['abilities'].append(pkmn.abilityname)
                                     elif change == 'abil':
                                         window['-ability-e-'].set_tooltip('')
-                                        change = ''
                                     else:
                                         window['-ability-e-'].Update('Unknown Ability')
                                     if pkmn.level not in trackdata[pkmn.name]['levels']:

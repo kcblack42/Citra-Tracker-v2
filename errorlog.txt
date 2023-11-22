@@ -521,3 +521,4 @@
 2023-11-21 11:37:57.595077: 'NoneType' object is not subscriptable
 2023-11-21 11:38:10.665305: 'NoneType' object is not subscriptable
 2023-11-21 11:44:13.288002: cannot access local variable 'battlewildoppadd' where it is not associated with a value
+2023-11-21 18:20:25.528491: list index out of range
