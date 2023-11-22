@@ -522,3 +522,152 @@
 2023-11-21 11:38:10.665305: 'NoneType' object is not subscriptable
 2023-11-21 11:44:13.288002: cannot access local variable 'battlewildoppadd' where it is not associated with a value
 2023-11-21 18:20:25.528491: list index out of range
+2023-11-21 20:33:52.222988: list index out of range
+2023-11-21 20:34:05.251990: list index out of range
+2023-11-21 20:34:18.283157: list index out of range
+2023-11-21 20:34:31.317743: list index out of range
+2023-11-21 20:34:44.355104: list index out of range
+2023-11-21 20:34:57.381283: list index out of range
+2023-11-21 20:56:18.568404: list index out of range
+2023-11-21 20:56:31.599344: list index out of range
+2023-11-21 20:56:44.629622: list index out of range
+2023-11-21 20:56:57.658573: list index out of range
+2023-11-21 20:57:10.694374: list index out of range
+2023-11-21 20:57:23.722619: list index out of range
+2023-11-21 20:57:36.755684: list index out of range
+2023-11-21 20:57:49.788553: list index out of range
+2023-11-21 20:58:02.825682: list index out of range
+2023-11-21 20:58:15.857936: list index out of range
+2023-11-21 20:58:28.898460: list index out of range
+2023-11-21 20:58:41.924900: list index out of range
+2023-11-21 22:41:58.597017: cannot access local variable 'battlewildoppadd' where it is not associated with a value
+2023-11-22 10:52:06.072428: cannot unpack non-iterable NoneType object
+2023-11-22 11:02:01.349494: 'NoneType' object is not subscriptable
+2023-11-22 11:02:14.430025: 'NoneType' object is not subscriptable
+2023-11-22 11:02:27.506596: 'NoneType' object is not subscriptable
+2023-11-22 11:02:40.601774: 'NoneType' object is not subscriptable
+2023-11-22 11:02:53.747800: 'NoneType' object is not subscriptable
+2023-11-22 11:03:06.841119: 'NoneType' object is not subscriptable
+2023-11-22 11:03:19.929870: 'NoneType' object is not subscriptable
+2023-11-22 11:06:29.266821: cannot access local variable 'battlewildoppadd' where it is not associated with a value
+2023-11-22 11:06:42.273466: cannot access local variable 'battlewildoppadd' where it is not associated with a value
+2023-11-22 11:06:55.281862: cannot access local variable 'battlewildoppadd' where it is not associated with a value
+2023-11-22 11:07:08.288446: cannot access local variable 'battlewildoppadd' where it is not associated with a value
+2023-11-22 11:07:21.295288: cannot access local variable 'battlewildoppadd' where it is not associated with a value
+2023-11-22 11:07:34.311056: cannot access local variable 'battlewildoppadd' where it is not associated with a value
+2023-11-22 11:07:47.318761: cannot access local variable 'battlewildoppadd' where it is not associated with a value
+2023-11-22 11:08:00.324207: cannot access local variable 'battlewildoppadd' where it is not associated with a value
+2023-11-22 11:08:13.337574: cannot access local variable 'battlewildoppadd' where it is not associated with a value
+2023-11-22 17:49:05.171129: None
+2023-11-22 17:49:18.316204: None
+2023-11-22 17:49:31.413937: None
+2023-11-22 17:49:44.502166: None
+2023-11-22 17:49:57.592534: None
+2023-11-22 17:50:10.684179: None
+2023-11-22 17:50:23.776112: None
+2023-11-22 17:50:36.875039: None
+2023-11-22 17:50:49.972689: None
+2023-11-22 17:51:03.063105: None
+2023-11-22 17:51:16.158968: None
+2023-11-22 17:51:29.256041: None
+2023-11-22 17:51:42.347636: None
+2023-11-22 17:51:55.438203: None
+2023-11-22 17:52:08.528618: None
+2023-11-22 17:52:21.616451: None
+2023-11-22 17:52:34.708346: None
+2023-11-22 17:52:47.812628: None
+2023-11-22 17:53:00.913328: None
+2023-11-22 17:53:14.003401: None
+2023-11-22 17:53:27.095035: None
+2023-11-22 17:53:40.207663: None
+2023-11-22 17:54:08.468239: None
+2023-11-22 17:54:21.564822: None
+2023-11-22 17:54:34.663699: None
+2023-11-22 17:54:47.759355: None
+2023-11-22 17:55:00.851460: None
+2023-11-22 17:55:13.939188: None
+2023-11-22 17:55:27.033976: None
+2023-11-22 17:55:40.130835: None
+2023-11-22 17:55:53.220757: None
+2023-11-22 17:56:06.315505: None
+2023-11-22 17:56:19.409678: None
+2023-11-22 17:56:32.501312: None
+2023-11-22 17:56:45.595799: None
+2023-11-22 17:56:58.687011: None
+2023-11-22 17:57:11.792338: None
+2023-11-22 17:57:24.878562: None
+2023-11-22 17:57:37.948208: cannot unpack non-iterable NoneType object
+2023-11-22 17:57:51.034239: None
+2023-11-22 17:58:04.125684: None
+2023-11-22 17:58:17.218706: None
+2023-11-22 17:58:30.311644: None
+2023-11-22 17:58:43.415526: None
+2023-11-22 17:58:56.514147: None
+2023-11-22 17:59:09.614899: None
+2023-11-22 17:59:22.699925: None
+2023-11-22 17:59:35.791434: None
+2023-11-22 17:59:48.890216: None
+2023-11-22 18:00:01.991356: None
+2023-11-22 18:00:15.064264: cannot unpack non-iterable NoneType object
+2023-11-22 18:00:28.164506: None
+2023-11-22 18:00:41.268389: None
+2023-11-22 18:00:54.336222: cannot unpack non-iterable NoneType object
+2023-11-22 18:01:07.430774: None
+2023-11-22 18:01:20.528517: None
+2023-11-22 18:01:33.618400: None
+2023-11-22 18:01:46.713154: None
+2023-11-22 18:01:59.783426: cannot unpack non-iterable NoneType object
+2023-11-22 18:02:12.876506: None
+2023-11-22 18:02:25.992030: None
+2023-11-22 18:02:39.088669: None
+2023-11-22 18:02:52.161426: cannot unpack non-iterable NoneType object
+2023-11-22 18:03:05.232844: cannot unpack non-iterable NoneType object
+2023-11-22 18:03:31.005802: cannot unpack non-iterable NoneType object
+2023-11-22 18:05:36.964218: cannot unpack non-iterable NoneType object
+2023-11-22 18:08:08.591783: cannot unpack non-iterable NoneType object
+2023-11-22 18:08:21.481481: cannot unpack non-iterable NoneType object
+2023-11-22 18:08:29.229461: cannot unpack non-iterable NoneType object
+2023-11-22 18:08:42.301367: cannot unpack non-iterable NoneType object
+2023-11-22 18:08:55.375014: cannot unpack non-iterable NoneType object
+2023-11-22 18:09:08.447530: cannot unpack non-iterable NoneType object
+2023-11-22 18:09:21.515942: cannot unpack non-iterable NoneType object
+2023-11-22 18:09:34.585764: cannot unpack non-iterable NoneType object
+2023-11-22 18:09:47.662245: cannot unpack non-iterable NoneType object
+2023-11-22 18:10:07.965783: cannot access local variable 'pkmnindex' where it is not associated with a value
+2023-11-22 18:10:21.031752: cannot access local variable 'pkmnindex' where it is not associated with a value
+2023-11-22 18:10:34.092851: cannot access local variable 'pkmnindex' where it is not associated with a value
+2023-11-22 18:10:47.167520: cannot access local variable 'pkmnindex' where it is not associated with a value
+2023-11-22 18:11:00.237865: cannot access local variable 'pkmnindex' where it is not associated with a value
+2023-11-22 18:11:13.299862: cannot access local variable 'pkmnindex' where it is not associated with a value
+2023-11-22 18:11:26.363655: cannot access local variable 'pkmnindex' where it is not associated with a value
+2023-11-22 18:11:39.425204: cannot access local variable 'pkmnindex' where it is not associated with a value
+2023-11-22 18:11:52.490643: cannot access local variable 'pkmnindex' where it is not associated with a value
+2023-11-22 18:12:21.851593: cannot unpack non-iterable NoneType object
+2023-11-22 18:12:34.923878: cannot unpack non-iterable NoneType object
+2023-11-22 18:12:47.986350: cannot unpack non-iterable NoneType object
+2023-11-22 18:13:09.521661: cannot unpack non-iterable NoneType object
+2023-11-22 18:13:22.591026: cannot unpack non-iterable NoneType object
+2023-11-22 18:13:35.662342: cannot unpack non-iterable NoneType object
+2023-11-22 18:13:48.724997: cannot unpack non-iterable NoneType object
+2023-11-22 18:14:01.795031: cannot unpack non-iterable NoneType object
+2023-11-22 18:14:14.859848: cannot unpack non-iterable NoneType object
+2023-11-22 18:14:27.920534: cannot unpack non-iterable NoneType object
+2023-11-22 18:14:40.988247: cannot unpack non-iterable NoneType object
+2023-11-22 18:14:54.053334: cannot unpack non-iterable NoneType object
+2023-11-22 18:15:07.114641: cannot unpack non-iterable NoneType object
+2023-11-22 18:15:20.186003: cannot unpack non-iterable NoneType object
+2023-11-22 18:15:33.262265: cannot unpack non-iterable NoneType object
+2023-11-22 18:15:46.325750: cannot unpack non-iterable NoneType object
+2023-11-22 18:15:59.394008: cannot unpack non-iterable NoneType object
+2023-11-22 18:16:12.455656: cannot unpack non-iterable NoneType object
+2023-11-22 18:16:25.526541: cannot unpack non-iterable NoneType object
+2023-11-22 18:16:38.601002: cannot unpack non-iterable NoneType object
+2023-11-22 18:19:12.476294: cannot unpack non-iterable NoneType object
+2023-11-22 18:19:25.543875: cannot unpack non-iterable NoneType object
+2023-11-22 18:19:38.612303: cannot unpack non-iterable NoneType object
+2023-11-22 18:20:00.752933: list index out of range
+2023-11-22 18:20:13.857531: list index out of range
+2023-11-22 18:20:26.959425: list index out of range
+2023-11-22 18:20:40.066080: list index out of range
+2023-11-22 18:23:11.729079: list index out of range
+2023-11-22 18:23:24.835716: list index out of range

@@ -257,6 +257,16 @@ class Pokemon:
                         query+= " and pokemonsuffix = 'shield'"
                     case 8 | 10:
                         query+= " and pokemonsuffix = 'blade'"
+            case 710: ### Pumpkaboo
+                match form:
+                    case 8 | 10:
+                        query+= " and pokemonsuffix = 'average'"
+                    case 16 | 18:
+                        query+= " and pokemonsuffix = 'large'"
+                    case 24 | 26:
+                        query+= " and pokemonsuffix = 'super'"
+                    case _:
+                        query+= " and pokemonsuffix is null"
             case 711: ### Gourgeist
                 match form:
                     case 8 | 10:
@@ -1232,7 +1242,7 @@ def run():
                                 slotchoice = pkmn.name # only kicks the first time through the code
                                 antici = 0
                             window['-slotdrop-'].Update(values=slot, value=slotchoice, visible=True)
-                            # print(enctype, ';;;', pkmn.name, ';;;', party.index(pkmn)+1, ';;;', pkmnindex+len(party1)+1)
+                            # print(enctype, ';;;', pkmn.name, ';;;', party.index(pkmn)+1, ';;;', pkmnindex+12)
                             if enctype!='p':
                                 #grabs in battle types
                                 pkmntypes=[]
@@ -1301,7 +1311,9 @@ def run():
                                         where al.abilityindex = {batabilnum} and ga.generationid <= {gen} 
                                         order by ga.generationid desc
                                         """ 
-                                    abilityname,abilitydescription = cursor.execute(query).fetchone()
+                                    # print(batabilnum, ';;;', gen)
+                                    if batabilnum > 0:
+                                        abilityname,abilitydescription = cursor.execute(query).fetchone()
                                     ### STATS ########
                                     #print(int.from_bytes(c.read_memory((ppadd+(mongap*(pk-1))-264),1)))
                                     attackchange,defchange,spatkchange,spdefchange,speedchange = pkmn.getStatChanges()
@@ -1434,7 +1446,7 @@ def run():
                                             window['-mv{}bp-'.format(pkmn.moves.index(move) + 1)].update(movepower, text_color='white')
                                         window['-mv{}acc-'.format(pkmn.moves.index(move) + 1)].update(acc)
                                         window['-mv{}ctc-'.format(pkmn.moves.index(move) + 1)].update(contact)
-                                elif (pkmn in party2) & (((gen == 6) & (party.index(pkmn)+1 == 7)) | ((gen == 7) & (party.index(pkmn)+1 == 13))): # this works for singles in XY, needs testing for all other games; only access first mon stuff, may want to figure out a way to include double battle (may not work for multis)
+                                elif (pkmn in party2) & (((gen == 6) & (party.index(pkmn)+1 == 7)) | ((gen == 7) & (party.index(pkmn)+1 == 7))): # this works for singles in XY, needs testing for all other games; only access first mon stuff, may want to figure out a way to include double battle (may not work for multis)
                                 # elif ((pkmn in party2) & (party.index(pkmn)+1 == 7)) | ((enctype == 't') & (party.index(pkmn)+1 == 1)): # this works for singles in XY, needs testing for all other games; only access first mon stuff, may want to figure out a way to include double battle (may not work for multis)
                                     # print(pkmn.name, ';;;', pkmn.species, ';;;', party.index(pkmn)+1)
                                     if (emon != pkmn) & (emon == emon): # washing the data on mon change
