@@ -1095,8 +1095,10 @@ def run():
                 sg.Column(botcol4), 
                 sg.Column(botcol5),
                 sg.Column(botcol6),
+            ], 
+            [
                 sg.Column(botcol7, key='-bc7-'),
-            ]], size=(425, 700)), 
+            ]], size=(425, 700)),
             sg.VerticalSeparator(key='-vs-'),
             sg.Column([[
                 sg.Column(topcol1a, size=(225, 380), key='-tc1a-e-', visible = False), 
@@ -1113,7 +1115,7 @@ def run():
             ], 
             [
                 sg.Column(botcol7a, key='-bc7a-e-', visible = False), 
-            ]], size=(450, 700))
+            ]], size=(425, 700))
         ]]
         window = sg.Window(track_title, layout, track_size, background_color='black', resizable=True)
         loops = 0
