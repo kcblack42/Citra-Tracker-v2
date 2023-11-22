@@ -999,7 +999,7 @@ def run():
             [sg.Text(key='-mv4ctc-', size=1, justification='c')],
         ]
         botcol7 = [
-            [sg.Button('Clear Notes', key='-clearnotes-', font=('Franklin Gothic Medium', font_sizes[2]), auto_size_button=True)]
+            [sg.Button('Clear Notes', key='-clearnotes-', font=('Franklin Gothic Medium', font_sizes[2]), auto_size_button=True, visible=False)]
         ]
 
 
@@ -1367,6 +1367,7 @@ def run():
                                     window['-movebphdr-'].update('BP')
                                     window['-moveacchdr-'].update('Acc')
                                     window['-movecontacthdr-'].update('C')
+                                    window['-clearnotes-'].update(visible=True)
                                     for move in pkmn.moves:
                                         stab = ''
                                         movetyp=movetype(pkmn,move,pkmn.held_item_num)
@@ -1701,6 +1702,7 @@ def run():
                                 window['-movebphdr-'].update('BP')
                                 window['-moveacchdr-'].update('Acc')
                                 window['-movecontacthdr-'].update('C')
+                                window['-clearnotes-'].update(visible=True)
                                 for move in pkmn.moves:
                                     stab = ''
                                     movetyp=movetype(pkmn,move,pkmn.held_item_num)
