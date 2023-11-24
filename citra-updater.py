@@ -865,6 +865,191 @@ def getURLAbbr(game):
     else:
         return 'home'
     
+def defaultuisettings():
+    topcol1 = [
+        [sg.Combo([], visible=False, font=('Franklin Gothic Medium', font_sizes[1]), enable_events=True, key='-slotdrop-', readonly=True, expand_x=True, background_color='black', text_color='white')],
+        [sg.Text('Loading...', key='-slot-'),],
+        [sg.Image(key='-monimg-')], 
+        [sg.Text(justification='c', key='-monname-'), sg.Text(font=('Arial', font_sizes[2], 'bold'), key='-monnum-')],
+        [sg.Image(key='-typeimg1-'), sg.Text(key='-typename1-'), sg.Image(key='-typeimg2-', visible=False), sg.Text(key='-typename2-', visible=False), sg.Image(key='-typeimg3-', visible=False), sg.Text(key='-typename3-', visible=False),],
+        [sg.Text(key='-level-'), sg.Text(key='-evo-', visible = False), sg.Image(key='-status-', visible = False)],
+        [sg.Text(key='-ability-')],
+        [sg.Text(key='-item-')],
+    ]
+    topcol2 = [
+        [sg.Text('HP:', key='-hplabel-', visible=False)],
+        [sg.Text('Atk:', key='-attlabel-', visible=False)],
+        [sg.Text('Def:', key='-deflabel-', visible=False)],
+        [sg.Text('SpAtk:', key='-spattlabel-', visible=False)],
+        [sg.Text('SpDef:', key='-spdeflabel-', visible=False)],
+        [sg.Text('Speed:', key='-speedlabel-', visible=False)],
+        [sg.Text('BST:', key='-bstlabel-', visible=False)],
+    ]
+    topcol3 = [
+        [sg.Text(key='-hp-', justification='r')],
+        [sg.Image(key='-attmod-'), sg.Text(key='-att-', justification='r')],
+        [sg.Image(key='-defmod-'), sg.Text(key='-def-', justification='r')],
+        [sg.Image(key='-spattmod-'), sg.Text(key='-spatt-', justification='r')],
+        [sg.Image(key='-spdefmod-'), sg.Text(key='-spdef-', justification='r')],
+        [sg.Image(key='-speedmod-'), sg.Text(key='-speed-', justification='r')],
+        [sg.Text(key='-bst-', justification='r')],
+    ]
+
+    botcol1 = [
+        [sg.Text(key='-movehdr-', justification='l')],
+        [sg.Image(key='-mv1type-'), sg.Text(key='-mv1text-', size=12)],
+        [sg.Image(key='-mv2type-'), sg.Text(key='-mv2text-', size=12)],
+        [sg.Image(key='-mv3type-'), sg.Text(key='-mv3text-', size=12)],
+        [sg.Image(key='-mv4type-'), sg.Text(key='-mv4text-', size=12)],
+    ]
+    botcol2 = [
+        [sg.Text(key='-movepphdr-', size=5, justification='c')],
+        [sg.Text(key='-mv1pp-', size=5, justification='r'), sg.Image(key='-mv1mod-'),],
+        [sg.Text(key='-mv2pp-', size=5, justification='r'), sg.Image(key='-mv2mod-'),],
+        [sg.Text(key='-mv3pp-', size=5, justification='r'), sg.Image(key='-mv3mod-'),],
+        [sg.Text(key='-mv4pp-', size=5, justification='r'), sg.Image(key='-mv4mod-'),],
+    ]
+    botcol4 = [
+        [sg.Text(key='-movebphdr-', size=3, justification='r')],
+        [sg.Text(key='-mv1bp-', size=3, justification='r')],
+        [sg.Text(key='-mv2bp-', size=3, justification='r')],
+        [sg.Text(key='-mv3bp-', size=3, justification='r')],
+        [sg.Text(key='-mv4bp-', size=3, justification='r')],
+    ]
+    botcol5 = [
+        [sg.Text(key='-moveacchdr-', size=3, justification='c')],
+        [sg.Text(key='-mv1acc-', size=3, justification='c')],
+        [sg.Text(key='-mv2acc-', size=3, justification='c')],
+        [sg.Text(key='-mv3acc-', size=3, justification='c')],
+        [sg.Text(key='-mv4acc-', size=3, justification='c')],
+    ]
+    botcol6 = [
+        [sg.Text(key='-movecontacthdr-', size=1, justification='c')],
+        [sg.Text(key='-mv1ctc-', size=1, justification='c')],
+        [sg.Text(key='-mv2ctc-', size=1, justification='c')],
+        [sg.Text(key='-mv3ctc-', size=1, justification='c')],
+        [sg.Text(key='-mv4ctc-', size=1, justification='c')],
+    ]
+    botcol7 = [
+        [sg.Button('Clear Notes', key='-clearnotes-', font=('Franklin Gothic Medium', font_sizes[2]), auto_size_button=True, visible=False)]
+    ]
+
+    topcol1a = [
+        [sg.Text(key='-slot-e-'),],
+        [sg.Image(key='-monimg-e-')], 
+        [sg.Text(justification='c', key='-monname-e-'), sg.Text(font=('Arial', font_sizes[2], 'bold'), key='-monnum-e-')],
+        [sg.Image(key='-typeimg1-e-'), sg.Text(key='-typename1-e-'), sg.Image(key='-typeimg2-e-', visible=False), sg.Text(key='-typename2-e-', visible=False),],
+        [sg.Text(key='-level-e-'), sg.Text(key='-evo-e-', visible = False), sg.Image(key='-status-e-', visible = False)],
+        [sg.Text(key='-ability-e-')],
+        [sg.Text(key='-note-e-', text_color='light blue')],
+    ]
+    topcol2a = [
+        [sg.Text('HP:', key='-hplabel-e-')],
+        [sg.Text('Atk:', key='-attlabel-e-')],
+        [sg.Text('Def:', key='-deflabel-e-')],
+        [sg.Text('SpAtk:', key='-spattlabel-e-')],
+        [sg.Text('SpDef:', key='-spdeflabel-e-')],
+        [sg.Text('Speed:', key='-speedlabel-e-')],
+        [sg.Text('BST:', key='-bstlabel-e-')],
+        [sg.Button(' + Ability ', key='-addabil-e-', font=('Franklin Gothic Medium', font_sizes[2]), auto_size_button=True)], 
+        [sg.Button('Add Note', key='-addnote-e-', font=('Franklin Gothic Medium', font_sizes[2]), auto_size_button=True)],
+    ]
+    topcol3a = [
+        [sg.Text('[ ]', key='-hp-e-', enable_events=True, font=('Consolas', font_sizes[3]))],
+        [sg.Image(key='-attmod-e-'), sg.Text('[ ]', key='-att-e-', enable_events=True, font=('Consolas', font_sizes[3]))],
+        [sg.Image(key='-defmod-e-'), sg.Text('[ ]', key='-def-e-', enable_events=True, font=('Consolas', font_sizes[3]))],
+        [sg.Image(key='-spattmod-e-'), sg.Text('[ ]', key='-spatt-e-', enable_events=True, font=('Consolas', font_sizes[3]))],
+        [sg.Image(key='-spdefmod-e-'), sg.Text('[ ]', key='-spdef-e-', enable_events=True, font=('Consolas', font_sizes[3]))],
+        [sg.Image(key='-speedmod-e-'), sg.Text('[ ]', key='-speed-e-', enable_events=True, font=('Consolas', font_sizes[3]))],
+        [sg.Text(key='-bst-e-')],
+        [sg.Button(' - Ability ', key='-remabil-e-', font=('Franklin Gothic Medium', font_sizes[2]), auto_size_button=True)],
+        [sg.Text('')], 
+    ]
+
+    botcol1a = [
+        [sg.Text(key='-movehdr-e-', justification='l')],
+        [sg.Image(key='-mv1type-e-'), sg.Text(key='-mv1text-e-')],
+        [sg.Image(key='-mv2type-e-'), sg.Text(key='-mv2text-e-')],
+        [sg.Image(key='-mv3type-e-'), sg.Text(key='-mv3text-e-')],
+        [sg.Image(key='-mv4type-e-'), sg.Text(key='-mv4text-e-')],
+    ]
+    botcol2a = [
+        [sg.Text('PP', key='-movepphdr-e-', size=5, justification='c')],
+        [sg.Text(key='-mv1pp-e-', size=5, justification='r'), sg.Image(key='-mv1mod-e-'),],
+        [sg.Text(key='-mv2pp-e-', size=5, justification='r'), sg.Image(key='-mv2mod-e-'),],
+        [sg.Text(key='-mv3pp-e-', size=5, justification='r'), sg.Image(key='-mv3mod-e-'),],
+        [sg.Text(key='-mv4pp-e-', size=5, justification='r'), sg.Image(key='-mv4mod-e-'),],
+    ]
+    # botcol3a = [
+    #     [sg.Image(key='-mvmodhdr-e-'), sg.Text(size=(0,1))],
+    #     [sg.Image(key='-mv1mod-e-'), sg.Text(size=(0,1))],
+    #     [sg.Image(key='-mv2mod-e-'), sg.Text(size=(0,1))],
+    #     [sg.Image(key='-mv3mod-e-'), sg.Text(size=(0,1))],
+    #     [sg.Image(key='-mv4mod-e-'), sg.Text(size=(0,1))],
+    # ]
+    botcol4a = [
+        [sg.Text('BP', key='-movebphdr-e-', size=3, justification='r')],
+        [sg.Text(key='-mv1bp-e-', size=3, justification='r')],
+        [sg.Text(key='-mv2bp-e-', size=3, justification='r')],
+        [sg.Text(key='-mv3bp-e-', size=3, justification='r')],
+        [sg.Text(key='-mv4bp-e-', size=3, justification='r')],
+    ]
+    botcol5a = [
+        [sg.Text('Acc', key='-moveacchdr-e-', size=3, justification='c')],
+        [sg.Text(key='-mv1acc-e-', size=3, justification='c')],
+        [sg.Text(key='-mv2acc-e-', size=3, justification='c')],
+        [sg.Text(key='-mv3acc-e-', size=3, justification='c')],
+        [sg.Text(key='-mv4acc-e-', size=3, justification='c')],
+    ]
+    botcol6a = [
+        [sg.Text('C', key='-movecontacthdr-e-', size=1, justification='c')],
+        [sg.Text(key='-mv1ctc-e-', size=1, justification='c')],
+        [sg.Text(key='-mv2ctc-e-', size=1, justification='c')],
+        [sg.Text(key='-mv3ctc-e-', size=1, justification='c')],
+        [sg.Text(key='-mv4ctc-e-', size=1, justification='c')],
+    ]
+    botcol7a = [
+        [sg.Text(key='-abillist-e-', justification='l', font=('Franklin Gothic Medium', font_sizes[2]))],
+        [sg.Text(key='-prevmoves-e-', justification='l', font=('Franklin Gothic Medium', font_sizes[2]), size=(50, 3))],
+        # [sg.Text(key='-mv4ctc-e-', size=1, justification='c')],
+    ]
+
+    layout = [[
+        sg.Column([[
+            sg.Column(topcol1, key='-tc1-', size=(225, 380)), 
+            sg.Column(topcol2, key='-tc2-'), 
+            sg.Column(topcol3, element_justification='right', key='-tc3-')
+        ], 
+        [
+            sg.Column(botcol1, key='-bc1-'), 
+            sg.Column(botcol2, key='-bc2-'), 
+            sg.Column(botcol4, key='-bc4-'), 
+            sg.Column(botcol5, key='-bc5-'),
+            sg.Column(botcol6, key='-bc6-'),
+        ], 
+        [
+            sg.Column(botcol7, key='-bc7-'),
+        ]], size=(425, 700)),
+        sg.VerticalSeparator(key='-vs-'),
+        sg.Column([[
+            sg.Column(topcol1a, size=(225, 380), key='-tc1a-e-', visible = False), 
+            sg.Column(topcol2a, size=(70, 350), key='-tc2a-e-', visible = False), 
+            sg.Column(topcol3a, size=(60, 350), element_justification='right', key='-tc3a-e-', visible = False)
+        ], 
+        [
+            sg.Column(botcol1a, key='-bc1a-e-', visible = False), 
+            sg.Column(botcol2a, element_justification='right', key='-bc2a-e-', visible = False), 
+            # sg.Column(botcol3a, element_justification='right', key='-bc3a-e-', visible = False), 
+            sg.Column(botcol4a, element_justification='right', key='-bc4a-e-', visible = False), 
+            sg.Column(botcol5a, element_justification='right', key='-bc5a-e-', visible = False), 
+            sg.Column(botcol6a, element_justification='right', key='-bc6a-e-', visible = False)
+        ], 
+        [
+            sg.Column(botcol7a, key='-bc7a-e-', visible = False), 
+        ]], size=(425, 700))
+    ]]
+    return layout
+
 def resize(image_file, new_size, encode_format='PNG'):
     im = Image.open(image_file)
     new_im = im.resize(new_size, Image.NEAREST)
@@ -944,195 +1129,14 @@ def run():
         print('running..')
         
         ### SET UP TRACKER GUI ###
-        topcol1 = [
-            [sg.Combo([], visible=False, font=('Franklin Gothic Medium', font_sizes[1]), enable_events=True, key='-slotdrop-', readonly=True, expand_x=True, background_color='black', text_color='white')],
-            [sg.Text('Loading...', key='-slot-'),],
-            [sg.Image(key='-monimg-')], 
-            [sg.Text(justification='c', key='-monname-'), sg.Text(font=('Arial', font_sizes[2], 'bold'), key='-monnum-')],
-            [sg.Image(key='-typeimg1-'), sg.Text(key='-typename1-'), sg.Image(key='-typeimg2-', visible=False), sg.Text(key='-typename2-', visible=False), sg.Image(key='-typeimg3-', visible=False), sg.Text(key='-typename3-', visible=False),],
-            [sg.Text(key='-level-'), sg.Text(key='-evo-', visible = False), sg.Image(key='-status-', visible = False)],
-            [sg.Text(key='-ability-')],
-            [sg.Text(key='-item-')],
-        ]
-        topcol2 = [
-            [sg.Text('HP:', key='-hplabel-', visible=False)],
-            [sg.Text('Atk:', key='-attlabel-', visible=False)],
-            [sg.Text('Def:', key='-deflabel-', visible=False)],
-            [sg.Text('SpAtk:', key='-spattlabel-', visible=False)],
-            [sg.Text('SpDef:', key='-spdeflabel-', visible=False)],
-            [sg.Text('Speed:', key='-speedlabel-', visible=False)],
-            [sg.Text('BST:', key='-bstlabel-', visible=False)],
-        ]
-        topcol3 = [
-            [sg.Text(key='-hp-', justification='r')],
-            [sg.Image(key='-attmod-'), sg.Text(key='-att-', justification='r')],
-            [sg.Image(key='-defmod-'), sg.Text(key='-def-', justification='r')],
-            [sg.Image(key='-spattmod-'), sg.Text(key='-spatt-', justification='r')],
-            [sg.Image(key='-spdefmod-'), sg.Text(key='-spdef-', justification='r')],
-            [sg.Image(key='-speedmod-'), sg.Text(key='-speed-', justification='r')],
-            [sg.Text(key='-bst-', justification='r')],
-        ]
-
-        botcol1 = [
-            [sg.Text(key='-movehdr-', justification='l')],
-            [sg.Image(key='-mv1type-'), sg.Text(key='-mv1text-', size=12)],
-            [sg.Image(key='-mv2type-'), sg.Text(key='-mv2text-', size=12)],
-            [sg.Image(key='-mv3type-'), sg.Text(key='-mv3text-', size=12)],
-            [sg.Image(key='-mv4type-'), sg.Text(key='-mv4text-', size=12)],
-        ]
-        botcol2 = [
-            [sg.Text(key='-movepphdr-', size=5, justification='c')],
-            [sg.Text(key='-mv1pp-', size=5, justification='r'), sg.Image(key='-mv1mod-'),],
-            [sg.Text(key='-mv2pp-', size=5, justification='r'), sg.Image(key='-mv2mod-'),],
-            [sg.Text(key='-mv3pp-', size=5, justification='r'), sg.Image(key='-mv3mod-'),],
-            [sg.Text(key='-mv4pp-', size=5, justification='r'), sg.Image(key='-mv4mod-'),],
-        ]
-        botcol4 = [
-            [sg.Text(key='-movebphdr-', size=3, justification='r')],
-            [sg.Text(key='-mv1bp-', size=3, justification='r')],
-            [sg.Text(key='-mv2bp-', size=3, justification='r')],
-            [sg.Text(key='-mv3bp-', size=3, justification='r')],
-            [sg.Text(key='-mv4bp-', size=3, justification='r')],
-        ]
-        botcol5 = [
-            [sg.Text(key='-moveacchdr-', size=3, justification='c')],
-            [sg.Text(key='-mv1acc-', size=3, justification='c')],
-            [sg.Text(key='-mv2acc-', size=3, justification='c')],
-            [sg.Text(key='-mv3acc-', size=3, justification='c')],
-            [sg.Text(key='-mv4acc-', size=3, justification='c')],
-        ]
-        botcol6 = [
-            [sg.Text(key='-movecontacthdr-', size=1, justification='c')],
-            [sg.Text(key='-mv1ctc-', size=1, justification='c')],
-            [sg.Text(key='-mv2ctc-', size=1, justification='c')],
-            [sg.Text(key='-mv3ctc-', size=1, justification='c')],
-            [sg.Text(key='-mv4ctc-', size=1, justification='c')],
-        ]
-        botcol7 = [
-            [sg.Button('Clear Notes', key='-clearnotes-', font=('Franklin Gothic Medium', font_sizes[2]), auto_size_button=True, visible=False)]
-        ]
-
-
-        topcol1a = [
-            [sg.Text(key='-slot-e-'),],
-            [sg.Image(key='-monimg-e-')], 
-            [sg.Text(justification='c', key='-monname-e-'), sg.Text(font=('Arial', font_sizes[2], 'bold'), key='-monnum-e-')],
-            [sg.Image(key='-typeimg1-e-'), sg.Text(key='-typename1-e-'), sg.Image(key='-typeimg2-e-', visible=False), sg.Text(key='-typename2-e-', visible=False),],
-            [sg.Text(key='-level-e-'), sg.Text(key='-evo-e-', visible = False), sg.Image(key='-status-e-', visible = False)],
-            [sg.Text(key='-ability-e-')],
-            [sg.Text(key='-note-e-', text_color='light blue')],
-        ]
-        topcol2a = [
-            [sg.Text('HP:', key='-hplabel-e-')],
-            [sg.Text('Atk:', key='-attlabel-e-')],
-            [sg.Text('Def:', key='-deflabel-e-')],
-            [sg.Text('SpAtk:', key='-spattlabel-e-')],
-            [sg.Text('SpDef:', key='-spdeflabel-e-')],
-            [sg.Text('Speed:', key='-speedlabel-e-')],
-            [sg.Text('BST:', key='-bstlabel-e-')],
-            [sg.Button(' + Ability ', key='-addabil-e-', font=('Franklin Gothic Medium', font_sizes[2]), auto_size_button=True)], 
-            [sg.Button('Add Note', key='-addnote-e-', font=('Franklin Gothic Medium', font_sizes[2]), auto_size_button=True)],
-        ]
-        topcol3a = [
-            [sg.Text('[ ]', key='-hp-e-', enable_events=True, font=('Consolas', font_sizes[3]))],
-            [sg.Image(key='-attmod-e-'), sg.Text('[ ]', key='-att-e-', enable_events=True, font=('Consolas', font_sizes[3]))],
-            [sg.Image(key='-defmod-e-'), sg.Text('[ ]', key='-def-e-', enable_events=True, font=('Consolas', font_sizes[3]))],
-            [sg.Image(key='-spattmod-e-'), sg.Text('[ ]', key='-spatt-e-', enable_events=True, font=('Consolas', font_sizes[3]))],
-            [sg.Image(key='-spdefmod-e-'), sg.Text('[ ]', key='-spdef-e-', enable_events=True, font=('Consolas', font_sizes[3]))],
-            [sg.Image(key='-speedmod-e-'), sg.Text('[ ]', key='-speed-e-', enable_events=True, font=('Consolas', font_sizes[3]))],
-            [sg.Text(key='-bst-e-')],
-            [sg.Button(' - Ability ', key='-remabil-e-', font=('Franklin Gothic Medium', font_sizes[2]), auto_size_button=True)],
-            [sg.Text('')], 
-        ]
-
-        botcol1a = [
-            [sg.Text(key='-movehdr-e-', justification='l')],
-            [sg.Image(key='-mv1type-e-'), sg.Text(key='-mv1text-e-')],
-            [sg.Image(key='-mv2type-e-'), sg.Text(key='-mv2text-e-')],
-            [sg.Image(key='-mv3type-e-'), sg.Text(key='-mv3text-e-')],
-            [sg.Image(key='-mv4type-e-'), sg.Text(key='-mv4text-e-')],
-        ]
-        botcol2a = [
-            [sg.Text('PP', key='-movepphdr-e-', size=5, justification='c')],
-            [sg.Text(key='-mv1pp-e-', size=5, justification='r'), sg.Image(key='-mv1mod-e-'),],
-            [sg.Text(key='-mv2pp-e-', size=5, justification='r'), sg.Image(key='-mv2mod-e-'),],
-            [sg.Text(key='-mv3pp-e-', size=5, justification='r'), sg.Image(key='-mv3mod-e-'),],
-            [sg.Text(key='-mv4pp-e-', size=5, justification='r'), sg.Image(key='-mv4mod-e-'),],
-        ]
-        # botcol3a = [
-        #     [sg.Image(key='-mvmodhdr-e-'), sg.Text(size=(0,1))],
-        #     [sg.Image(key='-mv1mod-e-'), sg.Text(size=(0,1))],
-        #     [sg.Image(key='-mv2mod-e-'), sg.Text(size=(0,1))],
-        #     [sg.Image(key='-mv3mod-e-'), sg.Text(size=(0,1))],
-        #     [sg.Image(key='-mv4mod-e-'), sg.Text(size=(0,1))],
-        # ]
-        botcol4a = [
-            [sg.Text('BP', key='-movebphdr-e-', size=3, justification='r')],
-            [sg.Text(key='-mv1bp-e-', size=3, justification='r')],
-            [sg.Text(key='-mv2bp-e-', size=3, justification='r')],
-            [sg.Text(key='-mv3bp-e-', size=3, justification='r')],
-            [sg.Text(key='-mv4bp-e-', size=3, justification='r')],
-        ]
-        botcol5a = [
-            [sg.Text('Acc', key='-moveacchdr-e-', size=3, justification='c')],
-            [sg.Text(key='-mv1acc-e-', size=3, justification='c')],
-            [sg.Text(key='-mv2acc-e-', size=3, justification='c')],
-            [sg.Text(key='-mv3acc-e-', size=3, justification='c')],
-            [sg.Text(key='-mv4acc-e-', size=3, justification='c')],
-        ]
-        botcol6a = [
-            [sg.Text('C', key='-movecontacthdr-e-', size=1, justification='c')],
-            [sg.Text(key='-mv1ctc-e-', size=1, justification='c')],
-            [sg.Text(key='-mv2ctc-e-', size=1, justification='c')],
-            [sg.Text(key='-mv3ctc-e-', size=1, justification='c')],
-            [sg.Text(key='-mv4ctc-e-', size=1, justification='c')],
-        ]
-        botcol7a = [
-            [sg.Text(key='-abillist-e-', justification='l', font=('Franklin Gothic Medium', font_sizes[2]))],
-            [sg.Text(key='-prevmoves-e-', justification='l', font=('Franklin Gothic Medium', font_sizes[2]), size=(50, 3))],
-            # [sg.Text(key='-mv4ctc-e-', size=1, justification='c')],
-        ]
-
-        layout = [[
-            sg.Column([[
-                sg.Column(topcol1, key='-TLCOL1-', size=(225, 380)), 
-                sg.Column(topcol2, key='-TLCOL2-'), 
-                sg.Column(topcol3, element_justification='right', key='-TLCOL3-')
-            ], 
-            [
-                sg.Column(botcol1), 
-                sg.Column(botcol2), 
-                sg.Column(botcol4), 
-                sg.Column(botcol5),
-                sg.Column(botcol6),
-            ], 
-            [
-                sg.Column(botcol7, key='-bc7-'),
-            ]], size=(425, 700)),
-            sg.VerticalSeparator(key='-vs-'),
-            sg.Column([[
-                sg.Column(topcol1a, size=(225, 380), key='-tc1a-e-', visible = False), 
-                sg.Column(topcol2a, size=(70, 350), key='-tc2a-e-', visible = False), 
-                sg.Column(topcol3a, size=(60, 350), element_justification='right', key='-tc3a-e-', visible = False)
-            ], 
-            [
-                sg.Column(botcol1a, key='-bc1a-e-', visible = False), 
-                sg.Column(botcol2a, element_justification='right', key='-bc2a-e-', visible = False), 
-                # sg.Column(botcol3a, element_justification='right', key='-bc3a-e-', visible = False), 
-                sg.Column(botcol4a, element_justification='right', key='-bc4a-e-', visible = False), 
-                sg.Column(botcol5a, element_justification='right', key='-bc5a-e-', visible = False), 
-                sg.Column(botcol6a, element_justification='right', key='-bc6a-e-', visible = False)
-            ], 
-            [
-                sg.Column(botcol7a, key='-bc7a-e-', visible = False), 
-            ]], size=(425, 700))
-        ]]
+        layout = defaultuisettings()
         window = sg.Window(track_title, layout, track_size, background_color='black', resizable=True)
         loops = 0
         slotchoice = ''
         enemymon = ''
         enemydict = {"abilities": [], "stats": ["", "", "", "", "", ""], "notes": "", "levels": [], "moves": []}
         change = ''
+        seed = open('seed.txt', 'r').read()
         while (True):
             try:
                 if c.is_connected():
@@ -1188,6 +1192,42 @@ def run():
                         confirm = sg.popup_ok_cancel('Clear tracker data?', title='Confirm')
                         if confirm == 'OK':
                             notesclear()
+                            sg.popup_ok('Data cleared.')
+                            slotchoice = ''
+                            window['-slot-'].update('Waiting for new mon...')
+                            # clearing visual tracker info for enemy mon
+                            # window[['-monname-', '-monnum-', '-level-', '-ability-', '-item-', '-typename1-', '-typename2-']].update('')
+                            # window[['-typeimg1-', '-typeimg2-']].update(visible=False)
+                            window['-ability-'].update('')
+                            window['-item-'].update('')
+                            window['-tc2-'].update(visible = False)
+                            window['-tc3-'].update(visible = False)
+                            window['-bc1-'].update(visible = False)
+                            window['-bc2-'].update(visible = False)
+                            window['-bc4-'].update(visible = False)
+                            window['-bc5-'].update(visible = False)
+                            window['-bc6-'].update(visible = False)
+                            window['-tc1a-e-'].update(visible = False)
+                            window['-tc2a-e-'].update(visible = False)
+                            window['-tc3a-e-'].update(visible = False)
+                            window['-bc1a-e-'].update(visible = False)
+                            window['-bc2a-e-'].update(visible = False)
+                            window['-bc4a-e-'].update(visible = False)
+                            window['-bc5a-e-'].update(visible = False)
+                            window['-bc6a-e-'].update(visible = False)
+                            window['-bc7a-e-'].update(visible = False)
+                            ct = 0
+                            while ct < 4:
+                                ct += 1
+                                window['-mv{}type-e-'.format(ct)].update(visible = False)
+                                window['-mv{}text-e-'.format(ct)].update(visible = False)
+                                window['-mv{}pp-e-'.format(ct)].update(visible = False)
+                                window['-mv{}mod-e-'.format(ct)].update(visible = False)
+                                window['-mv{}bp-e-'.format(ct)].update(visible = False)
+                                window['-mv{}acc-e-'.format(ct)].update(visible = False)
+                                window['-mv{}ctc-e-'.format(ct)].update(visible = False)
+                            # layout = defaultuisettings()
+                            # window = sg.Window(track_title, layout, track_size, background_color='black', resizable=True)
                     partyadd,enemyadd,ppadd,curoppnum,enctype,mongap=getaddresses(c)
                     # print("loops" + str(loops))
                     loops+=1
@@ -1332,12 +1372,19 @@ def run():
                                         where itemname = '{pkmn.held_item_name}' and genid <= {gen}
                                         """
                                     itemname,itemdesc = cursor.execute(query).fetchone()
-                                    window['-slot-'].Update('Battle')
+                                    window['-slot-'].Update('Seed {} - Battle'.format(seed))
                                     try:
                                         window['-monimg-'].Update(resize('images/homemodels/{}.png'.format(pkmn.name), (120,120)), visible = True)
                                     except:
                                         window['-monimg-'].Update(visible = False)
                                         print(Exception)
+                                    window['-tc2-'].update(visible = True)
+                                    window['-tc3-'].update(visible = True)
+                                    window['-bc1-'].update(visible = True)
+                                    window['-bc2-'].update(visible = True)
+                                    window['-bc4-'].update(visible = True)
+                                    window['-bc5-'].update(visible = True)
+                                    window['-bc6-'].update(visible = True)
                                     window['-monname-'].Update(pkmn.name.replace("Farfetchd","Farfetch'd"))
                                     window['-monnum-'].Update('#{}'.format(str(pkmn.species_num())))
                                     window['-level-'].Update('Level: {}'.format(levelnum))
@@ -1346,7 +1393,7 @@ def run():
                                     window['-ability-'].set_tooltip(str(pkmn.ability['description']))
                                     window['-item-'].Update(pkmn.held_item_name)
                                     window['-item-'].set_tooltip(itemdesc)
-                                    window['-hplabel-'].Update(visible = True)
+                                    window['-hplabel-'].update(visible = True)
                                     window['-attlabel-'].update(visible = True, text_color=natureformatting(naturelist, 0))
                                     window['-deflabel-'].update(visible = True, text_color=natureformatting(naturelist, 1))
                                     window['-spattlabel-'].update(visible = True, text_color=natureformatting(naturelist, 2))
@@ -1664,7 +1711,7 @@ def run():
                                     where itemname = '{pkmn.held_item_name}' and genid <= {gen}
                                     """
                                 itemname,itemdesc = cursor.execute(query).fetchone()
-                                window['-slot-'].Update('Overworld')
+                                window['-slot-'].Update('Seed {} - Overworld'.format(seed))
                                 try:
                                     window['-monimg-'].Update(resize('images/homemodels/{}.png'.format(pkmn.name), (120,120)), visible = True)
                                 except:
@@ -1679,6 +1726,13 @@ def run():
                                     window['-evo-'].set_tooltip('Evolves {}{}{}{}{}'.format(evoitem, evofriend, evolevel, evostring, evoloc))
                                 else:
                                     window['-evo-'].update(visible = False)
+                                window['-tc2-'].update(visible = True)
+                                window['-tc3-'].update(visible = True)
+                                window['-bc1-'].update(visible = True)
+                                window['-bc2-'].update(visible = True)
+                                window['-bc4-'].update(visible = True)
+                                window['-bc5-'].update(visible = True)
+                                window['-bc6-'].update(visible = True)
                                 window['-ability-'].update(str(pkmn.ability['name']))
                                 window['-ability-'].set_tooltip(str(pkmn.ability['description']))
                                 window['-item-'].update(pkmn.held_item_name)
@@ -1812,3 +1866,5 @@ with open('data/item-data.json','r') as f:
 
 if __name__ == "__main__" :
     run()
+    
+exit()

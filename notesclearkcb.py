@@ -37,4 +37,4 @@ def notesclear():
     new_seed = open('seed.txt', 'w').write(str(int(seed)+1))
     print(open('seed.txt', 'r').read())
 
-    time.sleep(5)
+    # time.sleep(5)
