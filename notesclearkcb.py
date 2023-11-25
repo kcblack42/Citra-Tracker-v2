@@ -38,3 +38,4 @@ def notesclear():
     print(open('seed.txt', 'r').read())
 
     # time.sleep(5)
+    return seed

@@ -23,7 +23,7 @@ try:
 except ImportError:
     import Image
 # import Image
-from notesclear import notesclear
+from notesclearkcb import notesclear
 
 # pysimplegui settings et al
 track_title = 'Ironmon Tracker'
@@ -1191,7 +1191,7 @@ def run():
                     elif event == '-clearnotes-':
                         confirm = sg.popup_ok_cancel('Clear tracker data?', title='Confirm')
                         if confirm == 'OK':
-                            notesclear()
+                            seed = notesclear()
                             sg.popup_ok('Data cleared.')
                             slotchoice = ''
                             window['-slot-'].update('Waiting for new mon...')
@@ -1479,7 +1479,7 @@ def run():
                                                 modimage="X"
                                         else:
                                             modimage="6"
-                                        movepower = calcPower(pkmn,move,hpnum[0],hpnum[1])
+                                        # movepower = calcPower(pkmn,move,hpnum[0],hpnum[1])
                                         acc = '-' if not move['acc'] else int(move['acc'])
                                         contact = ('Y' if move['contact'] else 'N')
                                         window['-mv{}type-'.format(pkmn.moves.index(move) + 1)].update(resize('images/categories/{}.png'.format(move["category"]), (27,20)))
@@ -1488,9 +1488,9 @@ def run():
                                         window['-mv{}pp-'.format(pkmn.moves.index(move) + 1)].update('{}/{}'.format(int.from_bytes(c.read_memory(ppadd+(mongap*(pk-1))+(14*(pkmn.moves).index(move)),1)), int.from_bytes(c.read_memory(ppadd+(mongap*(pk-1))+1+(14*(pkmn.moves).index(move)),1))))
                                         window['-mv{}mod-'.format(pkmn.moves.index(move) + 1)].update('images/modifiers/modifier{}.png'.format(modimage))
                                         if stab == move['type']:
-                                            window['-mv{}bp-'.format(pkmn.moves.index(move) + 1)].update(movepower, text_color=typeformatting(move['type']))
+                                            window['-mv{}bp-'.format(pkmn.moves.index(move) + 1)].update(calcPower(pkmn,move,hpnum[0],hpnum[1]), text_color=typeformatting(move['type']))
                                         else:
-                                            window['-mv{}bp-'.format(pkmn.moves.index(move) + 1)].update(movepower, text_color='white')
+                                            window['-mv{}bp-'.format(pkmn.moves.index(move) + 1)].update(calcPower(pkmn,move,hpnum[0],hpnum[1]), text_color='white')
                                         window['-mv{}acc-'.format(pkmn.moves.index(move) + 1)].update(acc)
                                         window['-mv{}ctc-'.format(pkmn.moves.index(move) + 1)].update(contact)
                                 elif (pkmn in party2) & (((gen == 6) & (party.index(pkmn)+1 == 7)) | ((gen == 7) & (party.index(pkmn)+1 == 7))): # this works for singles in XY, needs testing for all other games; only access first mon stuff, may want to figure out a way to include double battle (may not work for multis)
