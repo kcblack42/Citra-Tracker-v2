@@ -758,3 +758,22 @@
 2023-11-24 21:43:24.873142: list index out of range
 2023-11-24 21:43:37.908240: list index out of range
 2023-11-24 21:43:50.943420: list index out of range
+2023-11-25 10:13:18.576415: cannot access local variable 'frisk' where it is not associated with a value
+2023-11-25 10:13:31.671519: cannot access local variable 'frisk' where it is not associated with a value
+2023-11-25 10:13:44.718738: cannot access local variable 'frisk' where it is not associated with a value
+2023-11-25 10:13:57.776941: cannot access local variable 'frisk' where it is not associated with a value
+2023-11-25 10:14:10.827794: cannot access local variable 'frisk' where it is not associated with a value
+2023-11-25 10:14:23.877349: cannot access local variable 'frisk' where it is not associated with a value
+2023-11-25 10:14:36.932847: cannot access local variable 'frisk' where it is not associated with a value
+2023-11-25 10:14:50.013765: cannot access local variable 'frisk' where it is not associated with a value
+2023-11-25 10:15:03.072425: cannot access local variable 'frisk' where it is not associated with a value
+2023-11-25 10:15:16.122317: cannot access local variable 'frisk' where it is not associated with a value
+2023-11-25 10:15:29.177168: cannot access local variable 'frisk' where it is not associated with a value
+2023-11-25 12:04:04.067579: cannot access local variable 'battlewildoppadd' where it is not associated with a value
+2023-11-25 12:04:17.147077: cannot access local variable 'battlewildoppadd' where it is not associated with a value
+2023-11-25 12:04:30.233336: cannot access local variable 'battlewildoppadd' where it is not associated with a value
+2023-11-25 12:04:43.310529: cannot access local variable 'battlewildoppadd' where it is not associated with a value
+2023-11-25 12:04:56.401596: cannot access local variable 'battlewildoppadd' where it is not associated with a value
+2023-11-25 12:05:09.479098: cannot access local variable 'battlewildoppadd' where it is not associated with a value
+2023-11-25 12:05:22.564417: cannot access local variable 'battlewildoppadd' where it is not associated with a value
+2023-11-25 12:05:35.661373: cannot access local variable 'battlewildoppadd' where it is not associated with a value

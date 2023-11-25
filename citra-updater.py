@@ -897,10 +897,10 @@ def defaultuisettings():
 
     botcol1 = [
         [sg.Text(key='-movehdr-', justification='l')],
-        [sg.Image(key='-mv1type-'), sg.Text(key='-mv1text-', size=12)],
-        [sg.Image(key='-mv2type-'), sg.Text(key='-mv2text-', size=12)],
-        [sg.Image(key='-mv3type-'), sg.Text(key='-mv3text-', size=12)],
-        [sg.Image(key='-mv4type-'), sg.Text(key='-mv4text-', size=12)],
+        [sg.Image(key='-mv1type-'), sg.Text(key='-mv1text-', size=13)],
+        [sg.Image(key='-mv2type-'), sg.Text(key='-mv2text-', size=13)],
+        [sg.Image(key='-mv3type-'), sg.Text(key='-mv3text-', size=13)],
+        [sg.Image(key='-mv4type-'), sg.Text(key='-mv4text-', size=13)],
     ]
     botcol2 = [
         [sg.Text(key='-movepphdr-', size=5, justification='c')],
@@ -1029,7 +1029,7 @@ def defaultuisettings():
         ], 
         [
             sg.Column(botcol7, key='-bc7-'),
-        ]], size=(425, 700)),
+        ]], size=(430, 700)),
         sg.VerticalSeparator(key='-vs-'),
         sg.Column([[
             sg.Column(topcol1a, size=(225, 380), key='-tc1a-e-', visible = False), 
@@ -1046,7 +1046,7 @@ def defaultuisettings():
         ], 
         [
             sg.Column(botcol7a, key='-bc7a-e-', visible = False), 
-        ]], size=(425, 700))
+        ]], size=(430, 700))
     ]]
     return layout
 
