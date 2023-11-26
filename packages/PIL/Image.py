@@ -3807,11 +3807,8 @@ class Exif(MutableMapping):
                     self.get_ifd(ExifTags.IFD.Exif)
                 tag_data = self._ifds[ExifTags.IFD.Exif][tag]
                 if tag == ExifTags.IFD.Makernote:
-                    try:
-                        from .TiffImagePlugin import ImageFileDirectory_v2
-                    except ImportError:
-                        ImageFileDirectory_v2 = None
-                        
+                    from .TiffImagePlugin import ImageFileDirectory_v2
+
                     if tag_data[:8] == b"FUJIFILM":
                         ifd_offset = i32le(tag_data, 8)
                         ifd_data = tag_data[ifd_offset:]

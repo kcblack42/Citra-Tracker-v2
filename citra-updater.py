@@ -17,13 +17,14 @@ import re
 import os
 from urllib.request import urlopen, Request
 from io import BytesIO
-import PySimpleGUI as sg
-try:
-    from PIL import Image
-except ImportError:
-    import Image
-# import Image
-from notesclearkcb import notesclear
+import packages.PySimpleGUI as sg
+# try:
+#     from PIL import Image
+# except ImportError:
+#     import Image
+import packages.PIL.Image as Image
+from packages.notesclearkcb import notesclear
+# from packages.notesclear import notesclear
 
 # pysimplegui settings et al
 track_title = 'Ironmon Tracker'
