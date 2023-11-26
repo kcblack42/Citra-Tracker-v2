@@ -9,7 +9,7 @@ This is currently a separate window that updates automatically every 10 seconds 
 
 After a run is over (after you've advanced to the next seed), the way to clear the tracker data before continuing to the next seed is with the notesclear.py file. However, make sure to shut down your ROM before running that file - if you don't, either weird things happen or it will not clear your data at all. In the (near) future, functionality will be added to automate the seed advancement process if you make seeds via batch and FS Layer.
 
-Keep in mind this is an alpha version (especially for gen 7), do not expect perfection right now. More features will likely be added over time. If you have problems or suggestions, reach out to me (@Kaiya KC) in the ironmon discord, either in the #xy-oras, #sm-usum, or #tracker-dev-chat channels. I'm around way too much.
+Keep in mind this is an alpha version (especially for gen 7), do not expect perfection right now. More features will likely be added over time. If you have problems or suggestions, reach out to me (@Kaiya KC) in the ironmon discord, either in the #xy-oras, #sunmoon-usum, or #tracker-dev-chat channels. I'm around way too much.
 
 Big thanks to brdy for creating the initial display that this was based on, and his database for the data. Additionally, thanks to UTDZac for helping with some of the features being imported from Citra, and [this](https://github.com/EverOddish/PokeStreamer-Tools) for the citra party data. And thanks to Accrueblue for putting everything together the first time, none of this would be remotely possible without all of this pre-work.
 
