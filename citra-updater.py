@@ -34,6 +34,7 @@ except:
     install('Pillow')
     from PIL import Image
 
+
 # pysimplegui settings et al
 track_title = 'Ironmon Tracker'
 scale = 1.3
