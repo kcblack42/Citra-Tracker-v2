@@ -14,10 +14,13 @@ from citra import Citra
 import re
 import os
 from io import BytesIO
-import PySimpleGui as sg
+import PySimpleGUI as sg
 from PIL import Image
+# import packages.PySimpleGUI as sg
+# import packages.PIL.Image as Image
 # from packages.notesclearkcb import notesclear
-from packages.notesclear import notesclear
+from util.notesclear import notesclear
+
 
 # pysimplegui settings et al
 track_title = 'Ironmon Tracker'
