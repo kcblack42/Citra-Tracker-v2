@@ -15,8 +15,9 @@ from citra import Citra
 # newly added kcb
 import re
 import os
-from urllib.request import urlopen, Request
 from io import BytesIO
+# import PySimpleGui as sg
+# from PIL import Image
 import packages.PySimpleGUI as sg
 import packages.PIL.Image as Image
 from packages.notesclearkcb import notesclear

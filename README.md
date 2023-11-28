@@ -1,9 +1,9 @@
 Tracker for Gen 6/7 Pokémon Ironmon.
     Pokémon X/Y, Omega Ruby/Alpha Sapphire, Sun/Moon, Pokémon Ultra Sun/Ultra Moon
 
-How to Use:
+How to Use/Installation:
 
-Citra emulator for 3DS is required. Drop the files in the folder into the citra scripting folder (the one with a citra.py inside, usually in appdata/local) and run the citra-updater.py file via Python. Citra must have a ROM open (with a pokemon in your party) for the tracker to check for data. Wait until you get a mon to open it for the first time. It will remain open between runs, throwing an error (this is expected) until you get a new mon.
+Citra emulator for 3DS is required. Drop the files in the folder into the citra scripting folder (the one with a citra.py inside, usually in appdata/local), follow the instructions included (install-instructions.txt) and then run the citra-updater.py file via Python. Citra must have a ROM open (with a pokemon in your party) for the tracker to check for data. Wait until you get a mon to open it for the first time. It will remain open between runs, throwing an error (this is expected) until you get a new mon.
 
 This is currently a separate window that updates automatically every 10 seconds when ran correctly. You choose which mon of your own party to view using the drop-down menu, and can see your enemy's primary mon and take notes on abilities, stats, etc. Due to initial limitations, only the enemy's first mon is shown, which causes some issues in doubles (only one mon appears), and it does not function at all in multis and "event" wild encounters. It is a known bug that I'm looking into (so far unsuccessfully). Hovering/clicking on ceratin areas displays extra data about the mons, such as the move name displaying data about the move.
 
