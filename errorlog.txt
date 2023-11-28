@@ -1,16 +1,1 @@
-2023-11-25 19:56:40.762367: name '_plugins' is not defined
-2023-11-25 19:57:44.535508: name 'UnidentifiedImageError' is not defined
-2023-11-25 19:57:57.604856: name 'UnidentifiedImageError' is not defined
-2023-11-25 19:58:10.656936: name 'UnidentifiedImageError' is not defined
-2023-11-25 19:58:17.406596: name 'UnidentifiedImageError' is not defined
-2023-11-25 19:59:06.321843: cannot identify image file 'images/types/Fighting.png'
-2023-11-25 19:59:19.371003: cannot identify image file 'images/types/Fighting.png'
-2023-11-25 19:59:32.431153: cannot identify image file 'images/types/Fighting.png'
-2023-11-25 19:59:45.475801: cannot identify image file 'images/types/Fighting.png'
-2023-11-25 20:07:05.864356: list index out of range
-2023-11-25 20:10:25.737339: cannot access local variable 'battlewildoppadd' where it is not associated with a value
-2023-11-25 20:10:38.750137: cannot access local variable 'battlewildoppadd' where it is not associated with a value
-2023-11-25 20:10:51.841630: cannot access local variable 'battlewildoppadd' where it is not associated with a value
-2023-11-25 20:11:04.936246: cannot access local variable 'battlewildoppadd' where it is not associated with a value
-2023-11-25 20:12:22.875881: cannot access local variable 'battlewildoppadd' where it is not associated with a value
-2023-11-25 20:12:29.820880: cannot access local variable 'battlewildoppadd' where it is not associated with a value
+
