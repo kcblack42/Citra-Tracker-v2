@@ -1,7 +1,5 @@
 ### INSTALLATION INSTRUCTIONS ###
 
 1. Drop all of these files into the same location as citra.py. This is usually in appdata/local.
-2. In that same folder (there should now be both citra.py and citra-updater.py in it), shift-right click and select "Open PowerShell Window here" (or something similar - with older versions of windows it may be slightly different). A command-looking prompt should pop up.
-3. In that prompt, type "py --version". If this does not show up as 3.12.x, you may need to update your version of python. The program is untested in 3.11.x, but it may be functional.
-4. In that same prompt, type "py -m pip install -r requirements.txt". This should install all of the python packages needed to run the tracker, and may take a minute or two. The installed packages should be "PySimpleGUI", "Pillow", and "tk", along with any dependencies therein.
-5. After this, you should be good to go! Close out of the command prompt, get your first mon, load up the tracker, and good luck on your journey!
+2. Get a pokemon from the bag/lab/etc.
+3. Run the tracker! That's it!
