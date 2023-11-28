@@ -13,8 +13,9 @@ import logging
 from citra import Citra
 import re
 import os
-from urllib.request import urlopen, Request
 from io import BytesIO
+# import PySimpleGui as sg
+# from PIL import Image
 import packages.PySimpleGUI as sg
 import packages.PIL.Image as Image
 # from packages.notesclearkcb import notesclear
@@ -1314,6 +1315,8 @@ def run():
                                             evoitem = 'Water Stone/Kings Rock'
                                         elif pkmn.name == 'Clamperl':
                                             evoitem = 'Deep Sea Tooth/Deep Sea Scale'
+                                        elif pkmn.name == 'Slowpoke':
+                                            evoitem = 'Kings Rock/Level 37'
                                         # need to check slowpoke, kirlia, snorunt
                                         else:
                                             evoitem = ('' if not pkmn.evoitem else 'w/'+pkmn.evoitem)
