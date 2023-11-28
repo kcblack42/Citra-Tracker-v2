@@ -5,11 +5,9 @@ import subprocess
 import sys
 import json
 import sqlite3
-# import threading
 import traceback
 from configparser import ConfigParser
 from datetime import datetime
-# from http.server import HTTPServer, SimpleHTTPRequestHandler, BaseHTTPRequestHandler
 import logging
 from citra import Citra
 import re
