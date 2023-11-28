@@ -1,6 +1,0 @@
-###### Requirements without Version Specifiers ######
-PySimpleGUI==4.60.5
-Pillow==10.1.0
-tk==0.1.0
-
-###### Requirements with Version Specifiers ######
