@@ -11,8 +11,6 @@ from datetime import datetime
 from http.server import HTTPServer, SimpleHTTPRequestHandler, BaseHTTPRequestHandler
 import logging
 from citra import Citra
-
-# newly added kcb
 import re
 import os
 from io import BytesIO
@@ -22,6 +20,7 @@ from PIL import Image
 # import packages.PIL.Image as Image
 # from packages.notesclearkcb import notesclear
 from util.notesclear import notesclear
+
 
 # pysimplegui settings et al
 track_title = 'Ironmon Tracker'
