@@ -15,8 +15,8 @@ from citra import Citra
 import re
 import os
 from io import BytesIO
-from util.notesclearkcb import notesclear
-# from util.notesclear import notesclear
+# from util.notesclearkcb import notesclear
+from util.notesclear import notesclear
 
 def install(package):
     subprocess.check_call([sys.executable, "-m", "pip", "install", package])
