@@ -2,24 +2,37 @@ import struct
 import time
 import os
 import subprocess
+import sys
 import json
 import sqlite3
-import threading
+# import threading
 import traceback
 from configparser import ConfigParser
 from datetime import datetime
-from http.server import HTTPServer, SimpleHTTPRequestHandler, BaseHTTPRequestHandler
+# from http.server import HTTPServer, SimpleHTTPRequestHandler, BaseHTTPRequestHandler
 import logging
 from citra import Citra
 import re
 import os
 from io import BytesIO
-import PySimpleGUI as sg
-from PIL import Image
-# import packages.PySimpleGUI as sg
-# import packages.PIL.Image as Image
-# from packages.notesclearkcb import notesclear
-from util.notesclear import notesclear
+from util.notesclearkcb import notesclear
+# from util.notesclear import notesclear
+
+def install(package):
+    subprocess.check_call([sys.executable, "-m", "pip", "install", package])
+    print('Installed package [{}].'.format(package))
+
+try: # check for PySimpleGUI and install if not present
+    import PySimpleGUI as sg
+except:
+    install('PySimpleGUI')
+    import PySimpleGUI as sg
+
+try: # check for Pillow and install if not present
+    from PIL import Image
+except:
+    install('Pillow')
+    from PIL import Image
 
 
 # pysimplegui settings et al
