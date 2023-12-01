@@ -5,11 +5,9 @@ import subprocess
 import sys
 import json
 import sqlite3
-# import threading
 import traceback
 from configparser import ConfigParser
 from datetime import datetime
-# from http.server import HTTPServer, SimpleHTTPRequestHandler, BaseHTTPRequestHandler
 import logging
 from citra import Citra
 import re
@@ -137,6 +135,8 @@ class Pokemon:
                         query+= " and pokemonsuffix = 'mega-y'"
             case 150: ### Mewtwo
                 match form:
+                    case 4:
+                        query+= " and pokemonsuffix is null"
                     case 12:
                         query+= " and pokemonsuffix = 'mega-x'"
                     case 20: ### Mewtwo Y
@@ -1330,7 +1330,9 @@ def run():
                                             evoitem = 'Deep Sea Tooth/Deep Sea Scale'
                                         elif pkmn.name == 'Slowpoke':
                                             evoitem = 'Kings Rock/Level 37'
-                                        # need to check slowpoke, kirlia, snorunt
+                                        elif pkmn.name == 'Kirlia':
+                                            evoitem = 'Lvl 30/Dawn Stone (M)'
+                                        # need to check snorunt
                                         else:
                                             evoitem = ('' if not pkmn.evoitem else 'w/'+pkmn.evoitem)
                                             evofriend = ('' if pkmn.evotype != 'Friendship' else 'w/ high friendship')
@@ -1528,12 +1530,25 @@ def run():
                                             window['-typeimg2-e-'].Update(visible = False)
                                             window['-typename2-e-'].Update(visible = False)
                                     if pkmn.evo:
-                                        # evotype = ('' if not pkmn.evotype else pkmn.evotype)
-                                        evoitem = ('' if not pkmn.evoitem else 'w/'+pkmn.evoitem)
-                                        evofriend = ('' if pkmn.evotype != 'Friendship' else 'w/ high friendship')
-                                        evolevel = ('' if not pkmn.evolevel else '@ level '+str(int(pkmn.evolevel)))
-                                        evostring = ('' if not pkmn.evostring else pkmn.evostring)
-                                        evoloc = ('' if not pkmn.evolocation else 'in '+pkmn.evolocation)
+                                        if pkmn.name == 'Eevee':
+                                            evoitem = 'Any stone'
+                                        elif pkmn.name == 'Gloom':
+                                            evoitem = 'Leaf Stone/Sun Stone'
+                                        elif pkmn.name == 'Poliwhirl':
+                                            evoitem = 'Water Stone/Kings Rock'
+                                        elif pkmn.name == 'Clamperl':
+                                            evoitem = 'Deep Sea Tooth/Deep Sea Scale'
+                                        elif pkmn.name == 'Slowpoke':
+                                            evoitem = 'Kings Rock/Level 37'
+                                        elif pkmn.name == 'Kirlia':
+                                            evoitem = 'Lvl 30/Dawn Stone (M)'
+                                        # need to check snorunt
+                                        else:
+                                            evoitem = ('' if not pkmn.evoitem else 'w/'+pkmn.evoitem)
+                                            evofriend = ('' if pkmn.evotype != 'Friendship' else 'w/ high friendship')
+                                            evolevel = ('' if not pkmn.evolevel else '@ level '+str(int(pkmn.evolevel)))
+                                            evostring = ('' if not pkmn.evostring else pkmn.evostring)
+                                            evoloc = ('' if not pkmn.evolocation else 'in '+pkmn.evolocation)
                                         window['-evo-e-'].update('>', visible = True)
                                         window['-evo-e-'].set_tooltip('Evolves {}{}{}{}{}'.format(evoitem, evofriend, evolevel, evostring, evoloc))
                                     else:
@@ -1699,11 +1714,29 @@ def run():
                                         window['-typeimg2-'].Update(visible = False)
                                         window['-typename2-'].Update(visible = False)
                                 if pkmn.evo:
-                                    evoitem = ('' if not pkmn.evoitem else 'w/'+pkmn.evoitem)
-                                    evofriend = ('' if pkmn.evotype != 'Friendship' else 'w/ high friendship')
-                                    evolevel = ('' if not pkmn.evolevel else '@ level '+str(int(pkmn.evolevel)))
-                                    evostring = ('' if not pkmn.evostring else pkmn.evostring)
-                                    evoloc = ('' if not pkmn.evolocation else 'in '+pkmn.evolocation)
+                                    if pkmn.name == 'Eevee':
+                                        evoitem = 'Any stone'
+                                    elif pkmn.name == 'Gloom':
+                                        evoitem = 'Leaf Stone/Sun Stone'
+                                    elif pkmn.name == 'Poliwhirl':
+                                        evoitem = 'Water Stone/Kings Rock'
+                                    elif pkmn.name == 'Clamperl':
+                                        evoitem = 'Deep Sea Tooth/Deep Sea Scale'
+                                    elif pkmn.name == 'Slowpoke':
+                                        evoitem = 'Kings Rock/Level 37'
+                                    elif pkmn.name == 'Kirlia':
+                                        evoitem = 'Lvl 30/Dawn Stone (M)'
+                                    # need to check snorunt
+                                    else:
+                                        evoitem = ('' if not pkmn.evoitem else 'w/'+pkmn.evoitem)
+                                        evofriend = ('' if pkmn.evotype != 'Friendship' else 'w/ high friendship')
+                                        evolevel = ('' if not pkmn.evolevel else '@ level '+str(int(pkmn.evolevel)))
+                                        evostring = ('' if not pkmn.evostring else pkmn.evostring)
+                                        evoloc = ('' if not pkmn.evolocation else 'in '+pkmn.evolocation)
+                                    window['-evo-'].update('>', visible = True)
+                                    window['-evo-'].set_tooltip('Evolves {}{}{}{}{}'.format(evoitem, evofriend, evolevel, evostring, evoloc))
+                                else:
+                                    window['-evo-'].update(visible = False)
                                 if pkmn.status != '':
                                     window['-status-'].Update(resize('images/statuses/{}.png'.format(pkmn.status), (75, 20)), visible = True)
                                 else:
@@ -1732,11 +1765,6 @@ def run():
                                 window['-monnum-'].Update('#{}'.format(str(pkmn.species_num())))
                                 window['-level-'].Update('Level: {}'.format(str(pkmn.level)))
                                 window['-level-'].set_tooltip('Seen at {}'.format(trackdata[pkmn.name]["levels"]))
-                                if pkmn.evo:
-                                    window['-evo-'].update('>', visible = True)
-                                    window['-evo-'].set_tooltip('Evolves {}{}{}{}{}'.format(evoitem, evofriend, evolevel, evostring, evoloc))
-                                else:
-                                    window['-evo-'].update(visible = False)
                                 window['-tc2-'].update(visible = True)
                                 window['-tc3-'].update(visible = True)
                                 window['-bc1-'].update(visible = True)
