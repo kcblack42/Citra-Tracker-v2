@@ -298,6 +298,8 @@ class Pokemon:
                         query+= " and pokemonsuffix = 'complete'"
             case 720: ### Hoopa
                 match form:
+                    case 4:
+                        query+= " and pokemonsuffix is null"
                     case 12:
                         query+= " and pokemonsuffix = 'unbound'"
             case 741: ### Oricorio
@@ -1083,6 +1085,27 @@ def natureformatting(nl, s):
         return naturedict['lowered']
     else:
         return naturedict['neutral']
+    
+def natureberries(nl):
+    dislikedflavor = {'spicy':'Figy Berry', 'dry':'Wiki Berry', 'sweet':'Mago Berry', 'bitter':'Aguav Berry', 'sour':'Iapapa Berry'}
+    if nl[0] == 'lowered':
+        s = '-attlabel-'
+        return dislikedflavor['spicy'], s
+    elif nl[1] == 'lowered':
+        s = '-deflabel-'
+        return dislikedflavor['dry'], s
+    elif nl[2] == 'lowered':
+        s = '-spattlabel-'
+        return dislikedflavor['sweet'], s
+    elif nl[3] == 'lowered':
+        s = '-spdeflabel-'
+        return dislikedflavor['bitter'], s
+    elif nl[4] == 'lowered':
+        s = '-speedlabel-'
+        return dislikedflavor['sour'], s
+    else:
+        s = ''
+        return dislikedflavor['neutral'], s
 
 def statnotes(s, pos):
     nt = s['stats'][pos]
@@ -1371,6 +1394,7 @@ def run():
                                     #print(int.from_bytes(c.read_memory((ppadd+(mongap*(pk-1))-264),1)))
                                     attackchange,defchange,spatkchange,spdefchange,speedchange = pkmn.getStatChanges()
                                     naturelist = [attackchange,defchange,spatkchange,spdefchange,speedchange]
+                                    confuseberry, confusestat = natureberries(naturelist)
                                     ### MOVES ########
                                     totallearn,nextmove,learnedcount,learnstr = pkmn.getMoves(gamegroupid)
                                     nmove = (' - ' if not nextmove else nextmove)
@@ -1412,6 +1436,7 @@ def run():
                                     window['-spattlabel-'].update(visible = True, text_color=natureformatting(naturelist, 2))
                                     window['-spdeflabel-'].update(visible = True, text_color=natureformatting(naturelist, 3))
                                     window['-speedlabel-'].update(visible = True, text_color=natureformatting(naturelist, 4))
+                                    window[confusestat].set_tooltip('{} causes confusion'.format(confuseberry))
                                     window['-bstlabel-'].Update(visible = True)
                                     window['-hp-'].Update('{}/{}'.format(hpnum[0], hpnum[1]))
                                     window['-hp-'].set_tooltip('EV: ' + str(pkmn.evhp))
@@ -1748,6 +1773,7 @@ def run():
                                 # print(slot)
                                 attackchange,defchange,spatkchange,spdefchange,speedchange = pkmn.getStatChanges()
                                 naturelist = [attackchange,defchange,spatkchange,spdefchange,speedchange]
+                                confuseberry, confusestat = natureberries(naturelist)
                                 query=f"""select
                                         itemname
                                         ,itemdesc
@@ -1782,6 +1808,7 @@ def run():
                                 window['-spattlabel-'].update(visible = True, text_color=natureformatting(naturelist, 2))
                                 window['-spdeflabel-'].update(visible = True, text_color=natureformatting(naturelist, 3))
                                 window['-speedlabel-'].update(visible = True, text_color=natureformatting(naturelist, 4))
+                                window[confusestat].set_tooltip('{} causes confusion'.format(confuseberry))
                                 window['-bstlabel-'].update(visible = True)
                                 window['-hp-'].update('{}/{}'.format(pkmn.cur_hp, pkmn.maxhp))
                                 window['-hp-'].set_tooltip('EV: ' + str(pkmn.evhp))
