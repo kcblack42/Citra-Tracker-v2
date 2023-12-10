@@ -743,7 +743,7 @@ def analyze_statuses(self):
     print('end statuses')
 
 def calcPower(pkmn,move,hp1,hp2):
-    if move in ('Eruption','Water Spout'):
+    if move['name'] in ('Eruption','Water Spout'):
         return int(int(hp1)/int(hp2)*150)
     elif move['name']=='Return':
         return round(pkmn.friendship/2.5)
@@ -1087,7 +1087,7 @@ def natureformatting(nl, s):
         return naturedict['neutral']
     
 def natureberries(nl):
-    dislikedflavor = {'spicy':'Figy Berry', 'dry':'Wiki Berry', 'sweet':'Mago Berry', 'bitter':'Aguav Berry', 'sour':'Iapapa Berry'}
+    dislikedflavor = {'spicy':'Figy Berry', 'dry':'Wiki Berry', 'sweet':'Mago Berry', 'bitter':'Aguav Berry', 'sour':'Iapapa Berry', 'neutral':'No berry'}
     if nl[0] == 'lowered':
         s = '-attlabel-'
         return dislikedflavor['spicy'], s
@@ -1104,7 +1104,7 @@ def natureberries(nl):
         s = '-speedlabel-'
         return dislikedflavor['sour'], s
     else:
-        s = ''
+        s = '-bstlabel-'
         return dislikedflavor['neutral'], s
 
 def statnotes(s, pos):
@@ -1225,6 +1225,7 @@ def run():
                         if confirm == 'OK':
                             seed = notesclear()
                             sg.popup_ok('Data cleared.')
+                            trackdata=json.load(open(trackadd,"r+"))
                             slotchoice = ''
                             window['-slot-'].update('Waiting for new mon...')
                             # clearing visual tracker info for enemy mon
