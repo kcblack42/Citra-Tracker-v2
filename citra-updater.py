@@ -1639,7 +1639,7 @@ def run():
                                         print(Exception)
                                     window['-monname-e-'].Update(pkmn.name.replace("Farfetchd","Farfetch'd"))
                                     window['-monnum-e-'].Update('#{}'.format(str(pkmn.species_num())))
-                                    window['-level-e-'].Update('Level: {}'.format(levelnum))
+                                    window['-level-e-'].Update('Level: {} (Seen {})'.format(levelnum, len(trackdata[pkmn.name]["levels"])))
                                     window['-level-e-'].set_tooltip('Seen at {}'.format(trackdata[pkmn.name]["levels"]))
                                     window['-note-e-'].update(trackdata[pkmn.name]["notes"])
                                     window['-note-e-'].set_tooltip(trackdata[pkmn.name]["notes"])
