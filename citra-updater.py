@@ -15,6 +15,7 @@ import os
 from io import BytesIO
 from util.notesclearkcb import notesclear
 # from util.notesclear import notesclear
+import urllib.request
 
 def install(package):
     subprocess.check_call([sys.executable, "-m", "pip", "install", package])
@@ -1537,6 +1538,7 @@ def run():
                                     # print(pkmn.name, ';;;', pkmn.species, ';;;', party.index(pkmn)+1)
                                     if (emon != pkmn) & (emon == emon): # washing the data on mon change
                                         ct = 0
+                                        antici = 0
                                         enemymon = pkmn.name
                                         enemydict = trackdata[pkmn.name]
                                         while ct < 4:
