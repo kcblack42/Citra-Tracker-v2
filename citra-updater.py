@@ -311,6 +311,8 @@ class Pokemon:
                         query+= " and pokemonsuffix = 'pau'"
                     case 24 | 26:
                         query+= " and pokemonsuffix = 'sensu'"
+                    case _:
+                        query+= " and pokemonsuffix = 'baile'"
             case 745: ### Lycanroc
                 match form:
                     case 16 | 18:
@@ -329,6 +331,8 @@ class Pokemon:
                 query+= " and pokemonsuffix is null"
             case 800: ### Necrozma
                 match form:
+                    case 4:
+                        query+= " and pokemonsuffix is null"
                     case 12:
                         query+= " and pokemonsuffix = 'dusk'"
                     case 20:
@@ -953,7 +957,7 @@ def defaultuisettings():
         [sg.Image(key='-typeimg1-e-'), sg.Text(key='-typename1-e-'), sg.Image(key='-typeimg2-e-', visible=False), sg.Text(key='-typename2-e-', visible=False),],
         [sg.Text(key='-level-e-'), sg.Text(key='-evo-e-', visible = False), sg.Image(key='-status-e-', visible = False)],
         [sg.Text(key='-ability-e-')],
-        [sg.Text(key='-note-e-', text_color='light blue')],
+        [sg.Text(key='-note-e-', text_color='light blue', size=(25,2))],
     ]
     topcol2a = [
         [sg.Text('HP:', key='-hplabel-e-')],

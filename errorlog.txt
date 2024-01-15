@@ -344,3 +344,4 @@
 2024-01-12 23:10:11.820108: cannot access local variable 'battlewildoppadd' where it is not associated with a value
 2024-01-12 23:10:24.918198: cannot access local variable 'battlewildoppadd' where it is not associated with a value
 2024-01-12 23:10:38.001223: cannot access local variable 'battlewildoppadd' where it is not associated with a value
+2024-01-14 10:22:45.903085: list index out of range
