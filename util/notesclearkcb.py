@@ -20,7 +20,10 @@ def notesclear():
     # doing all of the file editing stuff to automatically move to next seed
     mod_folder = pathlib.Path('C:/Users/Gordon/AppData/Roaming/Citra/load/mods/')
     batch_folder = pathlib.Path('D:/Games/Pokemon/Ironmon/Ironmon Randomizer/X Batches/')
-    seed = open('seed.txt', 'r').read()
+    try:
+        seed = open('seed.txt', 'r').read()
+    except:
+        seed = 1
 
     # copy files to new folder
     shutil.copytree(batch_folder / 'kaizo{}'.format(seed), mod_folder, dirs_exist_ok=True)
@@ -34,7 +37,7 @@ def notesclear():
         print('structure does not exist')
 
     # update seed
-    new_seed = open('seed.txt', 'w').write(str(int(seed)+1))
+    new_seed = open('seed.txt', 'w+').write(str(int(seed)+1))
     print(open('seed.txt', 'r').read())
 
     # time.sleep(5)

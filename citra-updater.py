@@ -13,6 +13,7 @@ from citra import Citra
 import re
 import os
 from io import BytesIO
+from util.gitcheck import gitcheck
 from util.notesclearkcb import notesclear
 # from util.notesclear import notesclear
 import urllib.request
@@ -39,6 +40,9 @@ scale = 1.3
 track_size = (600, 600)
 font_sizes = [14, 12, 10, 15]
 sg.set_options(font=('Franklin Gothic Medium', font_sizes[0]), text_color='white', background_color='black', element_background_color='black', text_element_background_color='black', tooltip_font=('Franklin Gothic Medium', font_sizes[1]), tooltip_time=200, scaling=scale)
+
+curr_version = open('version.txt', 'r').read()
+gitcheck(curr_version)
 
 trackadd=r"trackerdata.json"
 
@@ -119,7 +123,7 @@ class Pokemon:
         dex = self.species_num()
         form = struct.unpack("B",self.raw_data[0x1D:0x1E])[0]
         query = f"""select pokemonid from "pokemon.pokemon" where pokemonpokedexnumber = {dex}"""
-        print("form",form,"dex",dex)
+        # print("form",form,"dex",dex)
         match dex:
             #bit 0: fateful encounter flag
             #bit 1: female-adds 2 to resulting form variable, so 2 or 10 instead of 0 or 8
@@ -353,7 +357,7 @@ class Pokemon:
                     query+= " and pokemonsuffix ='mega'"
                 else:
                     query+= " and pokemonsuffix is null"
-        print(query)
+        # print(query)
         self.id = cursor.execute(query).fetchone()[0]
         self.species,self.suffix,self.name = cursor.execute(f"""select pokemonspeciesname,pokemonsuffix,pokemonname from "pokemon.pokemon" where pokemonid = {self.id}""").fetchone()
         self.suffix = self.suffix or ''
