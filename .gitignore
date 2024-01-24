@@ -14,3 +14,6 @@ util/__pycache__/gitcheck.cpython-312.pyc
 util/__pycache__/notesclear.cpython-312.pyc
 util/__pycache__/notesclearkcb.cpython-312.pyc
 util/__pycache__/settings.cpython-312.pyc
+
+# archive files
+archive/*

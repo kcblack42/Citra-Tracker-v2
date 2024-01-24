@@ -407,3 +407,4 @@
 2024-01-23 23:39:16.295999: cannot unpack non-iterable NoneType object
 2024-01-23 23:44:34.340386: cannot access local variable 'batch_path' where it is not associated with a value
 2024-01-23 23:45:06.948646: 'batch_path'
+2024-01-24 00:03:17.694095: cannot access local variable 'batch_path' where it is not associated with a value
