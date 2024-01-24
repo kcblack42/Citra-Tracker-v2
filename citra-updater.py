@@ -16,6 +16,7 @@ from io import BytesIO
 from util.gitcheck import gitcheck
 from util.notesclearkcb import notesclear
 # from util.notesclear import notesclear
+from util.settings import autoload_settings
 import urllib.request
 
 def install(package):
@@ -951,7 +952,10 @@ def defaultuisettings():
         [sg.Text(key='-mv4ctc-', size=1, justification='c')],
     ]
     botcol7 = [
-        [sg.Button('Clear Notes', key='-clearnotes-', font=('Franklin Gothic Medium', font_sizes[2]), auto_size_button=True, visible=False)]
+        [
+            sg.Button('Clear Notes', key='-clearnotes-', font=('Franklin Gothic Medium', font_sizes[2]), auto_size_button=True, visible=False), 
+            sg.Button('Settings', key='-settings-', font=('Franklin Gothic Medium', font_sizes[2]), auto_size_button=True, visible=False)
+        ],
     ]
 
     topcol1a = [
@@ -1177,7 +1181,7 @@ def run():
         enemymon = ''
         enemydict = {"abilities": [], "stats": ["", "", "", "", "", ""], "notes": "", "levels": [], "moves": []}
         change = ''
-        seed = open('seed.txt', 'r').read()
+        seed = int(open('seed.txt', 'r').read()) - 1
         while (True):
             try:
                 if c.is_connected():
@@ -1229,17 +1233,18 @@ def run():
                         remabil = abil_popup(enemydict['abilities'])
                         trackdata[enemymon]['abilities'].remove(remabil)
                         window['-abillist-e-'].update(trackdata[enemymon]['abilities'])
+                    elif event == '-settings-':
+                        autoload_settings('settings.txt')
                     elif event == '-clearnotes-':
                         confirm = sg.popup_ok_cancel('Clear tracker data?', title='Confirm')
                         if confirm == 'OK':
-                            seed = notesclear()
+                            # seed = notesclear()
+                            seed = notesclear('settings.txt')
                             sg.popup_ok('Data cleared.')
                             trackdata=json.load(open(trackadd,"r+"))
                             slotchoice = ''
                             window['-slot-'].update('Waiting for new mon...')
-                            # clearing visual tracker info for enemy mon
-                            # window[['-monname-', '-monnum-', '-level-', '-ability-', '-item-', '-typename1-', '-typename2-']].update('')
-                            # window[['-typeimg1-', '-typeimg2-']].update(visible=False)
+                            # clearing visual tracker info
                             window['-ability-'].update('')
                             window['-item-'].update('')
                             window['-tc2-'].update(visible = False)
@@ -1475,6 +1480,7 @@ def run():
                                     window['-moveacchdr-'].update('Acc')
                                     window['-movecontacthdr-'].update('C')
                                     window['-clearnotes-'].update(visible=True)
+                                    window['-settings-'].update(visible=True)
                                     for move in pkmn.moves:
                                         stab = ''
                                         movetyp=movetype(pkmn,move,pkmn.held_item_num)
@@ -1846,6 +1852,7 @@ def run():
                                 window['-moveacchdr-'].update('Acc')
                                 window['-movecontacthdr-'].update('C')
                                 window['-clearnotes-'].update(visible=True)
+                                window['-settings-'].update(visible=True)
                                 for move in pkmn.moves:
                                     stab = ''
                                     movetyp=movetype(pkmn,move,pkmn.held_item_num)

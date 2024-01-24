@@ -377,3 +377,33 @@
 2024-01-20 22:26:29.107130: cannot access local variable 'battlewildoppadd' where it is not associated with a value
 2024-01-20 22:26:42.187925: cannot access local variable 'battlewildoppadd' where it is not associated with a value
 2024-01-20 22:26:55.271498: cannot access local variable 'battlewildoppadd' where it is not associated with a value
+2024-01-20 22:46:19.735301: list index out of range
+2024-01-20 22:48:49.179366: cannot access local variable 'battlewildoppadd' where it is not associated with a value
+2024-01-21 22:46:45.937925: cannot access local variable 'battlewildoppadd' where it is not associated with a value
+2024-01-21 22:46:59.048467: cannot access local variable 'battlewildoppadd' where it is not associated with a value
+2024-01-21 22:47:12.135015: cannot access local variable 'battlewildoppadd' where it is not associated with a value
+2024-01-21 22:51:11.353048: cannot access local variable 'battlewildoppadd' where it is not associated with a value
+2024-01-21 22:51:24.439134: cannot access local variable 'battlewildoppadd' where it is not associated with a value
+2024-01-21 22:51:37.542742: cannot access local variable 'battlewildoppadd' where it is not associated with a value
+2024-01-21 22:53:26.401358: cannot access local variable 'battlewildoppadd' where it is not associated with a value
+2024-01-21 22:53:39.490550: cannot access local variable 'battlewildoppadd' where it is not associated with a value
+2024-01-21 22:53:52.584561: cannot access local variable 'battlewildoppadd' where it is not associated with a value
+2024-01-21 23:00:48.975408: cannot access local variable 'battlewildoppadd' where it is not associated with a value
+2024-01-21 23:01:02.090111: cannot access local variable 'battlewildoppadd' where it is not associated with a value
+2024-01-21 23:01:15.193062: cannot access local variable 'battlewildoppadd' where it is not associated with a value
+2024-01-21 23:01:28.282541: cannot access local variable 'battlewildoppadd' where it is not associated with a value
+2024-01-23 23:12:29.498261: [Errno 2] No such file or directory: 'settings.txt'
+2024-01-23 23:19:19.780851: unsupported operand type(s) for -: 'str' and 'int'
+2024-01-23 23:20:13.730392: unsupported operand type(s) for -: 'str' and 'int'
+2024-01-23 23:21:47.013600: cannot access local variable 'batch_path' where it is not associated with a value
+2024-01-23 23:27:00.372873: cannot unpack non-iterable NoneType object
+2024-01-23 23:27:28.885805: cannot unpack non-iterable NoneType object
+2024-01-23 23:28:10.539763: cannot unpack non-iterable NoneType object
+2024-01-23 23:28:48.663624: cannot unpack non-iterable NoneType object
+2024-01-23 23:28:53.672073: 'batch_path'
+2024-01-23 23:28:58.678423: 'batch_path'
+2024-01-23 23:29:29.723230: 'batch_path'
+2024-01-23 23:29:53.757964: cannot unpack non-iterable NoneType object
+2024-01-23 23:39:16.295999: cannot unpack non-iterable NoneType object
+2024-01-23 23:44:34.340386: cannot access local variable 'batch_path' where it is not associated with a value
+2024-01-23 23:45:06.948646: 'batch_path'
