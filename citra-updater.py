@@ -954,7 +954,7 @@ def defaultuisettings():
     ]
     botcol7 = [
         [
-            sg.Button('Clear Notes', key='-clearnotes-', font=('Franklin Gothic Medium', font_sizes[2]), auto_size_button=True, visible=False), 
+            sg.Button('Next Seed', key='-clearnotes-', font=('Franklin Gothic Medium', font_sizes[2]), auto_size_button=True, visible=False), 
             sg.Button('Batch Settings', key='-settings-', font=('Franklin Gothic Medium', font_sizes[2]), auto_size_button=True, visible=False)
         ],
     ]
