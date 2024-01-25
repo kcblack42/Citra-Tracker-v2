@@ -18,6 +18,7 @@ def notesclear():
         json.dump(trackdata,f)
 
     # doing all of the file editing stuff to automatically move to next seed
+
     mod_folder = pathlib.Path('.')
     batch_folder = pathlib.Path('.')
     seed = open('seed.txt', 'r').read()
@@ -34,7 +35,7 @@ def notesclear():
         print('structure does not exist')
 
     # update seed
-    new_seed = open('seed.txt', 'w').write(str(int(seed)+1))
+    new_seed = open('seed.txt', 'w+').write(str(int(seed)+1))
     print(open('seed.txt', 'r').read())
 
     # time.sleep(5)

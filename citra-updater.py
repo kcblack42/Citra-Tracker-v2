@@ -13,8 +13,11 @@ from citra import Citra
 import re
 import os
 from io import BytesIO
-# from util.notesclearkcb import notesclear
+from util.gitcheck import gitcheck
 from util.notesclear import notesclear
+from util.settings import autoload_settings
+import urllib.request
+
 
 def install(package):
     subprocess.check_call([sys.executable, "-m", "pip", "install", package])
@@ -38,7 +41,10 @@ track_title = 'Ironmon Tracker'
 scale = 1.3
 track_size = (600, 600)
 font_sizes = [14, 12, 10, 15]
-sg.set_options(font=('Franklin Gothic Medium', font_sizes[0]), text_color='white', background_color='black', element_background_color='black', text_element_background_color='black', tooltip_font=('Franklin Gothic Medium', font_sizes[1]), tooltip_time=200, scaling=scale)
+sg.set_options(font=('Franklin Gothic Medium', font_sizes[0]), text_color='white', background_color='black', element_background_color='black', text_element_background_color='black', tooltip_font=('Franklin Gothic Medium', font_sizes[1]), tooltip_time=150, scaling=scale)
+
+curr_version = open('version.txt', 'r').read()
+gitcheck(curr_version)
 
 trackadd=r"trackerdata.json"
 
@@ -119,7 +125,7 @@ class Pokemon:
         dex = self.species_num()
         form = struct.unpack("B",self.raw_data[0x1D:0x1E])[0]
         query = f"""select pokemonid from "pokemon.pokemon" where pokemonpokedexnumber = {dex}"""
-        print("form",form,"dex",dex)
+        # print("form",form,"dex",dex)
         match dex:
             #bit 0: fateful encounter flag
             #bit 1: female-adds 2 to resulting form variable, so 2 or 10 instead of 0 or 8
@@ -136,6 +142,8 @@ class Pokemon:
                         query+= " and pokemonsuffix = 'mega-y'"
             case 150: ### Mewtwo
                 match form:
+                    case 4:
+                        query+= " and pokemonsuffix is null"
                     case 12:
                         query+= " and pokemonsuffix = 'mega-x'"
                     case 20: ### Mewtwo Y
@@ -297,6 +305,8 @@ class Pokemon:
                         query+= " and pokemonsuffix = 'complete'"
             case 720: ### Hoopa
                 match form:
+                    case 4:
+                        query+= " and pokemonsuffix is null"
                     case 12:
                         query+= " and pokemonsuffix = 'unbound'"
             case 741: ### Oricorio
@@ -307,6 +317,8 @@ class Pokemon:
                         query+= " and pokemonsuffix = 'pau'"
                     case 24 | 26:
                         query+= " and pokemonsuffix = 'sensu'"
+                    case _:
+                        query+= " and pokemonsuffix = 'baile'"
             case 745: ### Lycanroc
                 match form:
                     case 16 | 18:
@@ -325,6 +337,8 @@ class Pokemon:
                 query+= " and pokemonsuffix is null"
             case 800: ### Necrozma
                 match form:
+                    case 4:
+                        query+= " and pokemonsuffix is null"
                     case 12:
                         query+= " and pokemonsuffix = 'dusk'"
                     case 20:
@@ -345,7 +359,7 @@ class Pokemon:
                     query+= " and pokemonsuffix ='mega'"
                 else:
                     query+= " and pokemonsuffix is null"
-        print(query)
+        # print(query)
         self.id = cursor.execute(query).fetchone()[0]
         self.species,self.suffix,self.name = cursor.execute(f"""select pokemonspeciesname,pokemonsuffix,pokemonname from "pokemon.pokemon" where pokemonid = {self.id}""").fetchone()
         self.suffix = self.suffix or ''
@@ -740,7 +754,7 @@ def analyze_statuses(self):
     print('end statuses')
 
 def calcPower(pkmn,move,hp1,hp2):
-    if move in ('Eruption','Water Spout'):
+    if move['name'] in ('Eruption','Water Spout'):
         return int(int(hp1)/int(hp2)*150)
     elif move['name']=='Return':
         return round(pkmn.friendship/2.5)
@@ -939,7 +953,10 @@ def defaultuisettings():
         [sg.Text(key='-mv4ctc-', size=1, justification='c')],
     ]
     botcol7 = [
-        [sg.Button('Clear Notes', key='-clearnotes-', font=('Franklin Gothic Medium', font_sizes[2]), auto_size_button=True, visible=False)]
+        [
+            sg.Button('Clear Notes', key='-clearnotes-', font=('Franklin Gothic Medium', font_sizes[2]), auto_size_button=True, visible=False), 
+            sg.Button('Batch Settings', key='-settings-', font=('Franklin Gothic Medium', font_sizes[2]), auto_size_button=True, visible=False)
+        ],
     ]
 
     topcol1a = [
@@ -949,7 +966,7 @@ def defaultuisettings():
         [sg.Image(key='-typeimg1-e-'), sg.Text(key='-typename1-e-'), sg.Image(key='-typeimg2-e-', visible=False), sg.Text(key='-typename2-e-', visible=False),],
         [sg.Text(key='-level-e-'), sg.Text(key='-evo-e-', visible = False), sg.Image(key='-status-e-', visible = False)],
         [sg.Text(key='-ability-e-')],
-        [sg.Text(key='-note-e-', text_color='light blue')],
+        [sg.Text(key='-note-e-', text_color='light blue', size=(25,2))],
     ]
     topcol2a = [
         [sg.Text('HP:', key='-hplabel-e-')],
@@ -1082,6 +1099,27 @@ def natureformatting(nl, s):
         return naturedict['lowered']
     else:
         return naturedict['neutral']
+    
+def natureberries(nl):
+    dislikedflavor = {'spicy':'Figy Berry', 'dry':'Wiki Berry', 'sweet':'Mago Berry', 'bitter':'Aguav Berry', 'sour':'Iapapa Berry', 'neutral':'No berry'}
+    if nl[0] == 'lowered':
+        s = '-attlabel-'
+        return dislikedflavor['spicy'], s
+    elif nl[1] == 'lowered':
+        s = '-deflabel-'
+        return dislikedflavor['dry'], s
+    elif nl[2] == 'lowered':
+        s = '-spattlabel-'
+        return dislikedflavor['sweet'], s
+    elif nl[3] == 'lowered':
+        s = '-spdeflabel-'
+        return dislikedflavor['bitter'], s
+    elif nl[4] == 'lowered':
+        s = '-speedlabel-'
+        return dislikedflavor['sour'], s
+    else:
+        s = '-bstlabel-'
+        return dislikedflavor['neutral'], s
 
 def statnotes(s, pos):
     nt = s['stats'][pos]
@@ -1144,7 +1182,7 @@ def run():
         enemymon = ''
         enemydict = {"abilities": [], "stats": ["", "", "", "", "", ""], "notes": "", "levels": [], "moves": []}
         change = ''
-        seed = open('seed.txt', 'r').read()
+        seed = int(open('seed.txt', 'r').read()) - 1
         while (True):
             try:
                 if c.is_connected():
@@ -1196,16 +1234,18 @@ def run():
                         remabil = abil_popup(enemydict['abilities'])
                         trackdata[enemymon]['abilities'].remove(remabil)
                         window['-abillist-e-'].update(trackdata[enemymon]['abilities'])
+                    elif event == '-settings-':
+                        autoload_settings('settings.txt')
                     elif event == '-clearnotes-':
                         confirm = sg.popup_ok_cancel('Clear tracker data?', title='Confirm')
                         if confirm == 'OK':
-                            seed = notesclear()
+                            # seed = notesclear()
+                            seed = notesclear('settings.txt')
                             sg.popup_ok('Data cleared.')
+                            trackdata=json.load(open(trackadd,"r+"))
                             slotchoice = ''
                             window['-slot-'].update('Waiting for new mon...')
-                            # clearing visual tracker info for enemy mon
-                            # window[['-monname-', '-monnum-', '-level-', '-ability-', '-item-', '-typename1-', '-typename2-']].update('')
-                            # window[['-typeimg1-', '-typeimg2-']].update(visible=False)
+                            # clearing visual tracker info
                             window['-ability-'].update('')
                             window['-item-'].update('')
                             window['-tc2-'].update(visible = False)
@@ -1329,7 +1369,9 @@ def run():
                                             evoitem = 'Deep Sea Tooth/Deep Sea Scale'
                                         elif pkmn.name == 'Slowpoke':
                                             evoitem = 'Kings Rock/Level 37'
-                                        # need to check slowpoke, kirlia, snorunt
+                                        elif pkmn.name == 'Kirlia':
+                                            evoitem = 'Lvl 30/Dawn Stone (M)'
+                                        # need to check snorunt
                                         else:
                                             evoitem = ('' if not pkmn.evoitem else 'w/'+pkmn.evoitem)
                                             evofriend = ('' if pkmn.evotype != 'Friendship' else 'w/ high friendship')
@@ -1368,6 +1410,7 @@ def run():
                                     #print(int.from_bytes(c.read_memory((ppadd+(mongap*(pk-1))-264),1)))
                                     attackchange,defchange,spatkchange,spdefchange,speedchange = pkmn.getStatChanges()
                                     naturelist = [attackchange,defchange,spatkchange,spdefchange,speedchange]
+                                    confuseberry, confusestat = natureberries(naturelist)
                                     ### MOVES ########
                                     totallearn,nextmove,learnedcount,learnstr = pkmn.getMoves(gamegroupid)
                                     nmove = (' - ' if not nextmove else nextmove)
@@ -1409,6 +1452,7 @@ def run():
                                     window['-spattlabel-'].update(visible = True, text_color=natureformatting(naturelist, 2))
                                     window['-spdeflabel-'].update(visible = True, text_color=natureformatting(naturelist, 3))
                                     window['-speedlabel-'].update(visible = True, text_color=natureformatting(naturelist, 4))
+                                    window[confusestat].set_tooltip('{} causes confusion'.format(confuseberry))
                                     window['-bstlabel-'].Update(visible = True)
                                     window['-hp-'].Update('{}/{}'.format(hpnum[0], hpnum[1]))
                                     window['-hp-'].set_tooltip('EV: ' + str(pkmn.evhp))
@@ -1437,6 +1481,7 @@ def run():
                                     window['-moveacchdr-'].update('Acc')
                                     window['-movecontacthdr-'].update('C')
                                     window['-clearnotes-'].update(visible=True)
+                                    window['-settings-'].update(visible=True)
                                     for move in pkmn.moves:
                                         stab = ''
                                         movetyp=movetype(pkmn,move,pkmn.held_item_num)
@@ -1508,6 +1553,7 @@ def run():
                                     # print(pkmn.name, ';;;', pkmn.species, ';;;', party.index(pkmn)+1)
                                     if (emon != pkmn) & (emon == emon): # washing the data on mon change
                                         ct = 0
+                                        antici = 0
                                         enemymon = pkmn.name
                                         enemydict = trackdata[pkmn.name]
                                         while ct < 4:
@@ -1527,12 +1573,25 @@ def run():
                                             window['-typeimg2-e-'].Update(visible = False)
                                             window['-typename2-e-'].Update(visible = False)
                                     if pkmn.evo:
-                                        # evotype = ('' if not pkmn.evotype else pkmn.evotype)
-                                        evoitem = ('' if not pkmn.evoitem else 'w/'+pkmn.evoitem)
-                                        evofriend = ('' if pkmn.evotype != 'Friendship' else 'w/ high friendship')
-                                        evolevel = ('' if not pkmn.evolevel else '@ level '+str(int(pkmn.evolevel)))
-                                        evostring = ('' if not pkmn.evostring else pkmn.evostring)
-                                        evoloc = ('' if not pkmn.evolocation else 'in '+pkmn.evolocation)
+                                        if pkmn.name == 'Eevee':
+                                            evoitem = 'Any stone'
+                                        elif pkmn.name == 'Gloom':
+                                            evoitem = 'Leaf Stone/Sun Stone'
+                                        elif pkmn.name == 'Poliwhirl':
+                                            evoitem = 'Water Stone/Kings Rock'
+                                        elif pkmn.name == 'Clamperl':
+                                            evoitem = 'Deep Sea Tooth/Deep Sea Scale'
+                                        elif pkmn.name == 'Slowpoke':
+                                            evoitem = 'Kings Rock/Level 37'
+                                        elif pkmn.name == 'Kirlia':
+                                            evoitem = 'Lvl 30/Dawn Stone (M)'
+                                        # need to check snorunt
+                                        else:
+                                            evoitem = ('' if not pkmn.evoitem else 'w/'+pkmn.evoitem)
+                                            evofriend = ('' if pkmn.evotype != 'Friendship' else 'w/ high friendship')
+                                            evolevel = ('' if not pkmn.evolevel else '@ level '+str(int(pkmn.evolevel)))
+                                            evostring = ('' if not pkmn.evostring else pkmn.evostring)
+                                            evoloc = ('' if not pkmn.evolocation else 'in '+pkmn.evolocation)
                                         window['-evo-e-'].update('>', visible = True)
                                         window['-evo-e-'].set_tooltip('Evolves {}{}{}{}{}'.format(evoitem, evofriend, evolevel, evostring, evoloc))
                                     else:
@@ -1597,7 +1656,7 @@ def run():
                                         print(Exception)
                                     window['-monname-e-'].Update(pkmn.name.replace("Farfetchd","Farfetch'd"))
                                     window['-monnum-e-'].Update('#{}'.format(str(pkmn.species_num())))
-                                    window['-level-e-'].Update('Level: {}'.format(levelnum))
+                                    window['-level-e-'].Update('Level: {} (Seen {})'.format(levelnum, len(trackdata[pkmn.name]["levels"])))
                                     window['-level-e-'].set_tooltip('Seen at {}'.format(trackdata[pkmn.name]["levels"]))
                                     window['-note-e-'].update(trackdata[pkmn.name]["notes"])
                                     window['-note-e-'].set_tooltip(trackdata[pkmn.name]["notes"])
@@ -1698,11 +1757,29 @@ def run():
                                         window['-typeimg2-'].Update(visible = False)
                                         window['-typename2-'].Update(visible = False)
                                 if pkmn.evo:
-                                    evoitem = ('' if not pkmn.evoitem else 'w/'+pkmn.evoitem)
-                                    evofriend = ('' if pkmn.evotype != 'Friendship' else 'w/ high friendship')
-                                    evolevel = ('' if not pkmn.evolevel else '@ level '+str(int(pkmn.evolevel)))
-                                    evostring = ('' if not pkmn.evostring else pkmn.evostring)
-                                    evoloc = ('' if not pkmn.evolocation else 'in '+pkmn.evolocation)
+                                    if pkmn.name == 'Eevee':
+                                        evoitem = 'Any stone'
+                                    elif pkmn.name == 'Gloom':
+                                        evoitem = 'Leaf Stone/Sun Stone'
+                                    elif pkmn.name == 'Poliwhirl':
+                                        evoitem = 'Water Stone/Kings Rock'
+                                    elif pkmn.name == 'Clamperl':
+                                        evoitem = 'Deep Sea Tooth/Deep Sea Scale'
+                                    elif pkmn.name == 'Slowpoke':
+                                        evoitem = 'Kings Rock/Level 37'
+                                    elif pkmn.name == 'Kirlia':
+                                        evoitem = 'Lvl 30/Dawn Stone (M)'
+                                    # need to check snorunt
+                                    else:
+                                        evoitem = ('' if not pkmn.evoitem else 'w/'+pkmn.evoitem)
+                                        evofriend = ('' if pkmn.evotype != 'Friendship' else 'w/ high friendship')
+                                        evolevel = ('' if not pkmn.evolevel else '@ level '+str(int(pkmn.evolevel)))
+                                        evostring = ('' if not pkmn.evostring else pkmn.evostring)
+                                        evoloc = ('' if not pkmn.evolocation else 'in '+pkmn.evolocation)
+                                    window['-evo-'].update('>', visible = True)
+                                    window['-evo-'].set_tooltip('Evolves {}{}{}{}{}'.format(evoitem, evofriend, evolevel, evostring, evoloc))
+                                else:
+                                    window['-evo-'].update(visible = False)
                                 if pkmn.status != '':
                                     window['-status-'].Update(resize('images/statuses/{}.png'.format(pkmn.status), (75, 20)), visible = True)
                                 else:
@@ -1714,6 +1791,7 @@ def run():
                                 # print(slot)
                                 attackchange,defchange,spatkchange,spdefchange,speedchange = pkmn.getStatChanges()
                                 naturelist = [attackchange,defchange,spatkchange,spdefchange,speedchange]
+                                confuseberry, confusestat = natureberries(naturelist)
                                 query=f"""select
                                         itemname
                                         ,itemdesc
@@ -1731,11 +1809,6 @@ def run():
                                 window['-monnum-'].Update('#{}'.format(str(pkmn.species_num())))
                                 window['-level-'].Update('Level: {}'.format(str(pkmn.level)))
                                 window['-level-'].set_tooltip('Seen at {}'.format(trackdata[pkmn.name]["levels"]))
-                                if pkmn.evo:
-                                    window['-evo-'].update('>', visible = True)
-                                    window['-evo-'].set_tooltip('Evolves {}{}{}{}{}'.format(evoitem, evofriend, evolevel, evostring, evoloc))
-                                else:
-                                    window['-evo-'].update(visible = False)
                                 window['-tc2-'].update(visible = True)
                                 window['-tc3-'].update(visible = True)
                                 window['-bc1-'].update(visible = True)
@@ -1753,6 +1826,7 @@ def run():
                                 window['-spattlabel-'].update(visible = True, text_color=natureformatting(naturelist, 2))
                                 window['-spdeflabel-'].update(visible = True, text_color=natureformatting(naturelist, 3))
                                 window['-speedlabel-'].update(visible = True, text_color=natureformatting(naturelist, 4))
+                                window[confusestat].set_tooltip('{} causes confusion'.format(confuseberry))
                                 window['-bstlabel-'].update(visible = True)
                                 window['-hp-'].update('{}/{}'.format(pkmn.cur_hp, pkmn.maxhp))
                                 window['-hp-'].set_tooltip('EV: ' + str(pkmn.evhp))
@@ -1779,6 +1853,7 @@ def run():
                                 window['-moveacchdr-'].update('Acc')
                                 window['-movecontacthdr-'].update('C')
                                 window['-clearnotes-'].update(visible=True)
+                                window['-settings-'].update(visible=True)
                                 for move in pkmn.moves:
                                     stab = ''
                                     movetyp=movetype(pkmn,move,pkmn.held_item_num)
