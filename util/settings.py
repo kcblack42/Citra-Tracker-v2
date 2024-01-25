@@ -17,6 +17,7 @@ def autoload_settings(settings):
     except:
         path['batch_path'] = ''
         path['mod_path'] = ''
+        path['prefix'] = ''
 
     layout = [
             [
@@ -29,6 +30,10 @@ def autoload_settings(settings):
                 sg.Input(path['mod_path'], key="-mod-path-"), 
                 sg.FolderBrowse(key="-browse2-"),
             ],
+            [
+                sg.Text("File name prefix:", size=15), 
+                sg.Input(path['prefix'], key="-prefix-", size=25),
+            ],
             [sg.Button("Submit")]
         ]
 
@@ -39,10 +44,12 @@ def autoload_settings(settings):
         if event == sg.WIN_CLOSED or event=="Exit":
             batch_path = path["-batch-path-"]
             mod_path = path["-mod-path-"]
+            prefix = path["-prefix-"]
             break
         elif event == "Submit":
             batch_path = values["-batch-path-"]
             mod_path = values["-mod-path-"]
+            prefix = values["-prefix-"]
             break
 
     window.close()
@@ -50,10 +57,12 @@ def autoload_settings(settings):
     open(settings, 'w+').writelines(
         [
             "batch_path=", batch_path, "\n", 
-            "mod_path=", mod_path,
+            "mod_path=", mod_path, "\n", 
+            "prefix=", prefix,  
         ])
     print(batch_path)
     print(mod_path)
+    print(prefix)
 
 
 # b, s = autoload_settings()
