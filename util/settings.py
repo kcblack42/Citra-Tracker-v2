@@ -32,8 +32,7 @@ def autoload_settings(settings):
             ],
             [
                 sg.Text("File name prefix:", size=15), 
-                sg.Input(path['prefix'], key="-prefix-"), 
-                sg.FolderBrowse(key="-browse3-"),
+                sg.Input(path['prefix'], key="-prefix-", size=25),
             ],
             [sg.Button("Submit")]
         ]
@@ -63,6 +62,7 @@ def autoload_settings(settings):
         ])
     print(batch_path)
     print(mod_path)
+    print(prefix)
 
 
 # b, s = autoload_settings()
