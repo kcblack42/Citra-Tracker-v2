@@ -23,8 +23,12 @@ def notesclear(settings):
             path[name] = str(value)
 
     # doing all of the file editing stuff to automatically move to next seed
-    mod_folder = pathlib.Path(path['mod_path'])
-    batch_folder = pathlib.Path(path['batch_path'])
+    try:
+        mod_folder = pathlib.Path(path['mod_path'])
+        batch_folder = pathlib.Path(path['batch_path'])
+    except:
+        print('Invalid folder location.')
+        
     try:
         seed = open('seed.txt', 'r').read()
     except:

@@ -1,13 +1,11 @@
 import PySimpleGUI as sg
 
-track_title = 'Ironmon Tracker'
 scale = 1.3
-track_size = (600, 600)
 font_sizes = [14, 12, 10, 15]
 sg.set_options(font=('Franklin Gothic Medium', font_sizes[0]), text_color='white', background_color='black', element_background_color='black', text_element_background_color='black', tooltip_font=('Franklin Gothic Medium', font_sizes[1]), tooltip_time=200, scaling=scale)
 
-def settings_ui():
-    return 1
+def settings_ui(settings):
+    x = 1
 
 def autoload_settings(settings):
     path = {}
@@ -39,6 +37,8 @@ def autoload_settings(settings):
     while True:
         event, values = window.read()
         if event == sg.WIN_CLOSED or event=="Exit":
+            batch_path = path["-batch-path-"]
+            mod_path = path["-mod-path-"]
             break
         elif event == "Submit":
             batch_path = values["-batch-path-"]

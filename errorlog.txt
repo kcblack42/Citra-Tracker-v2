@@ -408,3 +408,16 @@
 2024-01-23 23:44:34.340386: cannot access local variable 'batch_path' where it is not associated with a value
 2024-01-23 23:45:06.948646: 'batch_path'
 2024-01-24 00:03:17.694095: cannot access local variable 'batch_path' where it is not associated with a value
+2024-01-24 17:10:38.279068: 'batch_path'
+2024-01-24 17:14:43.240618: cannot access local variable 'batch_path' where it is not associated with a value
+2024-01-24 17:15:33.489717: 'batch_path'
+2024-01-24 17:16:02.509666: cannot access local variable 'batch_path' where it is not associated with a value
+2024-01-24 17:17:09.571875: 'batch_path'
+2024-01-24 17:17:29.156983: write() argument must be str, not None
+2024-01-24 17:17:46.707685: 'mod_path'
+2024-01-24 20:54:44.897028: 'mod_path'
+2024-01-24 20:55:04.313195: '-batch-path-'
+2024-01-24 20:55:15.432331: '-batch-path-'
+2024-01-24 20:55:26.815863: '-batch-path-'
+2024-01-24 20:55:33.243566: '-batch-path-'
+2024-01-24 21:01:58.428572: '-batch-path-'

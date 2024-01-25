@@ -40,7 +40,7 @@ track_title = 'Ironmon Tracker'
 scale = 1.3
 track_size = (600, 600)
 font_sizes = [14, 12, 10, 15]
-sg.set_options(font=('Franklin Gothic Medium', font_sizes[0]), text_color='white', background_color='black', element_background_color='black', text_element_background_color='black', tooltip_font=('Franklin Gothic Medium', font_sizes[1]), tooltip_time=200, scaling=scale)
+sg.set_options(font=('Franklin Gothic Medium', font_sizes[0]), text_color='white', background_color='black', element_background_color='black', text_element_background_color='black', tooltip_font=('Franklin Gothic Medium', font_sizes[1]), tooltip_time=150, scaling=scale)
 
 curr_version = open('version.txt', 'r').read()
 gitcheck(curr_version)
@@ -954,7 +954,7 @@ def defaultuisettings():
     botcol7 = [
         [
             sg.Button('Clear Notes', key='-clearnotes-', font=('Franklin Gothic Medium', font_sizes[2]), auto_size_button=True, visible=False), 
-            sg.Button('Settings', key='-settings-', font=('Franklin Gothic Medium', font_sizes[2]), auto_size_button=True, visible=False)
+            sg.Button('Batch Settings', key='-settings-', font=('Franklin Gothic Medium', font_sizes[2]), auto_size_button=True, visible=False)
         ],
     ]
 
