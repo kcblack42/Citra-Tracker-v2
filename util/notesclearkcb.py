@@ -18,12 +18,10 @@ def notesclear():
         json.dump(trackdata,f)
 
     # doing all of the file editing stuff to automatically move to next seed
-    mod_folder = pathlib.Path('C:/Users/Gordon/AppData/Roaming/Citra/load/mods/')
-    batch_folder = pathlib.Path('D:/Games/Pokemon/Ironmon/Ironmon Randomizer/X Batches/')
-    try:
-        seed = open('seed.txt', 'r').read()
-    except:
-        seed = 1
+
+    mod_folder = pathlib.Path('.')
+    batch_folder = pathlib.Path('.')
+    seed = open('seed.txt', 'r').read()
 
     # copy files to new folder
     shutil.copytree(batch_folder / 'kaizo{}'.format(seed), mod_folder, dirs_exist_ok=True)

@@ -14,10 +14,10 @@ import re
 import os
 from io import BytesIO
 from util.gitcheck import gitcheck
-from util.notesclearkcb import notesclear
-# from util.notesclear import notesclear
+from util.notesclear import notesclear
 from util.settings import autoload_settings
 import urllib.request
+
 
 def install(package):
     subprocess.check_call([sys.executable, "-m", "pip", "install", package])
@@ -34,6 +34,7 @@ try: # check for Pillow and install if not present
 except:
     install('Pillow')
     from PIL import Image
+
 
 # pysimplegui settings et al
 track_title = 'Ironmon Tracker'
