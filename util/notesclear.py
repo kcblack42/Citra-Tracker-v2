@@ -26,7 +26,7 @@ def notesclear(settings):
     try:
         mod_folder = pathlib.Path(path['mod_path'])
         batch_folder = pathlib.Path(path['batch_path'])
-        prefix = path['prefix']
+        prefix = str(path['prefix'])
     except:
         print('Invalid folder location.')
         
@@ -41,7 +41,7 @@ def notesclear(settings):
     # delete files from last seed if they're still there
     try:
         shutil.rmtree(batch_folder / '{}{}'.format(prefix, str(int(seed)-1)))
-        (batch_folder / 'kaizo{}.log'.format(str(int(seed)-1))).unlink()
+        (batch_folder / '{}{}.log'.format(prefix, str(int(seed)-1))).unlink()
         print('previous files deleted')
     except:
         print('structure does not exist')
