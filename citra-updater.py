@@ -13,9 +13,6 @@ from citra import Citra
 import re
 import os
 from io import BytesIO
-from util.gitcheck import gitcheck
-from util.notesclear import notesclear
-from util.settings import autoload_settings
 import urllib.request
 
 
@@ -35,6 +32,9 @@ except:
     install('Pillow')
     from PIL import Image
 
+from util.gitcheck import gitcheck
+from util.notesclear import notesclear
+from util.settings import autoload_settings
 
 # pysimplegui settings et al
 track_title = 'Ironmon Tracker'
@@ -1182,7 +1182,10 @@ def run():
         enemymon = ''
         enemydict = {"abilities": [], "stats": ["", "", "", "", "", ""], "notes": "", "levels": [], "moves": []}
         change = ''
-        seed = int(open('seed.txt', 'r').read()) - 1
+        try:
+            seed = int(open('seed.txt', 'r').read()) - 1
+        except:
+            seed = 1
         while (True):
             try:
                 if c.is_connected():
@@ -1235,12 +1238,12 @@ def run():
                         trackdata[enemymon]['abilities'].remove(remabil)
                         window['-abillist-e-'].update(trackdata[enemymon]['abilities'])
                     elif event == '-settings-':
-                        autoload_settings('settings.txt')
+                        autoload_settings()
                     elif event == '-clearnotes-':
                         confirm = sg.popup_ok_cancel('Clear tracker data?', title='Confirm')
                         if confirm == 'OK':
                             # seed = notesclear()
-                            seed = notesclear('settings.txt')
+                            seed = notesclear()
                             sg.popup_ok('Data cleared.')
                             trackdata=json.load(open(trackadd,"r+"))
                             slotchoice = ''

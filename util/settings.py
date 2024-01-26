@@ -1,38 +1,37 @@
 import PySimpleGUI as sg
+import json
 
 scale = 1.3
 font_sizes = [14, 12, 10, 15]
 sg.set_options(font=('Franklin Gothic Medium', font_sizes[0]), text_color='white', background_color='black', element_background_color='black', text_element_background_color='black', tooltip_font=('Franklin Gothic Medium', font_sizes[1]), tooltip_time=200, scaling=scale)
 
-def settings_ui(settings):
-    x = 1
-
-def autoload_settings(settings):
-    path = {}
+def settings_ui():
     try:
-        with open(settings) as f:
-            for line in f:
-                name, value = line.split('=')
-                path[name] = str(value).strip()
+        settingsfile=r"settings.json"
     except:
-        path['batch_path'] = ''
-        path['mod_path'] = ''
-        path['prefix'] = ''
+        settingsfile = {'batch_path':'', 'mod_path':'', 'prefix':''}
+
+def autoload_settings():
+    try:
+        settingsfile=r"settings.json"
+        settingsdict=json.load(open(settingsfile,"r+"))
+    except:
+        settingsdict = {'batch_path':'', 'mod_path':'', 'prefix':''}
 
     layout = [
             [
                 sg.Text("Batch folder:", size=15), 
-                sg.Input(path['batch_path'], key="-batch-path-"), 
+                sg.Input(settingsdict['batch_path'], key="-batch-path-"), 
                 sg.FolderBrowse(key="-browse1-"),
             ],
             [
                 sg.Text("Citra mod folder:", size=15), 
-                sg.Input(path['mod_path'], key="-mod-path-"), 
+                sg.Input(settingsdict['mod_path'], key="-mod-path-"), 
                 sg.FolderBrowse(key="-browse2-"),
             ],
             [
                 sg.Text("File name prefix:", size=15), 
-                sg.Input(path['prefix'], key="-prefix-", size=25),
+                sg.Input(settingsdict['prefix'], key="-prefix-", size=25),
             ],
             [sg.Button("Submit")]
         ]
@@ -42,27 +41,21 @@ def autoload_settings(settings):
     while True:
         event, values = window.read()
         if event == sg.WIN_CLOSED or event=="Exit":
-            batch_path = path["-batch-path-"]
-            mod_path = path["-mod-path-"]
-            prefix = path["-prefix-"]
             break
         elif event == "Submit":
-            batch_path = values["-batch-path-"]
-            mod_path = values["-mod-path-"]
-            prefix = values["-prefix-"]
+            settingsdict['batch_path'] = values["-batch-path-"]
+            settingsdict['mod_path'] = values["-mod-path-"]
+            settingsdict['prefix'] = values["-prefix-"]
             break
 
     window.close()
-
-    open(settings, 'w+').writelines(
-        [
-            "batch_path=", batch_path, "\n", 
-            "mod_path=", mod_path, "\n", 
-            "prefix=", prefix,  
-        ])
-    print(batch_path)
-    print(mod_path)
-    print(prefix)
+    
+    with open(settingsfile,'w+') as f:
+        json.dump(settingsdict,f)
+    
+    print(settingsdict['batch_path'])
+    print(settingsdict['mod_path'])
+    print(settingsdict['prefix'])
 
 
 # b, s = autoload_settings()

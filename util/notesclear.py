@@ -1,9 +1,10 @@
 import json
 import pathlib
 import shutil
+import PySimpleGUI as sg
 
 # clearing the notes
-def notesclear(settings):
+def notesclear():
     trackadd=r"trackerdata.json"
     trackdata=json.load(open(trackadd,"r+"))
     for mon in trackdata:
@@ -16,17 +17,17 @@ def notesclear(settings):
     with open(trackadd,'w') as f:
         json.dump(trackdata,f)
 
-    path = {}
-    with open(settings) as f:
-        for line in f:
-            name, value = line.split('=')
-            path[name] = str(value)
+    try:
+        settingsfile=r"settings.json"
+        settingsdict=json.load(open(settingsfile,"r+"))
+    except:
+        print('Please set up your folders in settings before attempting this.')
 
     # doing all of the file editing stuff to automatically move to next seed
     try:
-        mod_folder = pathlib.Path(path['mod_path'])
-        batch_folder = pathlib.Path(path['batch_path'])
-        prefix = str(path['prefix'])
+        mod_folder = pathlib.Path(str(settingsdict['mod_path']).strip())
+        batch_folder = pathlib.Path(str(settingsdict['batch_path']).strip())
+        prefix = str(settingsdict['prefix']).strip()
     except:
         print('Invalid folder location.')
         

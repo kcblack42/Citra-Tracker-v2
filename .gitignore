@@ -2,18 +2,13 @@
 citra.py
 errorlog.txt
 seed.txt
-settings.txt
+settings.json
 trackerdata.json
 
-# utilities
-util/notesclearkcb.py
-
 # pycache files
-__pycache__/citra.cpython-312.pyc
-util/__pycache__/gitcheck.cpython-312.pyc
-util/__pycache__/notesclear.cpython-312.pyc
-util/__pycache__/notesclearkcb.cpython-312.pyc
-util/__pycache__/settings.cpython-312.pyc
+__pycache__/*
+util/__pycache__/*
+util\__pycache__\*
 
 # archive files
 archive/*
