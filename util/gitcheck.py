@@ -3,6 +3,9 @@ import PySimpleGUI as sg
 import webbrowser
 
 def gitcheck(v):
+    import requests
+    import PySimpleGUI as sg
+    import webbrowser
     gitapi = 'https://api.github.com/repos/kcblack42/Citra-Tracker-v2/releases/latest'
     gitlink = 'https://github.com/kcblack42/Citra-Tracker-v2/releases/latest'
     response = requests.get(gitapi)

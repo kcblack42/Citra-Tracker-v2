@@ -422,3 +422,33 @@
 2024-01-24 20:55:33.243566: '-batch-path-'
 2024-01-24 21:01:58.428572: '-batch-path-'
 2024-01-24 21:36:49.043261: '-batch-path-'
+2024-01-25 20:39:43.271686: list index out of range
+2024-01-25 20:39:56.330405: list index out of range
+2024-01-25 20:40:09.360584: list index out of range
+2024-01-25 20:40:22.387895: list index out of range
+2024-01-25 20:40:35.411577: list index out of range
+2024-01-25 20:40:48.449098: list index out of range
+2024-01-25 20:41:01.480257: list index out of range
+2024-01-25 20:41:14.505726: list index out of range
+2024-01-25 20:53:36.478627: [WinError 123] The filename, directory name, or volume label syntax is incorrect: 'D:\\Games\\Pokemon\\Ironmon\\Ironmon Randomizer\\X Batches\n\\kaizo200'
+2024-01-25 20:53:49.488764: cannot access local variable 'battlewildoppadd' where it is not associated with a value
+2024-01-25 20:54:02.493086: cannot access local variable 'battlewildoppadd' where it is not associated with a value
+2024-01-25 20:57:32.757772: '-batch-path-'
+2024-01-25 20:57:43.431295: cannot unpack non-iterable NoneType object
+2024-01-25 20:59:20.216603: too many values to unpack (expected 2)
+2024-01-25 20:59:33.230998: cannot access local variable 'battlewildoppadd' where it is not associated with a value
+2024-01-25 21:02:52.173821: too many values to unpack (expected 2)
+2024-01-25 21:03:23.698126: [WinError 123] The filename, directory name, or volume label syntax is incorrect: 'D:\\Games\\Pokemon\\Ironmon\\Ironmon Randomizer\\X Batches\n\\kaizo200'
+2024-01-25 21:03:36.708766: cannot access local variable 'battlewildoppadd' where it is not associated with a value
+2024-01-25 21:12:37.697683: [WinError 123] The filename, directory name, or volume label syntax is incorrect: 'D:\\Games\\Pokemon\\Ironmon\\Ironmon Randomizer\\X Batches\n\\kaizo200'
+2024-01-25 21:15:56.865683: [WinError 123] The filename, directory name, or volume label syntax is incorrect: 'D:\\Games\\Pokemon\\Ironmon\\Ironmon Randomizer\\X Batches\n\\kaizo200'
+2024-01-25 22:03:33.904873: unsupported operand type(s) for /: 'str' and 'str'
+2024-01-25 22:07:35.702571: cannot access local variable 'battlewildoppadd' where it is not associated with a value
+2024-01-25 22:10:06.189988: cannot access local variable 'battlewildoppadd' where it is not associated with a value
+2024-01-25 22:10:19.283800: cannot access local variable 'battlewildoppadd' where it is not associated with a value
+2024-01-25 22:10:32.362702: cannot access local variable 'battlewildoppadd' where it is not associated with a value
+2024-01-25 22:10:45.449009: cannot access local variable 'battlewildoppadd' where it is not associated with a value
+2024-01-25 22:10:58.531420: cannot access local variable 'battlewildoppadd' where it is not associated with a value
+2024-01-25 22:11:11.622086: cannot access local variable 'battlewildoppadd' where it is not associated with a value
+2024-01-25 22:11:24.704676: cannot access local variable 'battlewildoppadd' where it is not associated with a value
+2024-01-25 22:11:37.796095: cannot access local variable 'battlewildoppadd' where it is not associated with a value
