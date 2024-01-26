@@ -5,9 +5,6 @@ seed.txt
 settings.json
 trackerdata.json
 
-# utilities
-util/notesclearkcb.py
-
 # pycache files
 __pycache__/*
 util/__pycache__/*
