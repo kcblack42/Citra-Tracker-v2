@@ -495,7 +495,7 @@ class Pokemon:
                                                     SELECT
                                                         gamegroupid
                                                     FROM "pokemon.gamegroup"
-                                                        WHERE gamegrouporder < (
+                                                        WHERE gamegrouporder <= (
                                                             SELECT
                                                                 gamegrouporder
                                                             FROM "pokemon.gamegroup"
