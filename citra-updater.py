@@ -6,14 +6,13 @@ import sys
 import json
 import sqlite3
 import traceback
-from configparser import ConfigParser
+# from configparser import ConfigParser
 from datetime import datetime
 import logging
 from citra import Citra
 import re
 import os
 from io import BytesIO
-import urllib.request
 
 
 def install(package):
@@ -31,6 +30,12 @@ try: # check for Pillow and install if not present
 except:
     install('Pillow')
     from PIL import Image
+
+try: # check for Pillow and install if not present
+    import requests
+except:
+    install('requests')
+    import requests
 
 from util.gitcheck import gitcheck
 from util.notesclear import notesclear
