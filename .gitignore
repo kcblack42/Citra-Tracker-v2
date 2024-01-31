@@ -12,3 +12,6 @@ util\__pycache__\*
 
 # archive files
 archive/*
+
+# upcoming update files
+util/logreader.py

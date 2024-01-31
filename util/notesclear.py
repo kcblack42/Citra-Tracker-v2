@@ -1,7 +1,7 @@
 import json
 import pathlib
 import shutil
-import datetime
+from datetime import datetime
 
 # clearing the notes
 def notesclear():
@@ -34,7 +34,11 @@ def notesclear():
         batch_folder = pathlib.Path(str(settingsdict['batch_path']).strip())
         prefix = str(settingsdict['prefix']).strip()
 
-        seed = open('seed.txt', 'r').read()
+        try:
+            seed = open('seed.txt', 'r').read()
+        except Exception as e:
+            print('No seed file found - setting seed counter to 1 and creating file.')
+            seed = 1
 
         # copy files to new folder
         shutil.copytree(batch_folder / '{}{}'.format(prefix, seed), mod_folder, dirs_exist_ok=True)
