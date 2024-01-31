@@ -1909,11 +1909,6 @@ def run():
                             pk=pk+1
                     with open(trackadd,'w') as f:
                         json.dump(trackdata,f)
-                    # if trackdataedit == 1:
-                    #     with open(trackadd,'w') as f:
-                    #         json.dump(trackdata,f)
-                    #     trackdataedit = 0
-                    # time.sleep(8.5)
             except Exception as e:
                 print(e)
                 with open('errorlog.txt','a+') as f:
