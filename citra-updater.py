@@ -715,6 +715,9 @@ def getaddresses(c):
         wildppadd=0x33F7FA44-0x3f760d4-34
         trainerppadd=0x33F7FA44-0x3f760d4-34
         mongap=816
+    else:
+        return -1
+    
     if read_party(c,battlewildoppadd)[0].species_num() in range(1,808) and int.from_bytes(c.read_memory(wildppadd,1))<65:
         return battlewildpartyadd,battlewildoppadd,wildppadd,curoppadd,'w',mongap
     elif read_party(c,battletraineroppadd)[0].species_num() in range(1,808) and int.from_bytes(c.read_memory(trainerppadd,1))<65:
@@ -1284,9 +1287,15 @@ def run():
                                 window['-mv{}ctc-e-'.format(ct)].update(visible = False)
                             # layout = defaultuisettings()
                             # window = sg.Window(track_title, layout, track_size, background_color='black', resizable=True)
+                    
                     partyadd,enemyadd,ppadd,curoppnum,enctype,mongap=getaddresses(c)
                     # print("loops" + str(loops))
                     loops+=1
+
+                    # only continue reading data if a supported game is running
+                    if partyadd == -1:
+                        continue
+
                     #print('reading party')
                     party1=read_party(c,partyadd)
                     party2=read_party(c,enemyadd)
