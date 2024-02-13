@@ -1188,7 +1188,7 @@ def run():
         enemydict = {"abilities": [], "stats": ["", "", "", "", "", ""], "notes": "", "levels": [], "moves": []}
         change = ''
         try:
-            seed = int(open('seed.txt', 'r').read()) - 1
+            seed = int(open('seed.txt', 'r').read())
         except:
             seed = 1
         while (True):
@@ -1247,7 +1247,7 @@ def run():
                     elif event == '-clearnotes-':
                         confirm = sg.popup_ok_cancel('Clear tracker data?', title='Confirm')
                         if confirm == 'OK':
-                            # seed = notesclear()
+                            # seed = notesclear(), returns the next seed number
                             seed = notesclear()
                             sg.popup_ok('Data cleared.')
                             trackdata=json.load(open(trackadd,"r+"))
