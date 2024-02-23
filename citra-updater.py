@@ -14,6 +14,7 @@ import re
 import os
 from io import BytesIO
 
+TRACKER_UPDATE_FREQUENCY = 4000 # number of milliseconds, was 8000
 
 def install(package):
     subprocess.check_call([sys.executable, "-m", "pip", "install", package])
@@ -672,6 +673,7 @@ def getGame(c):
                     return namelist[item]
     except Exception as e:
         print(e)
+    return ""
 
 def getaddresses(c):
     getGam=getGame(c)
@@ -716,7 +718,7 @@ def getaddresses(c):
         trainerppadd=0x33F7FA44-0x3f760d4-34
         mongap=816
     else:
-        return -1
+        return -1,-1,-1,-1,-1,-1
     
     if read_party(c,battlewildoppadd)[0].species_num() in range(1,808) and int.from_bytes(c.read_memory(wildppadd,1))<65:
         return battlewildpartyadd,battlewildoppadd,wildppadd,curoppadd,'w',mongap
@@ -908,11 +910,11 @@ def defaultuisettings():
     ]
     topcol2 = [
         [sg.Text('HP:', key='-hplabel-', visible=False)],
-        [sg.Text('Atk:', key='-attlabel-', visible=False)],
-        [sg.Text('Def:', key='-deflabel-', visible=False)],
-        [sg.Text('SpAtk:', key='-spattlabel-', visible=False)],
-        [sg.Text('SpDef:', key='-spdeflabel-', visible=False)],
-        [sg.Text('Speed:', key='-speedlabel-', visible=False)],
+        [sg.Text('ATK:', key='-attlabel-', visible=False)],
+        [sg.Text('DEF:', key='-deflabel-', visible=False)],
+        [sg.Text('SPA:', key='-spattlabel-', visible=False)],
+        [sg.Text('SPD:', key='-spdeflabel-', visible=False)],
+        [sg.Text('SPE:', key='-speedlabel-', visible=False)],
         [sg.Text('BST:', key='-bstlabel-', visible=False)],
     ]
     topcol3 = [
@@ -962,8 +964,8 @@ def defaultuisettings():
     ]
     botcol7 = [
         [
-            sg.Button('Next Seed', key='-clearnotes-', font=('Franklin Gothic Medium', font_sizes[2]), auto_size_button=True, visible=False), 
-            sg.Button('Batch Settings', key='-settings-', font=('Franklin Gothic Medium', font_sizes[2]), auto_size_button=True, visible=False)
+            sg.Button('Next Seed', key='-clearnotes-', font=('Franklin Gothic Medium', font_sizes[2]), pad=(2,2,2,2), auto_size_button=True, visible=False), 
+            sg.Button('Batch Settings', key='-settings-', font=('Franklin Gothic Medium', font_sizes[2]), pad=(2,2,2,2), auto_size_button=True, visible=False)
         ],
     ]
 
@@ -978,11 +980,11 @@ def defaultuisettings():
     ]
     topcol2a = [
         [sg.Text('HP:', key='-hplabel-e-')],
-        [sg.Text('Atk:', key='-attlabel-e-')],
-        [sg.Text('Def:', key='-deflabel-e-')],
-        [sg.Text('SpAtk:', key='-spattlabel-e-')],
-        [sg.Text('SpDef:', key='-spdeflabel-e-')],
-        [sg.Text('Speed:', key='-speedlabel-e-')],
+        [sg.Text('ATK:', key='-attlabel-e-')],
+        [sg.Text('DEF:', key='-deflabel-e-')],
+        [sg.Text('SPA:', key='-spattlabel-e-')],
+        [sg.Text('SPD:', key='-spdeflabel-e-')],
+        [sg.Text('SPE:', key='-speedlabel-e-')],
         [sg.Text('BST:', key='-bstlabel-e-')],
         [sg.Button(' + Ability ', key='-addabil-e-', font=('Franklin Gothic Medium', font_sizes[2]), auto_size_button=True)], 
         [sg.Button('Add Note', key='-addnote-e-', font=('Franklin Gothic Medium', font_sizes[2]), auto_size_button=True)],
@@ -1021,7 +1023,7 @@ def defaultuisettings():
     #     [sg.Image(key='-mv4mod-e-'), sg.Text(size=(0,1))],
     # ]
     botcol4a = [
-        [sg.Text('BP', key='-movebphdr-e-', size=3, justification='r')],
+        [sg.Text('Pow', key='-movebphdr-e-', size=3, justification='r')],
         [sg.Text(key='-mv1bp-e-', size=3, justification='r')],
         [sg.Text(key='-mv2bp-e-', size=3, justification='r')],
         [sg.Text(key='-mv3bp-e-', size=3, justification='r')],
@@ -1049,7 +1051,7 @@ def defaultuisettings():
 
     layout = [[
         sg.Column([[
-            sg.Column(topcol1, key='-tc1-', size=(225, 380)), 
+            sg.Column(topcol1, key='-tc1-', size=(200, 330)), 
             sg.Column(topcol2, key='-tc2-'), 
             sg.Column(topcol3, element_justification='right', key='-tc3-')
         ], 
@@ -1062,10 +1064,10 @@ def defaultuisettings():
         ], 
         [
             sg.Column(botcol7, key='-bc7-'),
-        ]], size=(430, 700)),
+        ]], size=(380, 580)),
         sg.VerticalSeparator(key='-vs-'),
         sg.Column([[
-            sg.Column(topcol1a, size=(225, 380), key='-tc1a-e-', visible = False), 
+            sg.Column(topcol1a, size=(200, 330), key='-tc1a-e-', visible = False), 
             sg.Column(topcol2a, size=(70, 350), key='-tc2a-e-', visible = False), 
             sg.Column(topcol3a, size=(60, 350), element_justification='right', key='-tc3a-e-', visible = False)
         ], 
@@ -1079,7 +1081,7 @@ def defaultuisettings():
         ], 
         [
             sg.Column(botcol7a, key='-bc7a-e-', visible = False), 
-        ]], size=(430, 700))
+        ]], size=(380, 580))
     ]]
     return layout
 
@@ -1100,7 +1102,7 @@ def typeformatting(typing):
     return typecolor
 
 def natureformatting(nl, s):
-    naturedict = {'raised':'#f08080', 'lowered':'#87cefa', 'neutral':'#ffffff'}
+    naturedict = {'raised':'#80f080', 'lowered':'#f08080', 'neutral':'#ffffff'}
     if nl[s] == 'raised':
         return naturedict['raised']
     elif nl[s] == 'lowered':
@@ -1172,19 +1174,23 @@ def run():
         #print('connecting to citra')
         c = Citra()
         #print('connected to citra')
-        game=getGame(c)
-        gamegroupid,gamegroupabbreviation,gen = cursor.execute(f"""
-                select
-                    gg.gamegroupid
-                    ,gg.gamegroupabbreviation
-                    ,gg.generationid
-                from "pokemon.gamegroup" gg
-                where gamegroupname = '{game}'""").fetchone()
-        print('running..')
+        game = ""
+        print('Waiting for game to start...')
+        while game == "":
+            game=getGame(c)
+            if game != "":
+                gamegroupid,gamegroupabbreviation,gen = cursor.execute(f"""
+                        select
+                            gg.gamegroupid
+                            ,gg.gamegroupabbreviation
+                            ,gg.generationid
+                        from "pokemon.gamegroup" gg
+                        where gamegroupname = '{game}'""").fetchone()
+        print('Game loaded: {}'.format(game))
         
         ### SET UP TRACKER GUI ###
         layout = defaultuisettings()
-        window = sg.Window(track_title, layout, track_size, background_color='black', resizable=True)
+        window = sg.Window(track_title, layout, track_size, element_padding=(1,1,0,0), background_color='black', resizable=True)
         loops = 0
         slotchoice = ''
         enemymon = ''
@@ -1199,7 +1205,7 @@ def run():
                 if c.is_connected():
                     if loops == 0:
                         trackdata=json.load(open(trackadd,"r+"))
-                    event, values = window.Read(timeout=8000)
+                    event, values = window.Read(timeout=TRACKER_UPDATE_FREQUENCY)
                     if event == sg.WIN_CLOSED:
                         break
                     elif event == '-slotdrop-':
@@ -1239,7 +1245,7 @@ def run():
                             abil = ''
                         trackdata[enemymon]['abilities'].append(abil)
                         window['-abillist-e-'].update(trackdata[enemymon]['abilities'])
-                        window['-ability-e-'].update(abil)
+                        window['-ability-e-'].update(abil, text_color="#f0f080")
                         change = 'abil'
                     elif event == '-remabil-e-':
                         remabil = abil_popup(enemydict['abilities'])
@@ -1248,11 +1254,11 @@ def run():
                     elif event == '-settings-':
                         autoload_settings()
                     elif event == '-clearnotes-':
-                        confirm = sg.popup_ok_cancel('Clear tracker data?', title='Confirm')
+                        confirm = sg.popup_ok_cancel('Load next seed?\nAfter clicking yes, wait 1 sec then Citra > Emulation > Restart.', title='Confirm')
                         if confirm == 'OK':
                             # seed = notesclear(), returns the next seed number
                             seed = notesclear()
-                            sg.popup_ok('Data cleared.')
+                            # sg.popup_ok('Data cleared.')
                             trackdata=json.load(open(trackadd,"r+"))
                             slotchoice = ''
                             window['-slot-'].update('Waiting for new mon...')
@@ -1287,6 +1293,8 @@ def run():
                                 window['-mv{}ctc-e-'.format(ct)].update(visible = False)
                             # layout = defaultuisettings()
                             # window = sg.Window(track_title, layout, track_size, background_color='black', resizable=True)
+                            time.sleep(8)
+                            continue
                     
                     partyadd,enemyadd,ppadd,curoppnum,enctype,mongap=getaddresses(c)
                     # print("loops" + str(loops))
@@ -1326,7 +1334,7 @@ def run():
                             pke=pkmnindex+12
                         typereadere=c.read_memory(ppadd+(mongap*(pke-1))-(2*(gen+6)),2) #(2*(gen+6))
                         for byte in typereadere:
-                            if typelist[byte] not in enemytypes:
+                            if 0 <= byte < len(typelist) and typelist[byte] not in enemytypes:
                                 enemytypes.append(typelist[byte])
                     except Exception:
                         print(Exception)
@@ -1353,8 +1361,8 @@ def run():
                                 pkmntypes=[]
                                 currmon = pkmn
                                 typereader=c.read_memory(ppadd+(mongap*(pk-1))-(2*(gen+6)),2)
-                                for byte in typereader: # this triggers a list index out of range error in multis
-                                    if typelist[byte] not in pkmntypes:
+                                for byte in typereader:
+                                    if 0 <= byte < len(typelist) and typelist[byte] not in pkmntypes:
                                         pkmntypes.append(typelist[byte])
                                 # print('unknown flags')
                                 # print_bits(pkmn.alt_form)
@@ -1459,7 +1467,7 @@ def run():
                                     window['-monnum-'].Update('#{}'.format(str(pkmn.species_num())))
                                     window['-level-'].Update('Level: {}'.format(levelnum))
                                     window['-level-'].set_tooltip('Seen at {}'.format(trackdata[pkmn.name]["levels"]))
-                                    window['-ability-'].Update(str(pkmn.ability['name']))
+                                    window['-ability-'].Update(str(pkmn.ability['name']), text_color="#f0f080")
                                     window['-ability-'].set_tooltip(str(pkmn.ability['description']))
                                     window['-item-'].Update(pkmn.held_item_name)
                                     window['-item-'].set_tooltip(itemdesc)
@@ -1483,18 +1491,29 @@ def run():
                                     window['-spdef-'].set_tooltip('EV: ' + str(pkmn.evspdef))
                                     window['-speed-'].Update(pkmn.speed, text_color=natureformatting(naturelist, 4))
                                     window['-speed-'].set_tooltip('EV: ' + str(pkmn.evspeed))
-                                    if 0 <= int.from_bytes(c.read_memory((ppadd+(mongap*(pk-1))-20),1)) <= 12:
-                                        # trying to fix a weird error that it rarely throws regarding -attmod-, one may fix all because it seems like its all or nothing
-                                        window['-attmod-'].Update('images/modifiers/modifier{}.png'.format(int.from_bytes(c.read_memory((ppadd+(mongap*(pk-1))-20),1))), visible = True)
-                                        window['-defmod-'].Update('images/modifiers/modifier{}.png'.format(int.from_bytes(c.read_memory((ppadd+(mongap*(pk-1))-19),1))), visible = True)
-                                        window['-spattmod-'].Update('images/modifiers/modifier{}.png'.format(int.from_bytes(c.read_memory((ppadd+(mongap*(pk-1))-18),1))), visible = True)
-                                        window['-spdefmod-'].Update('images/modifiers/modifier{}.png'.format(int.from_bytes(c.read_memory((ppadd+(mongap*(pk-1))-17),1))), visible = True)
-                                        window['-speedmod-'].Update('images/modifiers/modifier{}.png'.format(int.from_bytes(c.read_memory((ppadd+(mongap*(pk-1))-16),1))), visible = True)
+
+                                    # Update stat stage modifiers, and only apply if within proper range
+                                    modatt = int.from_bytes(c.read_memory((ppadd+(mongap*(pk-1))-20),1))
+                                    if 0 <= modatt <= 12:
+                                        window['-attmod-'].Update('images/modifiers/modifier{}.png'.format(modatt), visible = True)
+                                    moddef = int.from_bytes(c.read_memory((ppadd+(mongap*(pk-1))-19),1))
+                                    if 0 <= moddef <= 12:
+                                        window['-defmod-'].Update('images/modifiers/modifier{}.png'.format(moddef), visible = True)
+                                    modspatt = int.from_bytes(c.read_memory((ppadd+(mongap*(pk-1))-18),1))
+                                    if 0 <= modspatt <= 12:
+                                        window['-spattmod-'].Update('images/modifiers/modifier{}.png'.format(modspatt), visible = True)
+                                    modspdef = int.from_bytes(c.read_memory((ppadd+(mongap*(pk-1))-17),1))
+                                    if 0 <= modspdef <= 12:
+                                        window['-spdefmod-'].Update('images/modifiers/modifier{}.png'.format(modspdef), visible = True)
+                                    modspeed = int.from_bytes(c.read_memory((ppadd+(mongap*(pk-1))-16),1))
+                                    if 0 <= modspeed <= 12:
+                                        window['-speedmod-'].Update('images/modifiers/modifier{}.png'.format(modspeed), visible = True)
+                                    
                                     window['-bst-'].Update(pkmn.bst)
                                     window['-movehdr-'].update('Moves {}/{} ({})'.format(learnedcount, totallearn, nmove))
                                     window['-movehdr-'].set_tooltip(learnstr)
                                     window['-movepphdr-'].update('PP')
-                                    window['-movebphdr-'].update('BP')
+                                    window['-movebphdr-'].update('Pow')
                                     window['-moveacchdr-'].update('Acc')
                                     window['-movecontacthdr-'].update('C')
                                     window['-clearnotes-'].update(visible=True)
@@ -1534,6 +1553,7 @@ def run():
                                         if movetyp!=None:
                                             for type in enemytypes:
                                                 typemult=typemult*(typetable[movetyp][typedic[type]])
+                                        modimage="6"
                                         if move["category"]!="Non-Damaging":
                                             if typemult==.25:
                                                 modimage="4"
@@ -1549,8 +1569,6 @@ def run():
                                                 antici = 1
                                             elif typemult==0:
                                                 modimage="X"
-                                        else:
-                                            modimage="6"
                                         # movepower = calcPower(pkmn,move,hpnum[0],hpnum[1])
                                         acc = '-' if not move['acc'] else int(move['acc'])
                                         contact = ('Y' if move['contact'] else 'N')
@@ -1642,14 +1660,14 @@ def run():
                                     if antici == 1:
                                         startupabils.append('Anticipation')
                                     if abilityname in startupabils:
-                                        window['-ability-e-'].Update(str(pkmn.ability['name']))
+                                        window['-ability-e-'].Update(str(pkmn.ability['name']), text_color="#f0f080")
                                         window['-ability-e-'].set_tooltip(str(pkmn.ability['description']))
                                         if pkmn.abilityname not in trackdata[pkmn.name]['abilities']:
                                             trackdata[pkmn.name]['abilities'].append(pkmn.abilityname)
                                     elif change == 'abil':
                                         window['-ability-e-'].set_tooltip('')
                                     else:
-                                        window['-ability-e-'].Update('Unknown Ability')
+                                        window['-ability-e-'].Update('Unknown Ability', text_color="#f0f080")
                                     if pkmn.level not in trackdata[pkmn.name]['levels']:
                                         trackdata[pkmn.name]['levels'].append(pkmn.level)
                                     nmove = (' - ' if not nextmove else nextmove)
@@ -1686,14 +1704,18 @@ def run():
                                     window['-bst-e-'].Update(pkmn.bst)
                                     if 0 <= int.from_bytes(c.read_memory((ppadd+(mongap*(pk-1))-20),1)) <= 12:
                                         window['-attmod-e-'].Update('images/modifiers/modifier{}.png'.format(int.from_bytes(c.read_memory((ppadd+(mongap*(pk-1))-20),1))), visible = True)
+                                    if 0 <= int.from_bytes(c.read_memory((ppadd+(mongap*(pk-1))-19),1)) <= 12:
                                         window['-defmod-e-'].Update('images/modifiers/modifier{}.png'.format(int.from_bytes(c.read_memory((ppadd+(mongap*(pk-1))-19),1))), visible = True)
+                                    if 0 <= int.from_bytes(c.read_memory((ppadd+(mongap*(pk-1))-18),1)) <= 12:
                                         window['-spattmod-e-'].Update('images/modifiers/modifier{}.png'.format(int.from_bytes(c.read_memory((ppadd+(mongap*(pk-1))-18),1))), visible = True)
+                                    if 0 <= int.from_bytes(c.read_memory((ppadd+(mongap*(pk-1))-17),1)) <= 12:
                                         window['-spdefmod-e-'].Update('images/modifiers/modifier{}.png'.format(int.from_bytes(c.read_memory((ppadd+(mongap*(pk-1))-17),1))), visible = True)
+                                    if 0 <= int.from_bytes(c.read_memory((ppadd+(mongap*(pk-1))-16),1)) <= 12:
                                         window['-speedmod-e-'].Update('images/modifiers/modifier{}.png'.format(int.from_bytes(c.read_memory((ppadd+(mongap*(pk-1))-16),1))), visible = True)
                                     window['-movehdr-e-'].update('Moves {}/{} ({})'.format(learnedcount, totallearn, nmove))
                                     window['-movehdr-e-'].set_tooltip(learnstr)
                                     window['-movepphdr-e-'].update('PP')
-                                    window['-movebphdr-e-'].update('BP')
+                                    window['-movebphdr-e-'].update('Pow')
                                     window['-moveacchdr-e-'].update('Acc')
                                     window['-movecontacthdr-e-'].update('C')
                                     window['-prevmoves-e-'].update('Previous Moves: ' + re.sub('[^A-Za-z0-9 ]+', '', str(trackdata[pkmn.name]['moves'])))
@@ -1833,7 +1855,7 @@ def run():
                                 window['-bc4-'].update(visible = True)
                                 window['-bc5-'].update(visible = True)
                                 window['-bc6-'].update(visible = True)
-                                window['-ability-'].update(str(pkmn.ability['name']))
+                                window['-ability-'].update(str(pkmn.ability['name']), text_color="#f0f080")
                                 window['-ability-'].set_tooltip(str(pkmn.ability['description']))
                                 window['-item-'].update(pkmn.held_item_name)
                                 window['-item-'].set_tooltip(itemdesc)
@@ -1866,7 +1888,7 @@ def run():
                                 window['-movehdr-'].update('Moves {}/{} ({})'.format(learnedcount, totallearn, nmove))
                                 window['-movehdr-'].set_tooltip(learnstr)
                                 window['-movepphdr-'].update('PP')
-                                window['-movebphdr-'].update('BP')
+                                window['-movebphdr-'].update('Pow')
                                 window['-moveacchdr-'].update('Acc')
                                 window['-movecontacthdr-'].update('C')
                                 window['-clearnotes-'].update(visible=True)
