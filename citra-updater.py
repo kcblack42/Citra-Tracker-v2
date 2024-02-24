@@ -40,6 +40,7 @@ except:
 from util.gitcheck import gitcheck
 from util.notesclear import notesclear
 from util.settings import autoload_settings
+from util.bagfuncs import bagload
 
 # pysimplegui settings et al
 track_title = 'Ironmon Tracker'
@@ -47,11 +48,13 @@ scale = 1.3
 track_size = (600, 600)
 font_sizes = [14, 12, 10, 15]
 sg.set_options(font=('Franklin Gothic Medium', font_sizes[0]), text_color='white', background_color='black', element_background_color='black', text_element_background_color='black', tooltip_font=('Franklin Gothic Medium', font_sizes[1]), tooltip_time=150, scaling=scale)
+refresh_rate = 2500
 
 curr_version = open('version.txt', 'r').read()
 gitcheck(curr_version)
 
 trackadd=r"trackerdata.json"
+bagitems = bagload()
 
 def crypt(data, seed, i):
     value = data[i]
@@ -786,6 +789,12 @@ def calcPower(pkmn,move,hp1,hp2):
             return 200
         else:
             return "ERR"
+    elif move['name'] == 'Psywave':
+        return 'VAR'
+    elif move['name'] in ('Seismic Toss', 'Night Shade'):
+        return 'LVL'
+    elif move['name'] in ('Electro Ball', 'Gyro Ball'):
+        return 'SPD'
     else:
         return ('-' if not move['power'] else int(move['power']))
     
@@ -966,7 +975,7 @@ def defaultuisettings():
 
     topcol1a = [
         [sg.Text(key='-slot-e-'),],
-        [sg.Image(key='-monimg-e-')], 
+        [sg.Image(key='-monimg-e-', enable_events=True)], 
         [sg.Text(justification='c', key='-monname-e-'), sg.Text(font=('Arial', font_sizes[2], 'bold'), key='-monnum-e-')],
         [sg.Image(key='-typeimg1-e-'), sg.Text(key='-typename1-e-'), sg.Image(key='-typeimg2-e-', visible=False), sg.Text(key='-typename2-e-', visible=False),],
         [sg.Text(key='-level-e-'), sg.Text(key='-evo-e-', visible = False), sg.Image(key='-status-e-', visible = False)],
@@ -1196,7 +1205,7 @@ def run():
                 if c.is_connected():
                     if loops == 0:
                         trackdata=json.load(open(trackadd,"r+"))
-                    event, values = window.Read(timeout=8000)
+                    event, values = window.Read(timeout=refresh_rate)
                     if event == sg.WIN_CLOSED:
                         break
                     elif event == '-slotdrop-':

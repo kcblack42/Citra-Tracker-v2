@@ -2,7 +2,7 @@
 
 1. Drop all of these files into the same location as citra.py. This is usually in appdata/local.
 2. Get a pokemon from the bag/lab/etc.
-3. Run the tracker! That's it!
+3. Run the tracker (go to the folder you just dropped your stuff in and try to open the citra-updater.py file)! That's it!
 
 ### FOR SEED AUTO-ADVANCEMENT ###
 
@@ -18,5 +18,4 @@
 <div><img src="https://github.com/kcblack42/Citra-Tracker-v2/blob/main/images/screens/setup3.png" height="122" width="495" /></div>
 
 5. In the tracker, if you click the "Batch Settings" button, you'll be prompted to fill in the three things I mentioned above. Do so and then click "Submit".
-6. When your run inevitably dies, use the "Next Seed" button, and it should both clear the saved tracker data, delete your old log + run files, and move your new run file to the folder you designated as the "mods folder" above. Enjoy your hands-off 3DS ironmon seed advancement experience!
-7. 
+6. When your run inevitably dies, use the "Next Seed" button, and it should both clear the saved tracker data, delete your old log + run files, and move your new run file to the folder you designated as the "mods folder" above. The order in which I do this in is click "Next seed", then close the rom, then confirm that you're moving to the next seed, then restart the rom. If you have a save file, you'll obviously need to reset that as well (up + X + B on the title screen). Enjoy your hands-off 3DS ironmon seed advancement experience!
