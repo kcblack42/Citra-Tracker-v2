@@ -1094,10 +1094,14 @@ def resize(image_file, new_size, encode_format='PNG'):
     return data
 
 def typeformatting(typing):
-    typecolordict = {'Normal':'#999999', 'Fire':'#ff612c', 'Water':'#2892ff', 'Electric':'#ffdb00', 'Grass':'#42bf24', 
-                  'Ice':'#42bfff', 'Fighting':'#ffa202', 'Poison':'#994dcf', 'Ground':'#ab7939', 'Flying':'#95c9ff',
-                  'Psychic':'#ff637f', 'Bug':'#9fa523', 'Rock':'#bcb889', 'Ghost':'#6e4570', 'Dragon':'#7e44ed', 
-                  'Dark':'#2f4f4f', 'Steel':'#708090', 'Fairy':'#ffb1ff'}
+    typecolordict = {'Normal':'#A8A878', 'Fire':'#F08030', 'Water':'#6890F0', 'Electric':'#F8D030', 'Grass':'#78C850', 
+                  'Ice':'#98D8D8', 'Fighting':'#C03028', 'Poison':'#A040A0', 'Ground':'#E0C068', 'Flying':'#A890F0',
+                  'Psychic':'#F85888', 'Bug':'#A8B820', 'Rock':'#B8A038', 'Ghost':'#705898', 'Dragon':'#7038F8', 
+                  'Dark':'#705848', 'Steel':'#B8B8D0', 'Fairy':'#ffb1ff', 'Unknown':'#FFFFFF'} #Fairy? EE99AC
+    # typecolordict = {'Normal':'#999999', 'Fire':'#ff612c', 'Water':'#2892ff', 'Electric':'#ffdb00', 'Grass':'#42bf24', 
+    #               'Ice':'#42bfff', 'Fighting':'#ffa202', 'Poison':'#994dcf', 'Ground':'#ab7939', 'Flying':'#95c9ff',
+    #               'Psychic':'#ff637f', 'Bug':'#9fa523', 'Rock':'#bcb889', 'Ghost':'#6e4570', 'Dragon':'#7e44ed', 
+    #               'Dark':'#2f4f4f', 'Steel':'#708090', 'Fairy':'#ffb1ff'}
     typecolor = typecolordict[typing]
     return typecolor
 
