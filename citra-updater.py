@@ -16,8 +16,9 @@ from io import BytesIO
 
 
 def install(package):
+    print(f'Installing [{package}]')
     subprocess.check_call([sys.executable, "-m", "pip", "install", package])
-    print('Installed package [{}].'.format(package))
+    print(f'Installed package [{package}].')
 
 try: # check for PySimpleGUI and install if not present
     import PySimpleGUI as sg
@@ -36,6 +37,12 @@ try: # check for Pillow and install if not present
 except:
     install('requests')
     import requests
+
+try: # check for plotly and install if not present
+    import plotly
+except:
+    install('plotly')
+    import plotly
 
 from util.gitcheck import gitcheck
 from util.notesclear import notesclear
@@ -1458,7 +1465,7 @@ def run():
                                     window['-monname-'].Update(pkmn.name.replace("Farfetchd","Farfetch'd"))
                                     window['-monnum-'].Update('#{}'.format(str(pkmn.species_num())))
                                     window['-level-'].Update('Level: {}'.format(levelnum))
-                                    window['-level-'].set_tooltip('Seen at {}'.format(trackdata[pkmn.name]["levels"]))
+                                    # window['-level-'].set_tooltip('Seen at {}'.format(trackdata[pkmn.name]["levels"]))
                                     window['-ability-'].Update(str(pkmn.ability['name']))
                                     window['-ability-'].set_tooltip(str(pkmn.ability['description']))
                                     window['-item-'].Update(pkmn.held_item_name)
@@ -1825,7 +1832,7 @@ def run():
                                 window['-monname-'].Update(pkmn.name.replace("Farfetchd","Farfetch'd"))
                                 window['-monnum-'].Update('#{}'.format(str(pkmn.species_num())))
                                 window['-level-'].Update('Level: {}'.format(str(pkmn.level)))
-                                window['-level-'].set_tooltip('Seen at {}'.format(trackdata[pkmn.name]["levels"]))
+                                # window['-level-'].set_tooltip('Seen at {}'.format(trackdata[pkmn.name]["levels"]))
                                 window['-tc2-'].update(visible = True)
                                 window['-tc3-'].update(visible = True)
                                 window['-bc1-'].update(visible = True)
