@@ -1388,6 +1388,10 @@ def run():
                                             window['-typeimg3-'].Update(visible = False)
                                             window['-typename3-'].Update(visible = False)
                                     if pkmn.evo:
+                                        evofriend = ''
+                                        evolevel = ''
+                                        evostring = ''
+                                        evoloc = ''
                                         if pkmn.name == 'Eevee':
                                             evoitem = 'Any stone'
                                         elif pkmn.name == 'Gloom':
@@ -1612,6 +1616,10 @@ def run():
                                             window['-typeimg2-e-'].Update(visible = False)
                                             window['-typename2-e-'].Update(visible = False)
                                     if pkmn.evo:
+                                        evofriend = ''
+                                        evolevel = ''
+                                        evostring = ''
+                                        evoloc = ''
                                         if pkmn.name == 'Eevee':
                                             evoitem = 'Any stone'
                                         elif pkmn.name == 'Gloom':
@@ -1800,6 +1808,10 @@ def run():
                                         window['-typeimg2-'].Update(visible = False)
                                         window['-typename2-'].Update(visible = False)
                                 if pkmn.evo:
+                                    evofriend = ''
+                                    evolevel = ''
+                                    evostring = ''
+                                    evoloc = ''
                                     if pkmn.name == 'Eevee':
                                         evoitem = 'Any stone'
                                     elif pkmn.name == 'Gloom':
