@@ -1,4 +1,5 @@
 import json
+import os
 import pathlib
 import shutil
 from datetime import datetime
@@ -35,18 +36,25 @@ def notesclear():
         prefix = str(settingsdict['prefix']).strip()
 
         try:
-            seed = open('seed.txt', 'r').read()
+            curr_seed = int(open('seed.txt', 'r').read())
         except Exception as e:
+            # if no seed file present, this is likely the first seed being played.
             print('No seed file found - setting seed counter to 1 and creating file.')
-            seed = 1
+            curr_seed = 1
+        
+        next_seed = curr_seed + 1
 
-        # copy files to new folder
-        shutil.copytree(batch_folder / '{}{}'.format(prefix, seed), mod_folder, dirs_exist_ok=True)
+        # copy next seed's files to new folder
+        next_folder = batch_folder / '{}{}'.format(prefix, str(next_seed))
+        if os.path.exists(next_folder) and os.path.isdir(next_folder):
+            shutil.copytree(next_folder, mod_folder, dirs_exist_ok=True)
 
-        # delete files from last seed if they're still there
-        shutil.rmtree(batch_folder / '{}{}'.format(prefix, str(int(seed)-1)))
+        # delete files from current seed if they're still there (the last played seed)
+        curr_folder = batch_folder / '{}{}'.format(prefix, str(curr_seed))
+        if os.path.exists(curr_folder) and os.path.isdir(curr_folder):
+            shutil.rmtree(curr_folder)
         try:
-            (batch_folder / '{}{}.log'.format(prefix, str(int(seed)-1))).unlink()
+            (batch_folder / '{}{}.log'.format(prefix, str(curr_seed))).unlink()
         except Exception as e:
             print('log not found')
             print(e)
@@ -58,8 +66,8 @@ def notesclear():
             f.write(errorLog)
 
     # update seed
-    new_seed = open('seed.txt', 'w+').write(str(int(seed)+1))
+    new_seed = open('seed.txt', 'w+').write(str(next_seed))
     print(open('seed.txt', 'r').read())
 
     # time.sleep(5)
-    return seed
+    return next_seed
