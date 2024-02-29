@@ -22,6 +22,11 @@ def install(package):
 
 try: # check for PySimpleGUI and install if not present
     import PySimpleGUI as sg
+    if sg.__version__ != '4.60.5':
+        print('Incorrect version of PSG package detected - installing PySimpleGUI v4.60.5.')
+        subprocess.check_call([sys.executable, "-m", "pip", "install", '--force-reinstall', '-v', 'PySimpleGUI==4.60.5'])
+        print('Update complete.')
+        import PySimpleGUI as sg
 except:
     install('PySimpleGUI==4.60.5') # pysimplegui apparently requires a license for v5.+, so i'm locking it to 4.60.5, which is what i'm developing on
     import PySimpleGUI as sg
