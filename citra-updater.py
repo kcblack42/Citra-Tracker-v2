@@ -23,7 +23,7 @@ def install(package):
 try: # check for PySimpleGUI and install if not present
     import PySimpleGUI as sg
 except:
-    install('PySimpleGUI')
+    install('PySimpleGUI==4.60.5') # pysimplegui apparently requires a license for v5.+, so i'm locking it to 4.60.5, which is what i'm developing on
     import PySimpleGUI as sg
 
 try: # check for Pillow and install if not present
