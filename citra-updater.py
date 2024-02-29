@@ -14,8 +14,6 @@ import re
 import os
 from io import BytesIO
 
-TRACKER_UPDATE_FREQUENCY = 4000 # number of milliseconds, was 8000
-
 def install(package):
     print(f'Installing [{package}]')
     subprocess.check_call([sys.executable, "-m", "pip", "install", package])
