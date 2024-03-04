@@ -51,7 +51,8 @@ except:
 from util.gitcheck import gitcheck
 from util.notesclear import notesclear
 from util.settings import autoload_settings
-from util.bagfuncs import bagload
+from util.bagfuncs import bagitems
+from util.uisettings import defaultuisettings
 
 # pysimplegui settings et al
 track_title = 'Ironmon Tracker'
@@ -65,7 +66,7 @@ curr_version = open('version.txt', 'r').read()
 gitcheck(curr_version)
 
 trackadd=r"trackerdata.json"
-bagitems = bagload()
+# bagitems = bagload()
 
 def crypt(data, seed, i):
     value = data[i]
@@ -699,6 +700,7 @@ def getaddresses(c):
         curoppadd=138545352
         wildppadd=136331232
         trainerppadd=136338160
+        multippadd=136331232+20784
         mongap=580
     elif getGam=='OmegaRuby/AlphaSapphire':
         partyaddress=0x8CF727C
@@ -709,6 +711,7 @@ def getaddresses(c):
         curoppadd=0x8CF727C-0xAF2F5C+0x22EA60 #little endian
         wildppadd=0x8CF727C-0xAF2F5C-20 #0x8CF727C-0xAF2F5C
         trainerppadd=0x8CF727C-0xAF2F5C-20+6928
+        multippadd=0x8CF727C-0xAF2F5C-20+6928+20784
         mongap=580 #Gen 6 has a gap between each mon's data, and goes directly from your mons to the opponent's...
     elif getGam=='Sun/Moon':
         partyaddress=0x34195E10
@@ -719,6 +722,7 @@ def getaddresses(c):
         curoppadd=0x34195E10-68732064+68472752
         wildppadd=0x34195E10-68732064-34
         trainerppadd=0x34195E10-68732064-34
+        multippadd=wildppadd
         mongap=816 #while Gen 7 spaces them out, so its 6 slots for your mon, 6 slots for teammates, then 6 slots for enemies.
     elif getGam=='UltraSun/UltraMoon':
         partyaddress=0x33F7FA44
@@ -729,6 +733,7 @@ def getaddresses(c):
         curoppadd=0x33F7FA44-0x3f760d4+66286592
         wildppadd=0x33F7FA44-0x3f760d4-34
         trainerppadd=0x33F7FA44-0x3f760d4-34
+        multippadd=wildppadd
         mongap=816
     else:
         return -1,-1,-1,-1,-1,-1
@@ -737,6 +742,8 @@ def getaddresses(c):
         return battlewildpartyadd,battlewildoppadd,wildppadd,curoppadd,'w',mongap
     elif read_party(c,battletraineroppadd)[0].species_num() in range(1,808) and int.from_bytes(c.read_memory(trainerppadd,1))<65:
         return battletrainerpartyadd,battletraineroppadd,trainerppadd,curoppadd,'t',mongap
+    # elif read_party(c,battletraineroppadd)[0].species_num() in range(1,808) and int.from_bytes(c.read_memory(multippadd,1)) in range(1,65):
+    #     return battletrainerpartyadd,battletraineroppadd,multippadd,curoppadd,'m',mongap
     else:
         return partyaddress,0,0,0,'p',mongap
 def cls():
@@ -916,194 +923,6 @@ def getURLAbbr(game):
     else:
         return 'home'
     
-def defaultuisettings():
-    topcol1 = [
-        [sg.Combo([], visible=False, font=('Franklin Gothic Medium', font_sizes[1]), enable_events=True, key='-slotdrop-', readonly=True, expand_x=True, background_color='black', text_color='white')],
-        [sg.Text('Loading...', key='-slot-'),],
-        [sg.Image(key='-monimg-')], 
-        [sg.Text(justification='c', key='-monname-'), sg.Text(font=('Arial', font_sizes[2], 'bold'), key='-monnum-')],
-        [sg.Image(key='-typeimg1-'), sg.Text(key='-typename1-'), sg.Image(key='-typeimg2-', visible=False), sg.Text(key='-typename2-', visible=False), sg.Image(key='-typeimg3-', visible=False), sg.Text(key='-typename3-', visible=False),],
-        [sg.Text(key='-level-'), sg.Text(key='-evo-', visible = False), sg.Image(key='-status-', visible = False)],
-        [sg.Text(key='-ability-')],
-        [sg.Text(key='-item-')],
-    ]
-    topcol2 = [
-        [sg.Text('HP:', key='-hplabel-', visible=False)],
-        [sg.Text('ATK:', key='-attlabel-', visible=False)],
-        [sg.Text('DEF:', key='-deflabel-', visible=False)],
-        [sg.Text('SPA:', key='-spattlabel-', visible=False)],
-        [sg.Text('SPD:', key='-spdeflabel-', visible=False)],
-        [sg.Text('SPE:', key='-speedlabel-', visible=False)],
-        [sg.Text('BST:', key='-bstlabel-', visible=False)],
-    ]
-    topcol3 = [
-        [sg.Text(key='-hp-', justification='r')],
-        [sg.Image(key='-attmod-'), sg.Text(key='-att-', justification='r')],
-        [sg.Image(key='-defmod-'), sg.Text(key='-def-', justification='r')],
-        [sg.Image(key='-spattmod-'), sg.Text(key='-spatt-', justification='r')],
-        [sg.Image(key='-spdefmod-'), sg.Text(key='-spdef-', justification='r')],
-        [sg.Image(key='-speedmod-'), sg.Text(key='-speed-', justification='r')],
-        [sg.Text(key='-bst-', justification='r')],
-    ]
-
-    botcol1 = [
-        [sg.Text(key='-movehdr-', justification='l')],
-        [sg.Image(key='-mv1type-'), sg.Text(key='-mv1text-', size=13)],
-        [sg.Image(key='-mv2type-'), sg.Text(key='-mv2text-', size=13)],
-        [sg.Image(key='-mv3type-'), sg.Text(key='-mv3text-', size=13)],
-        [sg.Image(key='-mv4type-'), sg.Text(key='-mv4text-', size=13)],
-    ]
-    botcol2 = [
-        [sg.Text(key='-movepphdr-', size=5, justification='c')],
-        [sg.Text(key='-mv1pp-', size=5, justification='r'), sg.Image(key='-mv1mod-'),],
-        [sg.Text(key='-mv2pp-', size=5, justification='r'), sg.Image(key='-mv2mod-'),],
-        [sg.Text(key='-mv3pp-', size=5, justification='r'), sg.Image(key='-mv3mod-'),],
-        [sg.Text(key='-mv4pp-', size=5, justification='r'), sg.Image(key='-mv4mod-'),],
-    ]
-    botcol4 = [
-        [sg.Text(key='-movebphdr-', size=3, justification='r')],
-        [sg.Text(key='-mv1bp-', size=3, justification='r')],
-        [sg.Text(key='-mv2bp-', size=3, justification='r')],
-        [sg.Text(key='-mv3bp-', size=3, justification='r')],
-        [sg.Text(key='-mv4bp-', size=3, justification='r')],
-    ]
-    botcol5 = [
-        [sg.Text(key='-moveacchdr-', size=3, justification='c')],
-        [sg.Text(key='-mv1acc-', size=3, justification='c')],
-        [sg.Text(key='-mv2acc-', size=3, justification='c')],
-        [sg.Text(key='-mv3acc-', size=3, justification='c')],
-        [sg.Text(key='-mv4acc-', size=3, justification='c')],
-    ]
-    botcol6 = [
-        [sg.Text(key='-movecontacthdr-', size=1, justification='c')],
-        [sg.Text(key='-mv1ctc-', size=1, justification='c')],
-        [sg.Text(key='-mv2ctc-', size=1, justification='c')],
-        [sg.Text(key='-mv3ctc-', size=1, justification='c')],
-        [sg.Text(key='-mv4ctc-', size=1, justification='c')],
-    ]
-    botcol7 = [
-        [
-            sg.Button('Next Seed', key='-clearnotes-', font=('Franklin Gothic Medium', font_sizes[2]), pad=(2,2,2,2), auto_size_button=True, visible=False), 
-            sg.Button('Batch Settings', key='-settings-', font=('Franklin Gothic Medium', font_sizes[2]), pad=(2,2,2,2), auto_size_button=True, visible=False)
-        ],
-    ]
-
-    topcol1a = [
-        [sg.Text(key='-slot-e-'),],
-        [sg.Image(key='-monimg-e-', enable_events=True)], 
-        [sg.Text(justification='c', key='-monname-e-'), sg.Text(font=('Arial', font_sizes[2], 'bold'), key='-monnum-e-')],
-        [sg.Image(key='-typeimg1-e-'), sg.Text(key='-typename1-e-'), sg.Image(key='-typeimg2-e-', visible=False), sg.Text(key='-typename2-e-', visible=False),],
-        [sg.Text(key='-level-e-'), sg.Text(key='-evo-e-', visible = False), sg.Image(key='-status-e-', visible = False)],
-        [sg.Text(key='-ability-e-')],
-        [sg.Text(key='-note-e-', text_color='light blue', size=(25,2))],
-    ]
-    topcol2a = [
-        [sg.Text('HP:', key='-hplabel-e-')],
-        [sg.Text('ATK:', key='-attlabel-e-')],
-        [sg.Text('DEF:', key='-deflabel-e-')],
-        [sg.Text('SPA:', key='-spattlabel-e-')],
-        [sg.Text('SPD:', key='-spdeflabel-e-')],
-        [sg.Text('SPE:', key='-speedlabel-e-')],
-        [sg.Text('BST:', key='-bstlabel-e-')],
-        [sg.Button(' + Ability ', key='-addabil-e-', font=('Franklin Gothic Medium', font_sizes[2]), auto_size_button=True)], 
-        [sg.Button('Add Note', key='-addnote-e-', font=('Franklin Gothic Medium', font_sizes[2]), auto_size_button=True)],
-    ]
-    topcol3a = [
-        [sg.Text('[ ]', key='-hp-e-', enable_events=True, font=('Consolas', font_sizes[3]))],
-        [sg.Image(key='-attmod-e-'), sg.Text('[ ]', key='-att-e-', enable_events=True, font=('Consolas', font_sizes[3]))],
-        [sg.Image(key='-defmod-e-'), sg.Text('[ ]', key='-def-e-', enable_events=True, font=('Consolas', font_sizes[3]))],
-        [sg.Image(key='-spattmod-e-'), sg.Text('[ ]', key='-spatt-e-', enable_events=True, font=('Consolas', font_sizes[3]))],
-        [sg.Image(key='-spdefmod-e-'), sg.Text('[ ]', key='-spdef-e-', enable_events=True, font=('Consolas', font_sizes[3]))],
-        [sg.Image(key='-speedmod-e-'), sg.Text('[ ]', key='-speed-e-', enable_events=True, font=('Consolas', font_sizes[3]))],
-        [sg.Text(key='-bst-e-')],
-        [sg.Button(' - Ability ', key='-remabil-e-', font=('Franklin Gothic Medium', font_sizes[2]), auto_size_button=True)],
-        [sg.Text('')], 
-    ]
-
-    botcol1a = [
-        [sg.Text(key='-movehdr-e-', justification='l')],
-        [sg.Image(key='-mv1type-e-'), sg.Text(key='-mv1text-e-')],
-        [sg.Image(key='-mv2type-e-'), sg.Text(key='-mv2text-e-')],
-        [sg.Image(key='-mv3type-e-'), sg.Text(key='-mv3text-e-')],
-        [sg.Image(key='-mv4type-e-'), sg.Text(key='-mv4text-e-')],
-    ]
-    botcol2a = [
-        [sg.Text('PP', key='-movepphdr-e-', size=5, justification='c')],
-        [sg.Text(key='-mv1pp-e-', size=5, justification='r'), sg.Image(key='-mv1mod-e-'),],
-        [sg.Text(key='-mv2pp-e-', size=5, justification='r'), sg.Image(key='-mv2mod-e-'),],
-        [sg.Text(key='-mv3pp-e-', size=5, justification='r'), sg.Image(key='-mv3mod-e-'),],
-        [sg.Text(key='-mv4pp-e-', size=5, justification='r'), sg.Image(key='-mv4mod-e-'),],
-    ]
-    # botcol3a = [
-    #     [sg.Image(key='-mvmodhdr-e-'), sg.Text(size=(0,1))],
-    #     [sg.Image(key='-mv1mod-e-'), sg.Text(size=(0,1))],
-    #     [sg.Image(key='-mv2mod-e-'), sg.Text(size=(0,1))],
-    #     [sg.Image(key='-mv3mod-e-'), sg.Text(size=(0,1))],
-    #     [sg.Image(key='-mv4mod-e-'), sg.Text(size=(0,1))],
-    # ]
-    botcol4a = [
-        [sg.Text('Pow', key='-movebphdr-e-', size=3, justification='r')],
-        [sg.Text(key='-mv1bp-e-', size=3, justification='r')],
-        [sg.Text(key='-mv2bp-e-', size=3, justification='r')],
-        [sg.Text(key='-mv3bp-e-', size=3, justification='r')],
-        [sg.Text(key='-mv4bp-e-', size=3, justification='r')],
-    ]
-    botcol5a = [
-        [sg.Text('Acc', key='-moveacchdr-e-', size=3, justification='c')],
-        [sg.Text(key='-mv1acc-e-', size=3, justification='c')],
-        [sg.Text(key='-mv2acc-e-', size=3, justification='c')],
-        [sg.Text(key='-mv3acc-e-', size=3, justification='c')],
-        [sg.Text(key='-mv4acc-e-', size=3, justification='c')],
-    ]
-    botcol6a = [
-        [sg.Text('C', key='-movecontacthdr-e-', size=1, justification='c')],
-        [sg.Text(key='-mv1ctc-e-', size=1, justification='c')],
-        [sg.Text(key='-mv2ctc-e-', size=1, justification='c')],
-        [sg.Text(key='-mv3ctc-e-', size=1, justification='c')],
-        [sg.Text(key='-mv4ctc-e-', size=1, justification='c')],
-    ]
-    botcol7a = [
-        [sg.Text(key='-abillist-e-', justification='l', font=('Franklin Gothic Medium', font_sizes[2]))],
-        [sg.Text(key='-prevmoves-e-', justification='l', font=('Franklin Gothic Medium', font_sizes[2]), size=(50, 3))],
-        # [sg.Text(key='-mv4ctc-e-', size=1, justification='c')],
-    ]
-
-    layout = [[
-        sg.Column([[
-            sg.Column(topcol1, key='-tc1-', size=(200, 330)), 
-            sg.Column(topcol2, key='-tc2-'), 
-            sg.Column(topcol3, element_justification='right', key='-tc3-')
-        ], 
-        [
-            sg.Column(botcol1, key='-bc1-'), 
-            sg.Column(botcol2, key='-bc2-'), 
-            sg.Column(botcol4, key='-bc4-'), 
-            sg.Column(botcol5, key='-bc5-'),
-            sg.Column(botcol6, key='-bc6-'),
-        ], 
-        [
-            sg.Column(botcol7, key='-bc7-'),
-        ]], size=(380, 580)),
-        sg.VerticalSeparator(key='-vs-'),
-        sg.Column([[
-            sg.Column(topcol1a, size=(200, 330), key='-tc1a-e-', visible = False), 
-            sg.Column(topcol2a, size=(70, 350), key='-tc2a-e-', visible = False), 
-            sg.Column(topcol3a, size=(60, 350), element_justification='right', key='-tc3a-e-', visible = False)
-        ], 
-        [
-            sg.Column(botcol1a, key='-bc1a-e-', visible = False), 
-            sg.Column(botcol2a, element_justification='right', key='-bc2a-e-', visible = False), 
-            # sg.Column(botcol3a, element_justification='right', key='-bc3a-e-', visible = False), 
-            sg.Column(botcol4a, element_justification='right', key='-bc4a-e-', visible = False), 
-            sg.Column(botcol5a, element_justification='right', key='-bc5a-e-', visible = False), 
-            sg.Column(botcol6a, element_justification='right', key='-bc6a-e-', visible = False)
-        ], 
-        [
-            sg.Column(botcol7a, key='-bc7a-e-', visible = False), 
-        ]], size=(380, 580))
-    ]]
-    return layout
-
 def resize(image_file, new_size, encode_format='PNG'):
     im = Image.open(image_file)
     new_im = im.resize(new_size, Image.NEAREST)
@@ -1212,7 +1031,7 @@ def run():
         print('Game loaded: {}'.format(game))
         
         ### SET UP TRACKER GUI ###
-        layout = defaultuisettings()
+        layout = defaultuisettings(font_sizes)
         window = sg.Window(track_title, layout, track_size, element_padding=(1,1,0,0), background_color='black', resizable=True)
         loops = 0
         slotchoice = ''
@@ -1288,6 +1107,7 @@ def run():
                             # clearing visual tracker info
                             window['-ability-'].update('')
                             window['-item-'].update('')
+                            window['-heals-'].update('')
                             window['-tc2-'].update(visible = False)
                             window['-tc3-'].update(visible = False)
                             window['-bc1-'].update(visible = False)
@@ -1378,6 +1198,8 @@ def run():
                                 slotchoice = pkmn.name # only kicks the first time through the code
                                 antici = 0
                             window['-slotdrop-'].Update(values=slot, value=slotchoice, visible=True)
+                            # print(c, ';;;', getGame(c), ';;;', pkmn, ';;;', items)
+                            hphl, statushl, pphl = bagitems(c, getGame(c), pkmn, items)
                             # print(enctype, ';;;', pkmn.name, ';;;', party.index(pkmn)+1, ';;;', pkmnindex+12)
                             if enctype!='p':
                                 #grabs in battle types
@@ -1498,12 +1320,16 @@ def run():
                                     window['-ability-'].set_tooltip(str(pkmn.ability['description']))
                                     window['-item-'].Update(pkmn.held_item_name)
                                     window['-item-'].set_tooltip(itemdesc)
+                                    window['-heals-'].update("Heals: "+str(hphl["percent"])+"% ("+str(hphl["total"])+")", visible = True)
+                                    # test=hphl.pop("percent")
+                                    window['-heals-'].set_tooltip("Heals: "+str(hphl)+"\nStatus:"+str(statushl)+"\nPP:"+str(pphl))
                                     window['-hplabel-'].update(visible = True)
                                     window['-attlabel-'].update(visible = True, text_color=natureformatting(naturelist, 0))
                                     window['-deflabel-'].update(visible = True, text_color=natureformatting(naturelist, 1))
                                     window['-spattlabel-'].update(visible = True, text_color=natureformatting(naturelist, 2))
                                     window['-spdeflabel-'].update(visible = True, text_color=natureformatting(naturelist, 3))
                                     window['-speedlabel-'].update(visible = True, text_color=natureformatting(naturelist, 4))
+                                    window['-accevalabel-'].update(visible = True, text_color='white')
                                     window[confusestat].set_tooltip('{} causes confusion'.format(confuseberry))
                                     window['-bstlabel-'].Update(visible = True)
                                     window['-hp-'].Update('{}/{}'.format(hpnum[0], hpnum[1]))
@@ -1535,7 +1361,13 @@ def run():
                                     modspeed = int.from_bytes(c.read_memory((ppadd+(mongap*(pk-1))-16),1))
                                     if 0 <= modspeed <= 12:
                                         window['-speedmod-'].Update('images/modifiers/modifier{}.png'.format(modspeed), visible = True)
-                                    
+                                    modacc = int.from_bytes(c.read_memory((ppadd+(mongap*(pk-1))-15),1))
+                                    if 0 <= modacc <= 12:
+                                        window['-accmod-'].Update('images/modifiers/modifier{}.png'.format(modacc), visible = True)
+                                    modeva = int.from_bytes(c.read_memory((ppadd+(mongap*(pk-1))-14),1))
+                                    if 0 <= modeva <= 12:
+                                        window['-evamod-'].Update('images/modifiers/modifier{}.png'.format(modeva), visible = True)
+
                                     window['-bst-'].Update(pkmn.bst)
                                     window['-movehdr-'].update('Moves {}/{} ({})'.format(learnedcount, totallearn, nmove))
                                     window['-movehdr-'].set_tooltip(learnstr)
@@ -1733,6 +1565,7 @@ def run():
                                     window['-spdef-e-'].update('[{}]'.format(trackdata[pkmn.name]['stats'][4]))
                                     window['-speed-e-'].update('[{}]'.format(trackdata[pkmn.name]['stats'][5]))
                                     window['-bst-e-'].Update(pkmn.bst)
+
                                     if 0 <= int.from_bytes(c.read_memory((ppadd+(mongap*(pk-1))-20),1)) <= 12:
                                         window['-attmod-e-'].Update('images/modifiers/modifier{}.png'.format(int.from_bytes(c.read_memory((ppadd+(mongap*(pk-1))-20),1))), visible = True)
                                     if 0 <= int.from_bytes(c.read_memory((ppadd+(mongap*(pk-1))-19),1)) <= 12:
@@ -1743,6 +1576,11 @@ def run():
                                         window['-spdefmod-e-'].Update('images/modifiers/modifier{}.png'.format(int.from_bytes(c.read_memory((ppadd+(mongap*(pk-1))-17),1))), visible = True)
                                     if 0 <= int.from_bytes(c.read_memory((ppadd+(mongap*(pk-1))-16),1)) <= 12:
                                         window['-speedmod-e-'].Update('images/modifiers/modifier{}.png'.format(int.from_bytes(c.read_memory((ppadd+(mongap*(pk-1))-16),1))), visible = True)
+                                    if 0 <= int.from_bytes(c.read_memory((ppadd+(mongap*(pk-1))-16),1)) <= 12:
+                                        window['-accmod-e-'].Update('images/modifiers/modifier{}.png'.format(int.from_bytes(c.read_memory((ppadd+(mongap*(pk-1))-15),1))), visible = True)
+                                    if 0 <= int.from_bytes(c.read_memory((ppadd+(mongap*(pk-1))-16),1)) <= 12:
+                                        window['-evamod-e-'].Update('images/modifiers/modifier{}.png'.format(int.from_bytes(c.read_memory((ppadd+(mongap*(pk-1))-14),1))), visible = True)
+                                    
                                     window['-movehdr-e-'].update('Moves {}/{} ({})'.format(learnedcount, totallearn, nmove))
                                     window['-movehdr-e-'].set_tooltip(learnstr)
                                     window['-movepphdr-e-'].update('PP')
@@ -1894,12 +1732,16 @@ def run():
                                 window['-ability-'].set_tooltip(str(pkmn.ability['description']))
                                 window['-item-'].update(pkmn.held_item_name)
                                 window['-item-'].set_tooltip(itemdesc)
+                                window['-heals-'].update("Heals: "+str(hphl["percent"])+"% ("+str(hphl["total"])+")", visible = True)
+                                # test=hphl.pop("percent")
+                                window['-heals-'].set_tooltip("Heals: "+str(hphl)+"\nStatus:"+str(statushl)+"\nPP:"+str(pphl))
                                 window['-hplabel-'].update(visible = True)
                                 window['-attlabel-'].update(visible = True, text_color=natureformatting(naturelist, 0))
                                 window['-deflabel-'].update(visible = True, text_color=natureformatting(naturelist, 1))
                                 window['-spattlabel-'].update(visible = True, text_color=natureformatting(naturelist, 2))
                                 window['-spdeflabel-'].update(visible = True, text_color=natureformatting(naturelist, 3))
                                 window['-speedlabel-'].update(visible = True, text_color=natureformatting(naturelist, 4))
+                                window['-accevalabel-'].update(visible =False)
                                 window[confusestat].set_tooltip('{} causes confusion'.format(confuseberry))
                                 window['-bstlabel-'].update(visible = True)
                                 window['-hp-'].update('{}/{}'.format(pkmn.cur_hp, pkmn.maxhp))
@@ -1920,6 +1762,8 @@ def run():
                                 window['-spattmod-'].update('images/modifiers/modifier6.png')
                                 window['-spdefmod-'].update('images/modifiers/modifier6.png')
                                 window['-speedmod-'].update('images/modifiers/modifier6.png')
+                                window['-accmod-'].update(visible =False)
+                                window['-evamod-'].update(visible =False)
                                 window['-movehdr-'].update('Moves {}/{} ({})'.format(learnedcount, totallearn, nmove))
                                 window['-movehdr-'].set_tooltip(learnstr)
                                 window['-movepphdr-'].update('PP')
