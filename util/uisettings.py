@@ -11,9 +11,10 @@ def defaultuisettings(font_sizes):
         [sg.Text(key='-level-'), sg.Text(key='-evo-', visible = False), sg.Image(key='-status-', visible = False)],
         [sg.Text(key='-ability-')],
         [sg.Text(key='-item-')],
-        [sg.Text(key='-heals-')],
+        # [sg.Text(key='-heals-')],
     ]
     topcol2 = [
+        [sg.Text(' ', key='-ph1-', visible=True)],
         [sg.Text('HP:', key='-hplabel-', visible=False)],
         [sg.Text('ATK:', key='-attlabel-', visible=False)],
         [sg.Text('DEF:', key='-deflabel-', visible=False)],
@@ -21,9 +22,15 @@ def defaultuisettings(font_sizes):
         [sg.Text('SPD:', key='-spdeflabel-', visible=False)],
         [sg.Text('SPE:', key='-speedlabel-', visible=False)],
         [sg.Text('BST:', key='-bstlabel-', visible=False)],
-        [sg.Text('Acc/Eva:', key='-accevalabel-', visible=False)],
+        # [sg.Text(key='-heals-')],
+    ]
+    topcol2b = [
+        [sg.Text(key='-hpheals-')],
+        # [sg.Text(key='-statusheals-')],
+        [sg.Text('Acc: ', key='-accevalabel-', visible=False, justification='l'), sg.Image(key='-accmod-'), sg.Text('  Eva: ', key='-accevaph-', visible=False), sg.Image(key='-evamod-')],
     ]
     topcol3 = [
+        [sg.Text(' ', key='-ph2-', visible=True, justification='r')],
         [sg.Text(key='-hp-', justification='r')],
         [sg.Image(key='-attmod-'), sg.Text(key='-att-', justification='r')],
         [sg.Image(key='-defmod-'), sg.Text(key='-def-', justification='r')],
@@ -31,7 +38,6 @@ def defaultuisettings(font_sizes):
         [sg.Image(key='-spdefmod-'), sg.Text(key='-spdef-', justification='r')],
         [sg.Image(key='-speedmod-'), sg.Text(key='-speed-', justification='r')],
         [sg.Text(key='-bst-', justification='r')],
-        [sg.Image(key='-accmod-'), sg.Image(key='-evamod-')],
     ]
 
     botcol1 = [
@@ -86,6 +92,7 @@ def defaultuisettings(font_sizes):
         [sg.Text(key='-note-e-', text_color='light blue', size=(25,2))],
     ]
     topcol2a = [
+        [sg.Text(' ', key='-ph3-', visible=True)],
         [sg.Text('HP:', key='-hplabel-e-')],
         [sg.Text('ATK:', key='-attlabel-e-')],
         [sg.Text('DEF:', key='-deflabel-e-')],
@@ -93,11 +100,12 @@ def defaultuisettings(font_sizes):
         [sg.Text('SPD:', key='-spdeflabel-e-')],
         [sg.Text('SPE:', key='-speedlabel-e-')],
         [sg.Text('BST:', key='-bstlabel-e-')],
-        [sg.Text('Acc/Eva:', key='-accevalabel-e-')],
+        [sg.Text('Acc:', key='-accevalabel-e-'), sg.Image(key='-accmod-e-')],
         [sg.Button(' + Ability ', key='-addabil-e-', font=('Franklin Gothic Medium', font_sizes[2]), auto_size_button=True)], 
         [sg.Button('Add Note', key='-addnote-e-', font=('Franklin Gothic Medium', font_sizes[2]), auto_size_button=True)],
     ]
     topcol3a = [
+        [sg.Text(' ', key='-ph4-', visible=True)],
         [sg.Text('[ ]', key='-hp-e-', enable_events=True, font=('Consolas', font_sizes[3]))],
         [sg.Image(key='-attmod-e-'), sg.Text('[ ]', key='-att-e-', enable_events=True, font=('Consolas', font_sizes[3]))],
         [sg.Image(key='-defmod-e-'), sg.Text('[ ]', key='-def-e-', enable_events=True, font=('Consolas', font_sizes[3]))],
@@ -105,7 +113,7 @@ def defaultuisettings(font_sizes):
         [sg.Image(key='-spdefmod-e-'), sg.Text('[ ]', key='-spdef-e-', enable_events=True, font=('Consolas', font_sizes[3]))],
         [sg.Image(key='-speedmod-e-'), sg.Text('[ ]', key='-speed-e-', enable_events=True, font=('Consolas', font_sizes[3]))],
         [sg.Text(key='-bst-e-')],
-        [sg.Image(key='-accmod-e-'), sg.Image(key="-evamod-e-")],
+        [sg.Text('Eva:', key='-accevaph-e-'), sg.Image(key="-evamod-e-")],
         [sg.Button(' - Ability ', key='-remabil-e-', font=('Franklin Gothic Medium', font_sizes[2]), auto_size_button=True)],
         [sg.Text('')], 
     ]
@@ -159,10 +167,21 @@ def defaultuisettings(font_sizes):
     ]
 
     layout = [[
+        # sg.Column([[
+        #     sg.Column(topcol1, key='-tc1-', size=(200, 350)), 
+        #     sg.Column(topcol2, key='-tc2-', size=(80, 350)), 
+        #     sg.Column(topcol3, element_justification='right', key='-tc3-', size=(100, 350))
+        # ], 
         sg.Column([[
             sg.Column(topcol1, key='-tc1-', size=(200, 350)), 
-            sg.Column(topcol2, key='-tc2-'), 
-            sg.Column(topcol3, element_justification='right', key='-tc3-')
+            sg.Column([[
+                sg.Column(topcol2, key='-tc2-', size=(80, 230)), 
+                sg.Column(topcol3, element_justification='right', key='-tc3-', size=(100, 230))
+                ],
+                [
+                    sg.Column(topcol2b, key='-tc2b-', size=(180, 120))
+                ],
+            ])
         ], 
         [
             sg.Column(botcol1, key='-bc1-'), 
@@ -177,7 +196,7 @@ def defaultuisettings(font_sizes):
         sg.VerticalSeparator(key='-vs-'),
         sg.Column([[
             sg.Column(topcol1a, size=(200, 350), key='-tc1a-e-', visible = False), 
-            sg.Column(topcol2a, size=(70, 350), key='-tc2a-e-', visible = False), 
+            sg.Column(topcol2a, size=(80, 350), key='-tc2a-e-', visible = False), 
             sg.Column(topcol3a, size=(60, 350), element_justification='right', key='-tc3a-e-', visible = False)
         ], 
         [
