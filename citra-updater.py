@@ -60,7 +60,7 @@ scale = 1.3
 track_size = (600, 600)
 font_sizes = [14, 12, 10, 15]
 sg.set_options(font=('Franklin Gothic Medium', font_sizes[0]), text_color='white', background_color='black', element_background_color='black', text_element_background_color='black', tooltip_font=('Franklin Gothic Medium', font_sizes[1]), tooltip_time=150, scaling=scale)
-refresh_rate = 2500
+refresh_rate = 4000
 
 curr_version = open('version.txt', 'r').read()
 gitcheck(curr_version)
@@ -1411,6 +1411,9 @@ def run():
                                             "-":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
                                         }
                                         typedic={"Normal":0,"Fighting":1,"Flying":2,"Poison":3,"Ground":4,"Rock":5,"Bug":6,"Ghost":7,"Steel":8,"Fire":9,"Water":10,"Grass":11,"Electric":12,"Psychic":13,"Ice":14,"Dragon":15,"Dark":16,"Fairy":17,"Null":18}
+                                        if pkmn.ability['name'] == 'Scrappy':
+                                            typetable['Normal'] = [1,1,1,1,1,.5,1,1,.5,1,1,1,1,1,1,1,1,1,1]
+                                            typetable['Fighting'] = [2,1,.5,.5,1,2,.5,1,2,1,1,1,1,.5,2,1,2,.5,1]
                                         typemult=1
                                         if movetyp!=None:
                                             for type in enemytypes:
@@ -1431,6 +1434,16 @@ def run():
                                                 antici = 1
                                             elif typemult==0:
                                                 modimage="X"
+                                        if move['type'] == 'Normal' and pkmn.ability['name'] == 'Aerilate':
+                                            move['type'] == 'Flying'
+                                        if move['type'] == 'Normal' and pkmn.ability['name'] == 'Pixilate':
+                                            move['type'] == 'Fairy'
+                                        if move['type'] == 'Normal' and pkmn.ability['name'] == 'Refrigerate':
+                                            move['type'] == 'Ice'
+                                        if move['type'] == 'Normal' and pkmn.ability['name'] == 'Galvanize':
+                                            move['type'] == 'Electric'
+                                        if pkmn.ability['name'] == 'Normalize':
+                                            move['type'] == 'Normal' #lolrip
                                         # movepower = calcPower(pkmn,move,hpnum[0],hpnum[1])
                                         acc = '-' if not move['acc'] else int(move['acc'])
                                         contact = ('Y' if move['contact'] else 'N')
