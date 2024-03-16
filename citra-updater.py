@@ -817,6 +817,8 @@ def calcPower(pkmn,move,hp1,hp2):
         return 'LVL'
     elif move['name'] in ('Electro Ball', 'Gyro Ball'):
         return 'SPD'
+    elif move['name'] == 'Punishment':
+        return '60+'
     else:
         return ('-' if not move['power'] else int(move['power']))
     
@@ -977,13 +979,17 @@ def statnotes(s, pos):
     nt = s['stats'][pos]
     if nt == ' ':
         s['stats'][pos] = '+'
+        txtcol = '#80f080'
     elif nt == '+':
         s['stats'][pos] = '-'
+        txtcol = '#f08080'
     elif nt == '-':
         s['stats'][pos] = '='
+        txtcol = '#ffffff'
     elif nt == '=':
         s['stats'][pos] = ' '
-    return s
+        txtcol = '#ffffff'
+    return s, txtcol
 
 def abil_popup(l):
     abilpopup = [
@@ -1054,29 +1060,29 @@ def run():
                         slotchoice = values['-slotdrop-']
                         window['-slotdrop-'].widget.select_clear()
                     elif event == '-hp-e-':
-                        u = statnotes(enemydict, 0)
+                        u, col = statnotes(enemydict, 0)
                         trackdata[enemymon]['stats'] = u['stats']
-                        window['-hp-e-'].update('[{}]'.format(u['stats'][0]))
+                        window['-hp-e-'].update('[{}]'.format(u['stats'][0]), text_color = col)
                     elif event == '-att-e-':
-                        u = statnotes(enemydict, 1)
+                        u, col = statnotes(enemydict, 1)
                         trackdata[enemymon]['stats'] = u['stats']
-                        window['-att-e-'].update('[{}]'.format(u['stats'][1]))
+                        window['-att-e-'].update('[{}]'.format(u['stats'][1]), text_color = col)
                     elif event == '-def-e-':
-                        u = statnotes(enemydict, 2)
+                        u, col = statnotes(enemydict, 2)
                         trackdata[enemymon]['stats'] = u['stats']
-                        window['-def-e-'].update('[{}]'.format(u['stats'][2]))
+                        window['-def-e-'].update('[{}]'.format(u['stats'][2]), text_color = col)
                     elif event == '-spatt-e-':
-                        u = statnotes(enemydict, 3)
+                        u, col = statnotes(enemydict, 3)
                         trackdata[enemymon]['stats'] = u['stats']
-                        window['-spatt-e-'].update('[{}]'.format(u['stats'][3]))
+                        window['-spatt-e-'].update('[{}]'.format(u['stats'][3]), text_color = col)
                     elif event == '-spdef-e-':
-                        u = statnotes(enemydict, 4)
+                        u, col = statnotes(enemydict, 4)
                         trackdata[enemymon]['stats'] = u['stats']
-                        window['-spdef-e-'].update('[{}]'.format(u['stats'][4]))
+                        window['-spdef-e-'].update('[{}]'.format(u['stats'][4]), text_color = col)
                     elif event == '-speed-e-':
-                        u = statnotes(enemydict, 5)
+                        u, col = statnotes(enemydict, 5)
                         trackdata[enemymon]['stats'] = u['stats']
-                        window['-speed-e-'].update('[{}]'.format(u['stats'][5]))
+                        window['-speed-e-'].update('[{}]'.format(u['stats'][5]), text_color = col)
                     elif event == '-addnote-e-':
                         note = sg.popup_get_text('Enter note:', title='Note', default_text=enemydict['notes'])
                         trackdata[enemymon]['notes'] = note
@@ -1322,7 +1328,7 @@ def run():
                                     window['-ability-'].set_tooltip(str(pkmn.ability['description']))
                                     window['-item-'].Update(pkmn.held_item_name)
                                     window['-item-'].set_tooltip(itemdesc)
-                                    window['-hpheals-'].update("Heals: "+str(hphl["percent"])+"% ("+str(hphl["total"])+")", visible = True)
+                                    window['-hpheals-'].update("Heals: "+str(hphl["percent"])+"% ("+str(hphl["total"])+")", visible = True, text_color="#f0f080")
                                     # test=hphl.pop("percent")
                                     window['-hpheals-'].set_tooltip("Heals: "+str(hphl)+"\nStatus:"+str(statushl)+"\nPP:"+str(pphl))
                                     window['-hplabel-'].update(visible = True)
@@ -1364,10 +1370,10 @@ def run():
                                     modspeed = int.from_bytes(c.read_memory((ppadd+(mongap*(pk-1))-16),1))
                                     if 0 <= modspeed <= 12:
                                         window['-speedmod-'].Update('images/modifiers/modifier{}.png'.format(modspeed), visible = True)
-                                    modacc = int.from_bytes(c.read_memory((ppadd+(mongap*(pk-1))-15),1))
+                                    modacc = int.from_bytes(c.read_memory((ppadd+(mongap*(pk-1))-14),1))
                                     if 0 <= modacc <= 12:
                                         window['-accmod-'].Update('images/modifiers/modifier{}.png'.format(modacc), visible = True)
-                                    modeva = int.from_bytes(c.read_memory((ppadd+(mongap*(pk-1))-14),1))
+                                    modeva = int.from_bytes(c.read_memory((ppadd+(mongap*(pk-1))-15),1))
                                     if 0 <= modeva <= 12:
                                         window['-evamod-'].Update('images/modifiers/modifier{}.png'.format(modeva), visible = True)
 
@@ -1411,9 +1417,22 @@ def run():
                                             "-":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
                                         }
                                         typedic={"Normal":0,"Fighting":1,"Flying":2,"Poison":3,"Ground":4,"Rock":5,"Bug":6,"Ghost":7,"Steel":8,"Fire":9,"Water":10,"Grass":11,"Electric":12,"Psychic":13,"Ice":14,"Dragon":15,"Dark":16,"Fairy":17,"Null":18}
+
+                                        # interactions between abilities and typings
                                         if pkmn.ability['name'] == 'Scrappy':
                                             typetable['Normal'] = [1,1,1,1,1,.5,1,1,.5,1,1,1,1,1,1,1,1,1,1]
                                             typetable['Fighting'] = [2,1,.5,.5,1,2,.5,1,2,1,1,1,1,.5,2,1,2,.5,1]
+                                        if move['type'] == 'Normal' and pkmn.ability['name'] == 'Aerilate':
+                                            move['type'] == 'Flying'
+                                        if move['type'] == 'Normal' and pkmn.ability['name'] == 'Pixilate':
+                                            move['type'] == 'Fairy'
+                                        if move['type'] == 'Normal' and pkmn.ability['name'] == 'Refrigerate':
+                                            move['type'] == 'Ice'
+                                        if move['type'] == 'Normal' and pkmn.ability['name'] == 'Galvanize':
+                                            move['type'] == 'Electric'
+                                        if pkmn.ability['name'] == 'Normalize':
+                                            move['type'] == 'Normal' #lolrip
+
                                         typemult=1
                                         if movetyp!=None:
                                             for type in enemytypes:
@@ -1434,16 +1453,6 @@ def run():
                                                 antici = 1
                                             elif typemult==0:
                                                 modimage="X"
-                                        if move['type'] == 'Normal' and pkmn.ability['name'] == 'Aerilate':
-                                            move['type'] == 'Flying'
-                                        if move['type'] == 'Normal' and pkmn.ability['name'] == 'Pixilate':
-                                            move['type'] == 'Fairy'
-                                        if move['type'] == 'Normal' and pkmn.ability['name'] == 'Refrigerate':
-                                            move['type'] == 'Ice'
-                                        if move['type'] == 'Normal' and pkmn.ability['name'] == 'Galvanize':
-                                            move['type'] == 'Electric'
-                                        if pkmn.ability['name'] == 'Normalize':
-                                            move['type'] == 'Normal' #lolrip
                                         # movepower = calcPower(pkmn,move,hpnum[0],hpnum[1])
                                         acc = '-' if not move['acc'] else int(move['acc'])
                                         contact = ('Y' if move['contact'] else 'N')
@@ -1466,8 +1475,7 @@ def run():
                                         antici = 0
                                         enemymon = pkmn.name
                                         enemydict = trackdata[pkmn.name]
-                                        while ct < 4:
-                                            ct += 1
+                                        for ct in range(1,5):
                                             window['-mv{}type-e-'.format(ct)].update(visible = False)
                                             window['-mv{}text-e-'.format(ct)].update(visible = False)
                                             window['-mv{}pp-e-'.format(ct)].update(visible = False)
@@ -1574,12 +1582,17 @@ def run():
                                     window['-level-e-'].set_tooltip('Seen at {}'.format(trackdata[pkmn.name]["levels"]))
                                     window['-note-e-'].update(trackdata[pkmn.name]["notes"])
                                     window['-note-e-'].set_tooltip(trackdata[pkmn.name]["notes"])
-                                    window['-hp-e-'].update('[{}]'.format(trackdata[pkmn.name]['stats'][0]))
-                                    window['-att-e-'].update('[{}]'.format(trackdata[pkmn.name]['stats'][1]))
-                                    window['-def-e-'].update('[{}]'.format(trackdata[pkmn.name]['stats'][2]))
-                                    window['-spatt-e-'].update('[{}]'.format(trackdata[pkmn.name]['stats'][3]))
-                                    window['-spdef-e-'].update('[{}]'.format(trackdata[pkmn.name]['stats'][4]))
-                                    window['-speed-e-'].update('[{}]'.format(trackdata[pkmn.name]['stats'][5]))
+                                    for i in range(0, 6):
+                                        j = ['hp', 'att', 'def', 'spatt', 'spdef', 'speed']
+                                        if trackdata[pkmn.name]['stats'][i] == '+':
+                                            col = '#80f080'
+                                        elif trackdata[pkmn.name]['stats'][i] == '-':
+                                            col = '#f08080'
+                                        else:
+                                            col = '#ffffff'
+                                        print(trackdata[pkmn.name]['stats'][i], ';;;', col)
+                                        window[f'-{j[i]}-e-'].update(f'[{trackdata[pkmn.name]['stats'][i]}]', text_color = col)
+                                    
                                     window['-bst-e-'].Update(pkmn.bst)
 
                                     if 0 <= int.from_bytes(c.read_memory((ppadd+(mongap*(pk-1))-20),1)) <= 12:
@@ -1592,9 +1605,9 @@ def run():
                                         window['-spdefmod-e-'].Update('images/modifiers/modifier{}.png'.format(int.from_bytes(c.read_memory((ppadd+(mongap*(pk-1))-17),1))), visible = True)
                                     if 0 <= int.from_bytes(c.read_memory((ppadd+(mongap*(pk-1))-16),1)) <= 12:
                                         window['-speedmod-e-'].Update('images/modifiers/modifier{}.png'.format(int.from_bytes(c.read_memory((ppadd+(mongap*(pk-1))-16),1))), visible = True)
-                                    if 0 <= int.from_bytes(c.read_memory((ppadd+(mongap*(pk-1))-16),1)) <= 12:
+                                    if 0 <= int.from_bytes(c.read_memory((ppadd+(mongap*(pk-1))-14),1)) <= 12:
                                         window['-accmod-e-'].Update('images/modifiers/modifier{}.png'.format(int.from_bytes(c.read_memory((ppadd+(mongap*(pk-1))-15),1))), visible = True)
-                                    if 0 <= int.from_bytes(c.read_memory((ppadd+(mongap*(pk-1))-16),1)) <= 12:
+                                    if 0 <= int.from_bytes(c.read_memory((ppadd+(mongap*(pk-1))-15),1)) <= 12:
                                         window['-evamod-e-'].Update('images/modifiers/modifier{}.png'.format(int.from_bytes(c.read_memory((ppadd+(mongap*(pk-1))-14),1))), visible = True)
                                     
                                     window['-movehdr-e-'].update('Moves {}/{} ({})'.format(learnedcount, totallearn, nmove))
@@ -1603,8 +1616,8 @@ def run():
                                     window['-movebphdr-e-'].update('Pow')
                                     window['-moveacchdr-e-'].update('Acc')
                                     window['-movecontacthdr-e-'].update('C')
-                                    window['-prevmoves-e-'].update('Previous Moves: ' + re.sub('[^A-Za-z0-9 ]+', '', str(trackdata[pkmn.name]['moves'])))
-                                    window['-abillist-e-'].update('Known Abilities: ' + re.sub('[^A-Za-z0-9 ]+', '', str(trackdata[pkmn.name]['abilities'])))
+                                    window['-prevmoves-e-'].update('Previous Moves: ' + re.sub('[^A-Za-z0-9, ]+', '', str(trackdata[pkmn.name]['moves'])))
+                                    window['-abillist-e-'].update('Known Abilities: ' + re.sub('[^A-Za-z0-9, ]+', '', str(trackdata[pkmn.name]['abilities'])))
                                     ### STATS ########
                                     ### MOVES ########
                                     totallearn,nextmove,learnedcount,learnstr = pkmn.getMoves(gamegroupid)
@@ -1749,7 +1762,7 @@ def run():
                                 window['-ability-'].set_tooltip(str(pkmn.ability['description']))
                                 window['-item-'].update(pkmn.held_item_name)
                                 window['-item-'].set_tooltip(itemdesc)
-                                window['-hpheals-'].update("Heals: "+str(hphl["percent"])+"% ("+str(hphl["total"])+")", visible = True)
+                                window['-hpheals-'].update("Heals: "+str(hphl["percent"])+"% ("+str(hphl["total"])+")", visible = True, text_color="#f0f080")
                                 # test=hphl.pop("percent")
                                 window['-hpheals-'].set_tooltip("Heals: "+str(hphl)+"\nStatus:"+str(statushl)+"\nPP:"+str(pphl))
                                 window['-hplabel-'].update(visible = True)
