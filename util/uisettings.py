@@ -27,7 +27,7 @@ def defaultuisettings(font_sizes):
     topcol2b = [
         [sg.Text(key='-hpheals-')],
         # [sg.Text(key='-statusheals-')],
-        [sg.Text('Acc: ', key='-accevalabel-', visible=False, justification='l'), sg.Image(key='-accmod-'), sg.Text('  Eva: ', key='-accevaph-', visible=False), sg.Image(key='-evamod-')],
+        [sg.Text('Acc: ', key='-accevalabel-', visible=False), sg.Image(key='-accmod-', visible=False), sg.Text('  Eva: ', key='-accevaph-', visible=False), sg.Image(key='-evamod-', visible=False)],
     ]
     topcol3 = [
         [sg.Text(' ', key='-ph2-', visible=True, justification='r')],
@@ -92,7 +92,7 @@ def defaultuisettings(font_sizes):
         [sg.Text(key='-note-e-', text_color='light blue', size=(25,2))],
     ]
     topcol2a = [
-        [sg.Text(' ', key='-ph3-', visible=True)],
+        [sg.Text(' ', key='-ph3-')],
         [sg.Text('HP:', key='-hplabel-e-')],
         [sg.Text('ATK:', key='-attlabel-e-')],
         [sg.Text('DEF:', key='-deflabel-e-')],
@@ -100,12 +100,12 @@ def defaultuisettings(font_sizes):
         [sg.Text('SPD:', key='-spdeflabel-e-')],
         [sg.Text('SPE:', key='-speedlabel-e-')],
         [sg.Text('BST:', key='-bstlabel-e-')],
-        [sg.Text('Acc:', key='-accevalabel-e-'), sg.Image(key='-accmod-e-')],
-        [sg.Button(' + Ability ', key='-addabil-e-', font=('Franklin Gothic Medium', font_sizes[2]), auto_size_button=True)], 
-        [sg.Button('Add Note', key='-addnote-e-', font=('Franklin Gothic Medium', font_sizes[2]), auto_size_button=True)],
+        # [sg.Text('Acc:', key='-accevalabel-e-'), sg.Image(key='-accmod-e-')],
+        # [sg.Button(' + Ability ', key='-addabil-e-', font=('Franklin Gothic Medium', font_sizes[2]), auto_size_button=True)], 
+        # [sg.Button('Add Note', key='-addnote-e-', font=('Franklin Gothic Medium', font_sizes[2]), auto_size_button=True)],
     ]
     topcol3a = [
-        [sg.Text(' ', key='-ph4-', visible=True)],
+        [sg.Text(' ', key='-ph4-')],
         [sg.Text('[ ]', key='-hp-e-', enable_events=True, font=('Consolas', font_sizes[3]))],
         [sg.Image(key='-attmod-e-'), sg.Text('[ ]', key='-att-e-', enable_events=True, font=('Consolas', font_sizes[3]))],
         [sg.Image(key='-defmod-e-'), sg.Text('[ ]', key='-def-e-', enable_events=True, font=('Consolas', font_sizes[3]))],
@@ -113,9 +113,14 @@ def defaultuisettings(font_sizes):
         [sg.Image(key='-spdefmod-e-'), sg.Text('[ ]', key='-spdef-e-', enable_events=True, font=('Consolas', font_sizes[3]))],
         [sg.Image(key='-speedmod-e-'), sg.Text('[ ]', key='-speed-e-', enable_events=True, font=('Consolas', font_sizes[3]))],
         [sg.Text(key='-bst-e-')],
-        [sg.Text('Eva:', key='-accevaph-e-'), sg.Image(key="-evamod-e-")],
-        [sg.Button(' - Ability ', key='-remabil-e-', font=('Franklin Gothic Medium', font_sizes[2]), auto_size_button=True)],
-        [sg.Text('')], 
+        # [sg.Text('Eva:', key='-accevaph-e-'), sg.Image(key="-evamod-e-")],
+        # [sg.Button(' - Ability ', key='-remabil-e-', font=('Franklin Gothic Medium', font_sizes[2]), auto_size_button=True)],
+        # [sg.Text('')], 
+    ]
+    topcol4a = [
+        [sg.Text('Acc: ', key='-accevalabel-e-'), sg.Image(key='-accmod-e-'), sg.Text('  Eva: ', key='-accevaph-e-'), sg.Image(key='-evamod-e-')],
+        [sg.Button(' + Ability ', key='-addabil-e-', font=('Franklin Gothic Medium', font_sizes[2]), auto_size_button=True), sg.Button(' - Ability ', key='-remabil-e-', font=('Franklin Gothic Medium', font_sizes[2]), auto_size_button=True)], 
+        [sg.Button('Add Note', key='-addnote-e-', font=('Franklin Gothic Medium', font_sizes[2]), auto_size_button=True)],
     ]
 
     botcol1a = [
@@ -161,17 +166,12 @@ def defaultuisettings(font_sizes):
         [sg.Text(key='-mv4ctc-e-', size=1, justification='c')],
     ]
     botcol7a = [
-        [sg.Text(key='-abillist-e-', justification='l', font=('Franklin Gothic Medium', font_sizes[2]))],
+        [sg.Text(key='-abillist-e-', justification='l', font=('Franklin Gothic Medium', font_sizes[2]), text_color="#f0f080")],
         [sg.Text(key='-prevmoves-e-', justification='l', font=('Franklin Gothic Medium', font_sizes[2]), size=(50, 3))],
         # [sg.Text(key='-mv4ctc-e-', size=1, justification='c')],
     ]
 
     layout = [[
-        # sg.Column([[
-        #     sg.Column(topcol1, key='-tc1-', size=(200, 350)), 
-        #     sg.Column(topcol2, key='-tc2-', size=(80, 350)), 
-        #     sg.Column(topcol3, element_justification='right', key='-tc3-', size=(100, 350))
-        # ], 
         sg.Column([[
             sg.Column(topcol1, key='-tc1-', size=(200, 350)), 
             sg.Column([[
@@ -196,8 +196,17 @@ def defaultuisettings(font_sizes):
         sg.VerticalSeparator(key='-vs-'),
         sg.Column([[
             sg.Column(topcol1a, size=(200, 350), key='-tc1a-e-', visible = False), 
-            sg.Column(topcol2a, size=(80, 350), key='-tc2a-e-', visible = False), 
-            sg.Column(topcol3a, size=(60, 350), element_justification='right', key='-tc3a-e-', visible = False)
+            sg.Column([[
+                sg.Column(topcol2a, key='-tc2a-e-', size=(50, 230)), 
+                sg.Column(topcol3a, element_justification='right', key='-tc3a-e-', size=(60, 230))
+                ],
+                [
+                    sg.Column(topcol4a, key='-tc4a-e-', size=(140, 120))
+                ],
+            ], key='-tc2-e-', visible=False),
+            # sg.Column(topcol2a, size=(80, 230), key='-tc2a-e-', visible = False), 
+            # sg.Column(topcol3a, size=(60, 230), element_justification='right', key='-tc3a-e-', visible = False),
+            # sg.Column(topcol4a, size=(140, 120), element_justification='right', key='-tc4a-e-', visible = False),
         ], 
         [
             sg.Column(botcol1a, key='-bc1a-e-', visible = False), 

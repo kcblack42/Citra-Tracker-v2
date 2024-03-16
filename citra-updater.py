@@ -1123,8 +1123,7 @@ def run():
                             window['-bc5-'].update(visible = False)
                             window['-bc6-'].update(visible = False)
                             window['-tc1a-e-'].update(visible = False)
-                            window['-tc2a-e-'].update(visible = False)
-                            window['-tc3a-e-'].update(visible = False)
+                            window['-tc2-e-'].update(visible = False)
                             window['-bc1a-e-'].update(visible = False)
                             window['-bc2a-e-'].update(visible = False)
                             window['-bc4a-e-'].update(visible = False)
@@ -1337,8 +1336,6 @@ def run():
                                     window['-spattlabel-'].update(visible = True, text_color=natureformatting(naturelist, 2))
                                     window['-spdeflabel-'].update(visible = True, text_color=natureformatting(naturelist, 3))
                                     window['-speedlabel-'].update(visible = True, text_color=natureformatting(naturelist, 4))
-                                    window['-accevalabel-'].update(visible = True, text_color='white')
-                                    window['-accevaph-'].update(visible = True)
                                     window[confusestat].set_tooltip('{} causes confusion'.format(confuseberry))
                                     window['-bstlabel-'].Update(visible = True)
                                     window['-hp-'].Update('{}/{}'.format(hpnum[0], hpnum[1]))
@@ -1370,15 +1367,17 @@ def run():
                                     modspeed = int.from_bytes(c.read_memory((ppadd+(mongap*(pk-1))-16),1))
                                     if 0 <= modspeed <= 12:
                                         window['-speedmod-'].Update('images/modifiers/modifier{}.png'.format(modspeed), visible = True)
-                                    modacc = int.from_bytes(c.read_memory((ppadd+(mongap*(pk-1))-14),1))
+                                    window['-accevalabel-'].update(visible = True, text_color='white')
+                                    modacc = int.from_bytes(c.read_memory((ppadd+(mongap*(pk-1))-15),1))
                                     if 0 <= modacc <= 12:
                                         window['-accmod-'].Update('images/modifiers/modifier{}.png'.format(modacc), visible = True)
-                                    modeva = int.from_bytes(c.read_memory((ppadd+(mongap*(pk-1))-15),1))
+                                    window['-accevaph-'].update(visible = True)
+                                    modeva = int.from_bytes(c.read_memory((ppadd+(mongap*(pk-1))-14),1))
                                     if 0 <= modeva <= 12:
                                         window['-evamod-'].Update('images/modifiers/modifier{}.png'.format(modeva), visible = True)
 
                                     window['-bst-'].Update(pkmn.bst)
-                                    window['-movehdr-'].update('Moves {}/{} ({})'.format(learnedcount, totallearn, nmove))
+                                    window['-movehdr-'].update(f'Moves {learnedcount}/{totallearn} ({nmove})')
                                     window['-movehdr-'].set_tooltip(learnstr)
                                     window['-movepphdr-'].update('PP')
                                     window['-movebphdr-'].update('Pow')
@@ -1560,8 +1559,7 @@ def run():
                                     nmove = (' - ' if not nextmove else nextmove)
                                     # show enemy stuff in battle
                                     window['-tc1a-e-'].Update(visible = True)
-                                    window['-tc2a-e-'].Update(visible = True)
-                                    window['-tc3a-e-'].Update(visible = True)
+                                    window['-tc2-e-'].update(visible = True)
                                     window['-bc1a-e-'].Update(visible = True)
                                     window['-bc2a-e-'].Update(visible = True)
                                     # window['-bc3a-e-'].Update(visible = False)
@@ -1577,9 +1575,9 @@ def run():
                                         window['-monimg-e-'].Update(visible = False)
                                         print(Exception)
                                     window['-monname-e-'].Update(pkmn.name.replace("Farfetchd","Farfetch'd"))
-                                    window['-monnum-e-'].Update('#{}'.format(str(pkmn.species_num())))
-                                    window['-level-e-'].Update('Level: {} (Seen {})'.format(levelnum, len(trackdata[pkmn.name]["levels"])))
-                                    window['-level-e-'].set_tooltip('Seen at {}'.format(trackdata[pkmn.name]["levels"]))
+                                    window['-monnum-e-'].Update(f'#{str(pkmn.species_num())}')
+                                    window['-level-e-'].Update(f'Level: {levelnum} (Seen {len(trackdata[pkmn.name]["levels"])})')
+                                    window['-level-e-'].set_tooltip(f'Seen at {trackdata[pkmn.name]["levels"]}')
                                     window['-note-e-'].update(trackdata[pkmn.name]["notes"])
                                     window['-note-e-'].set_tooltip(trackdata[pkmn.name]["notes"])
                                     for i in range(0, 6):
@@ -1590,7 +1588,6 @@ def run():
                                             col = '#f08080'
                                         else:
                                             col = '#ffffff'
-                                        print(trackdata[pkmn.name]['stats'][i], ';;;', col)
                                         window[f'-{j[i]}-e-'].update(f'[{trackdata[pkmn.name]['stats'][i]}]', text_color = col)
                                     
                                     window['-bst-e-'].Update(pkmn.bst)
@@ -1610,13 +1607,13 @@ def run():
                                     if 0 <= int.from_bytes(c.read_memory((ppadd+(mongap*(pk-1))-15),1)) <= 12:
                                         window['-evamod-e-'].Update('images/modifiers/modifier{}.png'.format(int.from_bytes(c.read_memory((ppadd+(mongap*(pk-1))-14),1))), visible = True)
                                     
-                                    window['-movehdr-e-'].update('Moves {}/{} ({})'.format(learnedcount, totallearn, nmove))
+                                    window['-movehdr-e-'].update(f'Moves {learnedcount}/{totallearn} ({nmove})')
                                     window['-movehdr-e-'].set_tooltip(learnstr)
                                     window['-movepphdr-e-'].update('PP')
                                     window['-movebphdr-e-'].update('Pow')
                                     window['-moveacchdr-e-'].update('Acc')
                                     window['-movecontacthdr-e-'].update('C')
-                                    window['-prevmoves-e-'].update('Previous Moves: ' + re.sub('[^A-Za-z0-9, ]+', '', str(trackdata[pkmn.name]['moves'])))
+                                    window['-prevmoves-e-'].update('Previous Moves: ' + re.sub('[^A-Za-z0-9 ]+', '', str(trackdata[pkmn.name]['moves'])))
                                     window['-abillist-e-'].update('Known Abilities: ' + re.sub('[^A-Za-z0-9, ]+', '', str(trackdata[pkmn.name]['abilities'])))
                                     ### STATS ########
                                     ### MOVES ########
@@ -1771,8 +1768,6 @@ def run():
                                 window['-spattlabel-'].update(visible = True, text_color=natureformatting(naturelist, 2))
                                 window['-spdeflabel-'].update(visible = True, text_color=natureformatting(naturelist, 3))
                                 window['-speedlabel-'].update(visible = True, text_color=natureformatting(naturelist, 4))
-                                window['-accevalabel-'].update(visible = False)
-                                window['-accevaph-'].update(visible = False)
                                 window[confusestat].set_tooltip('{} causes confusion'.format(confuseberry))
                                 window['-bstlabel-'].update(visible = True)
                                 window['-hp-'].update('{}/{}'.format(pkmn.cur_hp, pkmn.maxhp))
@@ -1793,8 +1788,10 @@ def run():
                                 window['-spattmod-'].update('images/modifiers/modifier6.png')
                                 window['-spdefmod-'].update('images/modifiers/modifier6.png')
                                 window['-speedmod-'].update('images/modifiers/modifier6.png')
-                                window['-accmod-'].update(visible =False)
-                                window['-evamod-'].update(visible =False)
+                                window['-accevalabel-'].update(visible = False)
+                                window['-accmod-'].update('images/modifiers/modifier6.png')
+                                window['-accevaph-'].update(visible = False)
+                                window['-evamod-'].update('images/modifiers/modifier6.png')
                                 window['-movehdr-'].update('Moves {}/{} ({})'.format(learnedcount, totallearn, nmove))
                                 window['-movehdr-'].set_tooltip(learnstr)
                                 window['-movepphdr-'].update('PP')
@@ -1828,8 +1825,7 @@ def run():
                                     continue
                                 # making enemy mon stuff invisible when not in a battle
                                 window['-tc1a-e-'].update(visible = False)
-                                window['-tc2a-e-'].update(visible = False)
-                                window['-tc3a-e-'].update(visible = False)
+                                window['-tc2-e-'].update(visible = False)
                                 window['-bc1a-e-'].update(visible = False)
                                 window['-bc2a-e-'].update(visible = False)
                                 # window['-bc3a-e-'].Update(visible = False)
