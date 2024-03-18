@@ -1422,15 +1422,15 @@ def run():
                                             typetable['Normal'] = [1,1,1,1,1,.5,1,1,.5,1,1,1,1,1,1,1,1,1,1]
                                             typetable['Fighting'] = [2,1,.5,.5,1,2,.5,1,2,1,1,1,1,.5,2,1,2,.5,1]
                                         if move['type'] == 'Normal' and pkmn.ability['name'] == 'Aerilate':
-                                            move['type'] == 'Flying'
+                                            movetyp = 'Flying'
                                         if move['type'] == 'Normal' and pkmn.ability['name'] == 'Pixilate':
-                                            move['type'] == 'Fairy'
+                                            movetyp = 'Fairy'
                                         if move['type'] == 'Normal' and pkmn.ability['name'] == 'Refrigerate':
-                                            move['type'] == 'Ice'
+                                            movetyp = 'Ice'
                                         if move['type'] == 'Normal' and pkmn.ability['name'] == 'Galvanize':
-                                            move['type'] == 'Electric'
+                                            movetyp = 'Electric'
                                         if pkmn.ability['name'] == 'Normalize':
-                                            move['type'] == 'Normal' #lolrip
+                                            movetyp = 'Normal' #lolrip
 
                                         typemult=1
                                         if movetyp!=None:
@@ -1456,12 +1456,12 @@ def run():
                                         acc = '-' if not move['acc'] else int(move['acc'])
                                         contact = ('Y' if move['contact'] else 'N')
                                         window['-mv{}type-'.format(pkmn.moves.index(move) + 1)].update(resize('images/categories/{}.png'.format(move["category"]), (27,20)))
-                                        window['-mv{}text-'.format(pkmn.moves.index(move) + 1)].update(move["name"], text_color=typeformatting(move['type']))
+                                        window['-mv{}text-'.format(pkmn.moves.index(move) + 1)].update(move["name"], text_color=typeformatting(movetyp))
                                         window['-mv{}text-'.format(pkmn.moves.index(move) + 1)].set_tooltip(move["description"])
                                         window['-mv{}pp-'.format(pkmn.moves.index(move) + 1)].update('{}/{}'.format(int.from_bytes(c.read_memory(ppadd+(mongap*(pk-1))+(14*(pkmn.moves).index(move)),1)), int.from_bytes(c.read_memory(ppadd+(mongap*(pk-1))+1+(14*(pkmn.moves).index(move)),1))))
                                         window['-mv{}mod-'.format(pkmn.moves.index(move) + 1)].update('images/modifiers/modifier{}.png'.format(modimage))
-                                        if stab == move['type']:
-                                            window['-mv{}bp-'.format(pkmn.moves.index(move) + 1)].update(calcPower(pkmn,move,hpnum[0],hpnum[1]), text_color=typeformatting(move['type']))
+                                        if stab == movetyp:
+                                            window['-mv{}bp-'.format(pkmn.moves.index(move) + 1)].update(calcPower(pkmn,move,hpnum[0],hpnum[1]), text_color=typeformatting(movetyp))
                                         else:
                                             window['-mv{}bp-'.format(pkmn.moves.index(move) + 1)].update(calcPower(pkmn,move,hpnum[0],hpnum[1]), text_color='white')
                                         window['-mv{}acc-'.format(pkmn.moves.index(move) + 1)].update(acc)
@@ -1602,9 +1602,9 @@ def run():
                                         window['-spdefmod-e-'].Update('images/modifiers/modifier{}.png'.format(int.from_bytes(c.read_memory((ppadd+(mongap*(pk-1))-17),1))), visible = True)
                                     if 0 <= int.from_bytes(c.read_memory((ppadd+(mongap*(pk-1))-16),1)) <= 12:
                                         window['-speedmod-e-'].Update('images/modifiers/modifier{}.png'.format(int.from_bytes(c.read_memory((ppadd+(mongap*(pk-1))-16),1))), visible = True)
-                                    if 0 <= int.from_bytes(c.read_memory((ppadd+(mongap*(pk-1))-14),1)) <= 12:
-                                        window['-accmod-e-'].Update('images/modifiers/modifier{}.png'.format(int.from_bytes(c.read_memory((ppadd+(mongap*(pk-1))-15),1))), visible = True)
                                     if 0 <= int.from_bytes(c.read_memory((ppadd+(mongap*(pk-1))-15),1)) <= 12:
+                                        window['-accmod-e-'].Update('images/modifiers/modifier{}.png'.format(int.from_bytes(c.read_memory((ppadd+(mongap*(pk-1))-15),1))), visible = True)
+                                    if 0 <= int.from_bytes(c.read_memory((ppadd+(mongap*(pk-1))-14),1)) <= 12:
                                         window['-evamod-e-'].Update('images/modifiers/modifier{}.png'.format(int.from_bytes(c.read_memory((ppadd+(mongap*(pk-1))-14),1))), visible = True)
                                     
                                     window['-movehdr-e-'].update(f'Moves {learnedcount}/{totallearn} ({nmove})')

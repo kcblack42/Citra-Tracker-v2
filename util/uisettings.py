@@ -197,7 +197,7 @@ def defaultuisettings(font_sizes):
         sg.Column([[
             sg.Column(topcol1a, size=(200, 350), key='-tc1a-e-', visible = False), 
             sg.Column([[
-                sg.Column(topcol2a, key='-tc2a-e-', size=(50, 230)), 
+                sg.Column(topcol2a, element_justification='right', key='-tc2a-e-', size=(50, 230)), 
                 sg.Column(topcol3a, element_justification='right', key='-tc3a-e-', size=(60, 230))
                 ],
                 [
