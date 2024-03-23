@@ -961,16 +961,16 @@ def natureberries(nl):
         return dislikedflavor['spicy'], s
     elif nl[1] == 'lowered':
         s = '-deflabel-'
-        return dislikedflavor['dry'], s
+        return dislikedflavor['sour'], s
     elif nl[2] == 'lowered':
         s = '-spattlabel-'
-        return dislikedflavor['sweet'], s
+        return dislikedflavor['dry'], s
     elif nl[3] == 'lowered':
         s = '-spdeflabel-'
         return dislikedflavor['bitter'], s
     elif nl[4] == 'lowered':
         s = '-speedlabel-'
-        return dislikedflavor['sour'], s
+        return dislikedflavor['sweet'], s
     else:
         s = '-bstlabel-'
         return dislikedflavor['neutral'], s

@@ -191,17 +191,30 @@ def abillist(mon):
         i += 1
     return logabils, alist
 
+def evolist(mon):
+    logevos = []
+    elist = []
+    i = 0
+    return logevos, elist
+
 graph=sg.Graph(canvas_size=(380,300), graph_bottom_left=(50,10), graph_top_right=(330,240),background_color='black', enable_events=True, key='-log-graph-')
 
 r = np.random.randint(0,776)
 logmoves, mvlist = movelist(moves_df.iloc[r,3:])
 logabils, alist = abillist(mons_df.iloc[r])
+logevos, elist = evolist(mons_df.iloc[r])
 
 layout = [
     [graph], 
     [
         sg.Column(logmoves, scrollable=True, vertical_scroll_only=True, key='-log-moves-', size=(180,280)),
-        sg.Column(logabils, key='-log-abils-', size=(180,280)),
+        sg.Column(
+            [
+                # sg.Column(logleaderTMs, key = '-log-leaderTMs-', size = (180,280))
+                sg.Column(logabils, key='-log-abils-', size=(180,160)),
+                # sg.Column(logevos, key = '-log-evos-', size = (180,120))
+            ]
+        )
     ],
     [sg.Button('Randomize')],
 ]
@@ -210,6 +223,7 @@ window = sg.Window('Graph test', layout, track_size, finalize=True)
 statchart(mons_df.iloc[r])
 logmoves, mvlist = movelist(moves_df.iloc[r,3:], logmoves, mvlist)
 logabils, alist = abillist(mons_df.iloc[r])
+logevos, elist = evolist(mons_df.iloc[r])
 
 while True:
     event, values = window.read()
@@ -222,16 +236,16 @@ while True:
         statchart(mons_df.iloc[x])
         logmoves, mvlist = movelist(moves_df.iloc[x,3:], logmoves, mvlist)
         logabils, alist = abillist(mons_df.iloc[x])
+        logevos, elist = evolist(mons_df.iloc[x])
         while i < len(logmoves):
             if i < len(mvlist):
                 window[f'-log-ml{i}-'].update(mvlist[i], visible = True)
             else:
                 window[f'-log-ml{i}-'].update(visible = False)
-            if i < len(alist):
-                if i == 2:
-                    window[f'-log-al{i}-'].update(f'{alist.iloc[i]} (HA)', visible = True)
-                else:
-                    window[f'-log-al{i}-'].update(alist.iloc[i], visible = True)
+            if i < len(alist) and i == 2:
+                window[f'-log-al{i}-'].update(f'{alist.iloc[i]} (HA)', visible = True)
+            elif i < len(alist):
+                window[f'-log-al{i}-'].update(alist.iloc[i], visible = True)
             i += 1
         # window.refresh()
 
