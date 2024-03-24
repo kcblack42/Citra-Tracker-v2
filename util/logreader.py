@@ -39,7 +39,7 @@ log = open('kaizo260.log', encoding="utf8").read()
 log.count('\n--')
 
 lsplit = log.split('\n--')
-evos = lsplit[1] # done
+evos = lsplit[1]
 mons = lsplit[2] # done
 moves = lsplit[7] # done
 tms = lsplit[8] # done
@@ -52,8 +52,15 @@ def parser(data, pattern, s):
     return groups
 
 # evolutions
-evos_regex = r'(?P<preevo>\S+)+\s+(?P<postevo>\S+)?'
-evos_df = pd.DataFrame(parser(evos.replace('->', ''), evos_regex, '\n')[1:])
+# evos_regex = r'(?P<preevo>\S+)+\s+(?P<postevo>\S+)?'
+# evos_df = pd.DataFrame(parser(evos.replace('->', ''), evos_regex, '\n')[1:])
+evos_df = pd.DataFrame([l for l in evos.split(sep='\n')][1:-1])
+evos_df[['preevo', 'postevo']] = evos_df[0].str.split('->', expand=True)
+evos_df['postevo'] = evos_df['postevo'].str.replace(' and ',';')
+evos_df['postevo'] = evos_df['postevo'].str.replace(', ',';')
+evos_df = evos_df.drop(columns=0)
+evos_df['preevo'] = evos_df['preevo'].str.strip()
+evos_df['postevo'] = evos_df['postevo'].str.strip()
 
 # mons
 mons_df = pd.read_csv(io.StringIO(mons.replace('Pokemon Base Stats & Types--','')), sep='|')
@@ -111,37 +118,10 @@ for (index, colname) in enumerate(wilds_df.iloc[:, 0:12]):
 pokemon = pd.merge(mons_df, evos_df, how = 'left', left_on='NAME', right_on='preevo').drop(columns='preevo').rename(columns={'postevo':'EVOLUTION'})
 pokemon = pd.merge(pokemon, moves_df, how='left', left_on='NAME', right_on='mon').drop(columns=['num', 'mon', 'evo'])
 pokemon.columns = pokemon.columns.str.replace('col_', 'move_')
+pokemon['EVOLUTION'] = pokemon['EVOLUTION'].fillna('')
+
 
 # charting stats
-pkmn_stats = pokemon[['NAME', 'HP', 'ATK', 'DEF', 'SATK', 'SDEF', 'SPD']].melt(id_vars='NAME')
-pkmn = 'Alakazam'
-# this is a pretty simple bar chart, for something that's more complicated (and significantly more customized), we'll need the go.Figure and go.Bar combination that's a bit more gross to set up, since we literally have to convert the dataframe into lists, can start with this
-# stat_chart = px.bar(pkmn_stats.loc[pkmn_stats['NAME'] == pkmn], x='variable', y='value', range_y=[0, 255], text='value')
-# stat_chart
-
-
-# # var = pkmn_stats.loc[pkmn_stats['NAME'] == pkmn]['variable'].to_list()
-# val = pkmn_stats.loc[pkmn_stats['NAME'] == pkmn]['value'].to_list()
-# stat_chart2 = go.Figure(data=[go.Bar(
-#     x=var,
-#     y=val,
-#     text=val, 
-#     textposition='outside',
-# )])
-# stat_chart2.update_yaxes(
-#     range=[0,255],
-#     gridwidth=0,
-#     showgrid=False,
-#     showticklabels=False,
-#     )
-# stat_chart2.update_layout(
-#     plot_bgcolor='black',
-#     paper_bgcolor='black',
-#     font_color='white',
-#     title=pkmn + ' (' + str(sum(val)) + ' BST)',
-#     )
-# stat_chart2
-
 def statchart(mon):
     base = 50
     i = 0
@@ -161,13 +141,15 @@ def statchart(mon):
         graph.DrawText(s, location=((x1 + x2)/2, y2+2), color='white', text_location=sg.TEXT_LOCATION_BOTTOM, font=('Franklin Gothic Medium', 12))
         i += 1
 
-    graph.DrawText(f'{mon.iloc[1]} ({sum(mon.iloc[3:9])} BST)', location=(70, base+180), color='white', text_location=sg.TEXT_LOCATION_TOP_LEFT, font=('Franklin Gothic Medium', 16))
+    graph.DrawText(f'{mon.iloc[1]} ({sum(mon.iloc[3:9])} BST)', location=(70, base+180), color='#f0f080', text_location=sg.TEXT_LOCATION_TOP_LEFT, font=('Franklin Gothic Medium', 16))
     graph.DrawLine(point_from=(65,base), point_to=(305,base), color='white')
+
 
 def movelist(mon, logmoves = [], mvlist = []):
     mon = mon.to_list()
     i = 0
     logmoves = []
+    logmoves.append([sg.Text(f'Moveset:', text_color='#f0f080', font=('Franklin Gothic Medium', 14), visible = True)])
     mvlist = []
     while i < len(mon):
         if str(mon[i]) != 'nan':
@@ -179,9 +161,11 @@ def movelist(mon, logmoves = [], mvlist = []):
         i += 1
     return logmoves, mvlist
 
+
 def abillist(mon):
     alist = mon[['ABILITY1', 'ABILITY2', 'ABILITY3']]
     logabils = []
+    logabils.append([sg.Text(f'Abilities:', text_color='#f0f080', font=('Franklin Gothic Medium', 14), visible = True)])
     i = 0
     while i < len(alist):
         if i == 2:
@@ -191,39 +175,55 @@ def abillist(mon):
         i += 1
     return logabils, alist
 
+
 def evolist(mon):
     logevos = []
-    elist = []
-    i = 0
+    elist = mon['EVOLUTION']
+    logevos.append([sg.Text(f'Evolutions:', text_color='#f0f080', font=('Franklin Gothic Medium', 14), visible = True)])
+    if elist == '':
+        logevos.append([sg.Text(f'None', text_color='white', font=('Franklin Gothic Medium', 12), key = f'-log-evos-', visible = True)])
+        elist = 'None'
+    elif elist.count(';') in (1, 2):
+        elist = elist.replace(';', '\n')
+        logevos.append([sg.Text(f'{elist}', text_color='white', font=('Franklin Gothic Medium', 12), key = f'-log-evos-', visible = True)])
+    elif elist.count(';') > 2:
+        i = 0
+        x = elist.count(';')
+        while i < x:
+            elist = elist.replace(';', ', ', 1)
+            elist = elist.replace(';', '\n', 1)
+            i += 2
+        logevos.append([sg.Text(f'{elist}', text_color='white', font=('Franklin Gothic Medium', 12), key = f'-log-evos-', visible = True)])
+    else:
+        logevos.append([sg.Text(f'{elist}', text_color='white', font=('Franklin Gothic Medium', 12), key = f'-log-evos-', visible = True)])
     return logevos, elist
+
 
 graph=sg.Graph(canvas_size=(380,300), graph_bottom_left=(50,10), graph_top_right=(330,240),background_color='black', enable_events=True, key='-log-graph-')
 
 r = np.random.randint(0,776)
-logmoves, mvlist = movelist(moves_df.iloc[r,3:])
-logabils, alist = abillist(mons_df.iloc[r])
-logevos, elist = evolist(mons_df.iloc[r])
+logmoves, mvlist = movelist(pokemon.iloc[r,16:])
+logabils, alist = abillist(pokemon.iloc[r])
+logevos, elist = evolist(pokemon.iloc[r])
+
+ph_blank = [[sg.Text(f'', text_color='white', font=('Franklin Gothic Medium', 12), visible = True)]]
+
+brcol = logabils + ph_blank + logevos
 
 layout = [
     [graph], 
     [
         sg.Column(logmoves, scrollable=True, vertical_scroll_only=True, key='-log-moves-', size=(180,280)),
-        sg.Column(
-            [
-                # sg.Column(logleaderTMs, key = '-log-leaderTMs-', size = (180,280))
-                sg.Column(logabils, key='-log-abils-', size=(180,160)),
-                # sg.Column(logevos, key = '-log-evos-', size = (180,120))
-            ]
-        )
+        sg.Column(brcol, key='-log-brcol-', size=(180,280), pad=(5,0,0,0))
     ],
     [sg.Button('Randomize')],
 ]
-window = sg.Window('Graph test', layout, track_size, finalize=True)
+window = sg.Window('Graph test', layout, track_size, finalize=True, element_padding=(1,1,0,0))
 
-statchart(mons_df.iloc[r])
-logmoves, mvlist = movelist(moves_df.iloc[r,3:], logmoves, mvlist)
-logabils, alist = abillist(mons_df.iloc[r])
-logevos, elist = evolist(mons_df.iloc[r])
+statchart(pokemon.iloc[r])
+logmoves, mvlist = movelist(pokemon.iloc[r,16:], logmoves, mvlist)
+logabils, alist = abillist(pokemon.iloc[r])
+logevos, elist = evolist(pokemon.iloc[r])
 
 while True:
     event, values = window.read()
@@ -232,12 +232,13 @@ while True:
     if event == 'Randomize':
         i = 0
         x = np.random.randint(0,776)
+        # x = 132 # testing eevee in particular
         graph.Erase()
-        statchart(mons_df.iloc[x])
-        logmoves, mvlist = movelist(moves_df.iloc[x,3:], logmoves, mvlist)
-        logabils, alist = abillist(mons_df.iloc[x])
-        logevos, elist = evolist(mons_df.iloc[x])
-        while i < len(logmoves):
+        statchart(pokemon.iloc[x])
+        logmoves, mvlist = movelist(pokemon.iloc[x,16:], logmoves, mvlist)
+        logabils, alist = abillist(pokemon.iloc[x])
+        logevos, elist = evolist(pokemon.iloc[x])
+        while i < len(logmoves) - 1:
             if i < len(mvlist):
                 window[f'-log-ml{i}-'].update(mvlist[i], visible = True)
             else:
@@ -246,6 +247,8 @@ while True:
                 window[f'-log-al{i}-'].update(f'{alist.iloc[i]} (HA)', visible = True)
             elif i < len(alist):
                 window[f'-log-al{i}-'].update(alist.iloc[i], visible = True)
+            if i == 0:
+                window[f'-log-evos-'].update(f'{elist}', visible = True)
             i += 1
         # window.refresh()
 
