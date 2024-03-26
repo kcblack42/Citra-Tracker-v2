@@ -63,6 +63,7 @@ else:
     print('Error reading log.')
 
 if game in ('XY', 'ORAS'):
+    gen = 6
     evos = lsplit[1] # done
     mons = lsplit[2] # done
     moves = lsplit[7] # done
@@ -71,6 +72,7 @@ if game in ('XY', 'ORAS'):
     trainer = lsplit[10] # done
     wildmons = lsplit[12] # done
 elif game in ('SM', 'USUM'): # not verified yet, will do after gen 6 is done
+    gen = 7
     evos = lsplit[1] 
     mons = lsplit[2] 
     moves = lsplit[7] 
@@ -236,9 +238,8 @@ def evolist(mon):
     return logevos, elist
 
 def tmlist(mon, game):
-    logtms = []
-    tmdict = {}
-    tmtext = []
+    logtms1, logtms4, logtmsfull, tmtext, tmtextfull = [], [], [], [], []
+    tmdict, tmdictfull = {}, {}
     if game == 'XY':
         gymtmlist = [83, 39, 98, 86, 24, 99, 4, 13]
     elif game == 'ORAS':
@@ -247,90 +248,187 @@ def tmlist(mon, game):
         gymtmlist = [4, 13, 24, 39, 83, 86, 98, 99]
     elif game == 'USUM':
         gymtmlist = [1, 19, 54, 43, 67, 29, 66]
-    logtms.append([sg.Text(f'Leader TMs:', text_color='#f0f080', font=('Franklin Gothic Medium', 14), visible = True)])
-    i = 0
+    logtms1.append([sg.Text(f'Leader TMs:', text_color='#f0f080', font=('Franklin Gothic Medium', 14), visible = True)])
+    i,j = 0,0
     while i < len(gymtmlist):
-        if tmcompat_df.iloc[r,i] == '-':
-            logtms.append([sg.Text(f'TM{tms_df['tmnum'][gymtmlist[i]-1]} {tms_df['move'][gymtmlist[i]-1]}', text_color='white', font=('Franklin Gothic Medium', 10), key = f'-log-gymtm{i}-', visible = True)])
+        if tmcompat_df.iloc[mon.iloc[0]-1, gymtmlist[i]] == '-':
+            logtms1.append([sg.Text(f'TM{tms_df['tmnum'][gymtmlist[i]-1]} {tms_df['move'][gymtmlist[i]-1]}', text_color='white', font=('Franklin Gothic Medium', 10), key = f'-log-gymtm1{i}-', visible = True)])
+            logtms4.append([sg.Text(f'TM{tms_df['tmnum'][gymtmlist[i]-1]} {tms_df['move'][gymtmlist[i]-1]}', text_color='white', font=('Franklin Gothic Medium', 10), key = f'-log-gymtm4{i}-', visible = True)])
             tmdict[f'TM{tms_df['tmnum'][gymtmlist[i]-1]} {tms_df['move'][gymtmlist[i]-1]}'] = False
         else:
-            logtms.append([sg.Text(f'TM{tms_df['tmnum'][gymtmlist[i]-1]} {tms_df['move'][gymtmlist[i]-1]}', text_color='green', font=('Franklin Gothic Medium', 10), key = f'-log-gymtm{i}-', visible = True)])
+            logtms1.append([sg.Text(f'TM{tms_df['tmnum'][gymtmlist[i]-1]} {tms_df['move'][gymtmlist[i]-1]}', text_color='green', font=('Franklin Gothic Medium', 10), key = f'-log-gymtm1{i}-', visible = True)])
+            logtms4.append([sg.Text(f'TM{tms_df['tmnum'][gymtmlist[i]-1]} {tms_df['move'][gymtmlist[i]-1]}', text_color='green', font=('Franklin Gothic Medium', 10), key = f'-log-gymtm4{i}-', visible = True)])
             tmdict[f'TM{tms_df['tmnum'][gymtmlist[i]-1]} {tms_df['move'][gymtmlist[i]-1]}'] = True
         tmtext.append(f'TM{tms_df['tmnum'][gymtmlist[i]-1]} {tms_df['move'][gymtmlist[i]-1]}')
         i += 1
-    return logtms, gymtmlist, tmdict, tmtext
+    while j < 100: # 100 TMs in both gens 6 and 7, there are HMs in the list so need to use flat number
+        if tmcompat_df.iloc[mon.iloc[0]-1, j + 1] == '-':
+            logtmsfull.append([sg.Text(f'TM{tms_df['tmnum'][j]} {tms_df['move'][j]}', text_color='white', font=('Franklin Gothic Medium', 10), key = f'-log-fulltm{j}-', visible = True)])
+            tmdictfull[f'TM{tms_df['tmnum'][j]} {tms_df['move'][j]}'] = False
+        else:
+            logtmsfull.append([sg.Text(f'TM{tms_df['tmnum'][j]} {tms_df['move'][j]}', text_color='green', font=('Franklin Gothic Medium', 10), key = f'-log-fulltm{j}-', visible = True)])
+            tmdictfull[f'TM{tms_df['tmnum'][j]} {tms_df['move'][j]}'] = True
+        tmtextfull.append(f'TM{tms_df['tmnum'][j]} {tms_df['move'][j]}')
+        j += 1
+    return logtms1, logtms4, logtmsfull, gymtmlist, tmdict, tmdictfull, tmtext, tmtextfull
 
 
 graph=sg.Graph(canvas_size=(380,200), graph_bottom_left=(50,10), graph_top_right=(330,240),background_color='black', enable_events=True, key='-log-graph-')
 
 r = np.random.randint(0,776)
+# r = 165
 logmoves, mvlist = movelist(pokemon.iloc[r,16:])
 logabils, alist = abillist(pokemon.iloc[r])
 logevos, elist = evolist(pokemon.iloc[r])
-logtms, gymtmlist, tmdict, tmtext = tmlist(pokemon.iloc[r], game)
-
-ph_blank = [[sg.Text(f'', text_color='white', font=('Franklin Gothic Medium', 12), visible = True)]]
+logtms1, logtms4, logtmsfull, gymtmlist, tmdict, tmdictfull, tmtext, tmtextfull = tmlist(pokemon.iloc[r], game)
 
 bwidth = 1
 bpad = (1,1,0,0)
-bfont = ('Franklin Gothic Medium', 12)
-navbar=[[
-    sg.Text(' Pokemon ', enable_events=True, key='-lognav-pkmn-', relief='groove', border_width=bwidth, pad=bpad, font=bfont),
-    sg.Text(' Trainers ', enable_events=True, key='-lognav-trainer-', relief='groove', border_width=bwidth, pad=bpad, font=bfont),
-    sg.Text(' Pivots ', enable_events=True, key='-lognav-pivot-', relief='groove', border_width=bwidth, pad=bpad, font=bfont),
-    sg.Text(' TMs ', enable_events=True, key='-lognav-tm-', relief='groove', border_width=bwidth, pad=bpad, font=bfont),
-    # sg.Text(' Info ', enable_events=True, key='-lognav-info-', relief='groove', border_width=1, pad=bpad, font=bfont),
-    # sg.Text(' Search ', enable_events=True, key='-lognav-search-', relief='groove', border_width=1, pad=bpad, font=bfont),
-    sg.Text(' Random ', enable_events=True, key='-lognav-random-', relief='groove', border_width=bwidth, pad=bpad, font=bfont),
-]]
+navbar = {}
+if gen == 6:
+    bfont = ('Franklin Gothic Medium', 12)
+    for i in range(1, 7):
+        navbar[i]=[[
+            sg.Text(' Pokemon ', enable_events=True, key=f'-lognav-pkmn{i}-', relief='groove', border_width=bwidth, pad=bpad, font=bfont),
+            sg.Text(' Trainers ', enable_events=True, key=f'-lognav-trainer{i}-', relief='groove', border_width=bwidth, pad=bpad, font=bfont),
+            sg.Text(' Pivots ', enable_events=True, key=f'-lognav-pivot{i}-', relief='groove', border_width=bwidth, pad=bpad, font=bfont),
+            sg.Text(' TMs ', enable_events=True, key=f'-lognav-tm{i}-', relief='groove', border_width=bwidth, pad=bpad, font=bfont),
+            # sg.Text(' Info ', enable_events=True, key=f'-lognav-info{i}-', relief='groove', border_width=1, pad=bpad, font=bfont),
+            # sg.Text(' Search ', enable_events=True, key=f'-lognav-search{i}-', relief='groove', border_width=1, pad=bpad, font=bfont),
+            sg.Text(' Random ', enable_events=True, key=f'-lognav-random{i}-', relief='groove', border_width=bwidth, pad=bpad, font=bfont),
+        ]]
+elif gen == 7: # not complete, will need to fill in later
+    bfont = ('Franklin Gothic Medium', 10) # need smaller font because more nav bar things, may choose to go to two rows instead but we'll see if thats needed (hopefully not), could also use abbreviations; might also roll tutor into TM for gen 7
+    for i in range(1, 8):
+        navbar[i]=[[
+            sg.Text(' Pokemon ', enable_events=True, key=f'-lognav-pkmn{i}-', relief='groove', border_width=bwidth, pad=bpad, font=bfont),
+            sg.Text(' Trainers ', enable_events=True, key=f'-lognav-trainer{i}-', relief='groove', border_width=bwidth, pad=bpad, font=bfont),
+            sg.Text(' Pivots ', enable_events=True, key=f'-lognav-pivot{i}-', relief='groove', border_width=bwidth, pad=bpad, font=bfont),
+            sg.Text(' TMs ', enable_events=True, key=f'-lognav-tm{i}-', relief='groove', border_width=bwidth, pad=bpad, font=bfont),
+            # sg.Text(' Tutors ', enable_events=True, key=f'-lognav-tutor{i}-', relief='groove', border_width=1, pad=bpad, font=bfont),
+            # sg.Text(' Info ', enable_events=True, key=f'-lognav-info{i}-', relief='groove', border_width=1, pad=bpad, font=bfont),
+            # sg.Text(' Search ', enable_events=True, key=f'-lognav-search{i}-', relief='groove', border_width=1, pad=bpad, font=bfont),
+            sg.Text(' Random ', enable_events=True, key=f'-lognav-random{i}-', relief='groove', border_width=bwidth, pad=bpad, font=bfont),
+        ]]
 
-brcol = [[
+
+brcol1 = [[
     sg.Column([
-        [sg.Column(logtms, size=(150,220)),],
+        [sg.Column(logtms1, size=(150,220)),],
         [sg.Column(logabils, size=(170,120))],
     ])
 ]]
-blcol = [[
+blcol1 = [[
     sg.Column([
         [sg.Column(logmoves, scrollable=True, vertical_scroll_only=True, size=(150,220)),],
         [sg.Column(logevos, size=(170,120))],
     ])
 ]]
 
-layout = [
-    [sg.Column(navbar, key='-log-navbar-', size=(340,35), justification='c')],
+layout_pkmn = [
+    [sg.Column(navbar[1], key='-log-navbar1-', size=(340,35), justification='c')],
     [graph], 
     [
-        sg.Column(blcol, key='-log-blcol-', size=(170,350), pad=(5,0,0,0)),
-        sg.Column(brcol, key='-log-brcol-', size=(170,350), pad=(5,0,0,0))
+        sg.Column(blcol1, key='-log-blcol-', size=(170,350), pad=(5,0,0,0)),
+        sg.Column(brcol1, key='-log-brcol-', size=(170,350), pad=(5,0,0,0))
     ],
 ]
+
+layout_trainers = [
+    [sg.Column(navbar[2], key='-log-navbar2-', size=(340,35), justification='c')],
+]
+
+layout_pivots = [
+    [sg.Column(navbar[3], key='-log-navbar3-', size=(340,35), justification='c')],
+]
+
+layout_tms = [
+    [sg.Column(navbar[4], key='-log-navbar4-', size=(340,35), justification='c')],
+    [sg.Text(f'{pokemon.iloc[r,1]} ({sum(pokemon.iloc[r,3:9])} BST)', font=('Franklin Gothic Medium', 16), text_color='#f0f080', key='-log-tmpkmn-')],
+    [
+        sg.Text(f'Gym TMs:', font=('Franklin Gothic Medium', 14), text_color='#f0f080', size=15),
+        sg.Text(f'All TMs:', font=('Franklin Gothic Medium', 14), text_color='#f0f080'),
+    ],
+    [sg.Column([
+        [
+            sg.Column(logtms4, size=(150,400)),
+            sg.Column(logtmsfull, size=(150,400), scrollable=True, vertical_scroll_only=True),
+        ],
+    ])]
+]
+# layout_tutors = [
+#     [sg.Column(navbar[5], key='-log-navbar4-', size=(340,35), justification='c')],
+# ]
+# layout_info = [
+#     [sg.Column(navbar[6], key='-log-navbar4-', size=(340,35), justification='c')],
+# ]
+# layout_search = [
+#     [sg.Column(navbar[7], key='-log-navbar4-', size=(340,35), justification='c')],
+# ]
+
+layout = [[
+    sg.Column(layout_pkmn, key='-layout1-'), 
+    sg.Column(layout_trainers, key='-layout2-', visible=False), 
+    sg.Column(layout_pivots, key='-layout3-', visible=False), 
+    sg.Column(layout_tms, key='-layout4-', visible=False), 
+]]
+
 window = sg.Window('Log reader test', layout, track_size, finalize=True, element_padding=(1,1,0,0))
 
 statchart(pokemon.iloc[r])
 logmoves, mvlist = movelist(pokemon.iloc[r,16:], logmoves, mvlist)
 logabils, alist = abillist(pokemon.iloc[r])
 logevos, elist = evolist(pokemon.iloc[r])
-logtms, gymtmlist, tmdict, tmtext = tmlist(pokemon.iloc[r], game)
+logtms1, logtms4, logtmsfull, gymtmlist, tmdict, tmdictfull, tmtext, tmtextfull = tmlist(pokemon.iloc[r], game)
 
+l = 1 #current layout (defaults to pokemon screen)
 while True:
     event, values = window.read()
     if event == sg.WIN_CLOSED:
         break
-    if event == '-lognav-random-':
+    if event == f'-lognav-pkmn{l}-':
+        window[f'-layout{l}-'].update(visible=False)
+        l = 1
+        window[f'-layout{l}-'].update(visible=True)
+    if event == f'-lognav-trainer{l}-':
+        window[f'-layout{l}-'].update(visible=False)
+        l = 2
+        window[f'-layout{l}-'].update(visible=True)
+    if event == f'-lognav-pivot{l}-':
+        window[f'-layout{l}-'].update(visible=False)
+        l = 3
+        window[f'-layout{l}-'].update(visible=True)
+    if event == f'-lognav-tm{l}-':
+        window[f'-layout{l}-'].update(visible=False)
+        l = 4
+        window[f'-layout{l}-'].update(visible=True)
+    # if event == f'-lognav-tutor{l}-':
+    #     window[f'-layout{l}-'].update(visible=False)
+    #     l = 5
+    #     window[f'-layout{l}-'].update(visible=True)
+    # if event == f'-lognav-info{l}-':
+    #     window[f'-layout{l}-'].update(visible=False)
+    #     l = 6
+    #     window[f'-layout{l}-'].update(visible=True)
+    # if event == f'-lognav-search{l}-':
+    #     window[f'-layout{l}-'].update(visible=False)
+    #     l = 7
+    #     window[f'-layout{l}-'].update(visible=True)
+    if event in ('-lognav-random1-', '-lognav-random4-',): # only relevant for the pokemon and tm pages (and eventually tutor)
         i = 0
         r = np.random.randint(0,776)
         # r = 132 # testing eevee in particular
+        # r = 165 # testing ledian in particular
         graph.Erase()
         statchart(pokemon.iloc[r])
         logmoves, mvlist = movelist(pokemon.iloc[r,16:], logmoves, mvlist)
         logabils, alist = abillist(pokemon.iloc[r])
         logevos, elist = evolist(pokemon.iloc[r])
-        logtms, gymtmlist, tmdict, tmtext = tmlist(pokemon.iloc[r], game)
-        while i < len(logmoves) - 1:
+        logtms1, logtms4, logtmsfull, gymtmlist, tmdict, tmdictfull, tmtext, tmtextfull = tmlist(pokemon.iloc[r], game)
+        while i < len(tmtextfull):
             if i < len(mvlist):
                 window[f'-log-ml{i}-'].update(mvlist[i], visible = True)
-            else:
+            elif i < len(logmoves) - 1:
                 window[f'-log-ml{i}-'].update(visible = False)
             if i < len(alist) and i == 2:
                 window[f'-log-al{i}-'].update(f'{alist.iloc[i]} (HA)', visible = True)
@@ -340,10 +438,17 @@ while True:
                 window[f'-log-evos-'].update(f'{elist}', visible = True)
             if i < len(tmtext):
                 if tmdict[tmtext[i]] == False:
-                    window[f'-log-gymtm{i}-'].update(text_color='white')
+                    window[f'-log-gymtm1{i}-'].update(text_color='white')
+                    window[f'-log-gymtm4{i}-'].update(text_color='white')
                 elif tmdict[tmtext[i]] == True:
-                    window[f'-log-gymtm{i}-'].update(text_color='green')
+                    window[f'-log-gymtm1{i}-'].update(text_color='green')
+                    window[f'-log-gymtm4{i}-'].update(text_color='green')
+            if tmdictfull[tmtextfull[i]] == False:
+                window[f'-log-fulltm{i}-'].update(text_color='white')
+            elif tmdictfull[tmtextfull[i]] == True:
+                window[f'-log-fulltm{i}-'].update(text_color='green')
             i += 1
+        window['-log-tmpkmn-'].update(f'{pokemon.iloc[r,1]} ({sum(pokemon.iloc[r,3:9])} BST)')
         # window.refresh()
 
 window.close()

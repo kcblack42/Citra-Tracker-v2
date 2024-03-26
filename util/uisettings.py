@@ -192,7 +192,7 @@ def defaultuisettings(font_sizes):
         ], 
         [
             sg.Column(botcol7, key='-bc7-'),
-        ]], size=(380, 580)),
+        ]], size=(380, 580), key='-lc-'),
         sg.VerticalSeparator(key='-vs-'),
         sg.Column([[
             sg.Column(topcol1a, size=(200, 350), key='-tc1a-e-', visible = False), 
