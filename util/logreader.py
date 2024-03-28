@@ -142,16 +142,21 @@ trainer_df = pd.concat([trainer_df, trainer_team], axis=1).drop(columns='team')
 trainer_df = trainer_df.map(lambda x: x.strip() if isinstance(x, str) else x)
 
 # wilds
-wilds_df = pd.DataFrame(wildmons.replace('Wild Pokemon--\n', '').split('\n\n')).rename(columns={0:'set'})
-wilds_df = wilds_df['set'].str.split('\n', expand=True)
-wilds_df[['set', 'loc']] = wilds_df[0].str.split('-', expand=True)
-wilds_df.drop(columns=0, inplace=True)
-for (index, colname) in enumerate(wilds_df.iloc[:, 0:12]):
-    new_col1 = 'pkmn_' + str(colname)
-    new_col2 = 'lvl_' + str(colname)
-    wilds_df[colname] = wilds_df[colname].str[0:24].str.strip()
-    wilds_df[[new_col1, new_col2]] = wilds_df[colname].str.split(' Lv', expand=True)
-    wilds_df.drop(columns=colname, inplace=True)
+if gen == 6: #may need to be by game rather than by gen but we're starting here
+    wilds_df = pd.DataFrame(wildmons.replace('Wild Pokemon--\n', '').split('\n\n')).rename(columns={0:'set'})
+    wilds_df = wilds_df['set'].str.split('\n', expand=True)
+    wilds_df[['set', 'loc']] = wilds_df[0].str.split('-', expand=True)
+    wilds_df.drop(columns=0, inplace=True)
+    for (index, colname) in enumerate(wilds_df.iloc[:, 0:12]):
+        new_col1 = 'pkmn_' + str(colname)
+        new_col2 = 'lvl_' + str(colname)
+        wilds_df[colname] = wilds_df[colname].str[0:24].str.strip()
+        wilds_df[[new_col1, new_col2]] = wilds_df[colname].str.split(' Lv', expand=True)
+        wilds_df.drop(columns=colname, inplace=True)
+elif gen == 7:
+    wilds_df = pd.DataFrame(wildmons.replace('Wild Pokemon--\n', '').split('\n\n')).rename(columns={0:'set'})
+    # need to figure this one out, with all of the SOS stuff
+wilds_df = wilds_df.map(lambda x: x.strip() if isinstance(x, str) else x)
 
 # joins for easier event handling later
 pokemon = pd.merge(mons_df, evos_df, how = 'left', left_on='NAME', right_on='preevo').drop(columns='preevo').rename(columns={'postevo':'EVOLUTION'})
@@ -272,6 +277,36 @@ def tmlist(mon, game):
         j += 1
     return logtms1, logtms4, logtmsfull, gymtmlist, tmdict, tmdictfull, tmtext, tmtextfull
 
+def pivotlist(game):
+    logpivotlocs, logpivotheaders = [], []
+    logpivot, pivottext = {}, {}
+    if game == 'XY':
+        sets = ['Set #22', 'Set #138', 'Set #23', 'Set #132']
+        locs = ['Route 2', 'Santalune Forest', 'Route 3', 'Route 22']   
+    elif game == 'ORAS':
+        sets = ['Set #22', 'Set #138', 'Set #23', 'Set #132', 'Set #134'] # need to find these
+        locs = ['Route 101', 'Route 102', 'Route 103', 'Route 104', 'Petalburg Woods']
+    elif gen == 7:
+        sets = ['??????????']
+        locs = ['Route 1 Grass #1']
+    pivotlocs = pd.merge(wilds_df, pd.DataFrame(sets, locs).reset_index(), how = 'inner', left_on='set', right_on=0).rename(columns={'index':'locname'})
+
+    f1 = ('Franklin Gothic Medium', 12)
+    f2 = ('Franklin Gothic Medium', 10)
+    logpivotlocs.append([sg.Text(f'Locations:', text_color='#f0f080', font=f1, visible = True)])
+    logpivotheaders.append([sg.Text(f'Pokemon', text_color='#f0f080', font=f1, visible = True)])
+    logpivotheaders.append([sg.Text(f'Level', text_color='#f0f080', font=f1, visible = True)])
+
+    for i in range(0, len(pivotlocs)):
+        logpivotlocs.append([sg.Text(f'{pivotlocs['locname'][i]}', text_color='white', font=f2, key = f'-log-pivotloc{i}-', visible = True, enable_events=True)])
+        j = 1
+        while j <= 12:
+            logpivot[f'{pivotlocs['locname'][i]}'] = [[sg.Text(f'{pivotlocs[f'pkmn_{j}'][i]}', text_color='white', font=f2, key = f'-log-pivotmon{i}-{j}-', visible = True)], [sg.Text(f'{pivotlocs[f'lvl_{j}'][i]}', text_color='white', font=f2, key = f'-log-pivotlvl{i}-{j}-', visible = True)]]
+            pivottext[f'{pivotlocs['locname'][i]}'] = [f'{pivotlocs[f'pkmn_{j}'][i]}', f'{pivotlocs[f'lvl_{j}'][i]}']
+            j += 1
+    return logpivotlocs, logpivotheaders, logpivot, pivottext
+
+
 
 graph=sg.Graph(canvas_size=(380,200), graph_bottom_left=(50,10), graph_top_right=(330,240),background_color='black', enable_events=True, key='-log-graph-')
 
@@ -281,6 +316,7 @@ logmoves, mvlist = movelist(pokemon.iloc[r,16:])
 logabils, alist = abillist(pokemon.iloc[r])
 logevos, elist = evolist(pokemon.iloc[r])
 logtms1, logtms4, logtmsfull, gymtmlist, tmdict, tmdictfull, tmtext, tmtextfull = tmlist(pokemon.iloc[r], game)
+logpivotlocs, logpivotheaders, logpivot, pivottext = pivotlist(game)
 
 bwidth = 1
 bpad = (1,1,0,0)
@@ -325,6 +361,9 @@ blcol1 = [[
     ])
 ]]
 
+bccol3 = [logpivotheaders[0]]
+brcol3 = [logpivotheaders[1]]
+
 layout_pkmn = [
     [sg.Column(navbar[1], key='-log-navbar1-', size=(340,35), justification='c')],
     [graph], 
@@ -340,6 +379,11 @@ layout_trainers = [
 
 layout_pivots = [
     [sg.Column(navbar[3], key='-log-navbar3-', size=(340,35), justification='c')],
+    [
+        sg.Column(logpivotlocs, key='-log-pivotlocs-', size=(150,350), justification='l'),
+        sg.Column(bccol3, size=(100,350)), 
+        sg.Column(brcol3, size=(50,350)),
+    ], 
 ]
 
 layout_tms = [
@@ -380,6 +424,7 @@ logmoves, mvlist = movelist(pokemon.iloc[r,16:], logmoves, mvlist)
 logabils, alist = abillist(pokemon.iloc[r])
 logevos, elist = evolist(pokemon.iloc[r])
 logtms1, logtms4, logtmsfull, gymtmlist, tmdict, tmdictfull, tmtext, tmtextfull = tmlist(pokemon.iloc[r], game)
+logpivotlocs, logpivotheaders, logpivot, pivottext = pivotlist(game)
 
 l = 1 #current layout (defaults to pokemon screen)
 while True:
@@ -449,6 +494,5 @@ while True:
                 window[f'-log-fulltm{i}-'].update(text_color='green')
             i += 1
         window['-log-tmpkmn-'].update(f'{pokemon.iloc[r,1]} ({sum(pokemon.iloc[r,3:9])} BST)')
-        # window.refresh()
 
 window.close()
