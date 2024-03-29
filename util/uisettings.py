@@ -171,8 +171,7 @@ def defaultuisettings(font_sizes):
         # [sg.Text(key='-mv4ctc-e-', size=1, justification='c')],
     ]
 
-    layout = [[
-        sg.Column([[
+    trackerleft = [[
             sg.Column(topcol1, key='-tc1-', size=(200, 350)), 
             sg.Column([[
                 sg.Column(topcol2, key='-tc2-', size=(80, 230)), 
@@ -192,7 +191,13 @@ def defaultuisettings(font_sizes):
         ], 
         [
             sg.Column(botcol7, key='-bc7-'),
-        ]], size=(380, 580), key='-lc-'),
+        ]]
+    
+    logviewerleft = [[]]
+
+    layout = [[
+        sg.Column(trackerleft, size=(380, 580), key='-lc-'),
+        sg.Column(logviewerleft, size=(380, 580), key='-logviewer-', visible=False),
         sg.VerticalSeparator(key='-vs-'),
         sg.Column([[
             sg.Column(topcol1a, size=(200, 350), key='-tc1a-e-', visible = False), 

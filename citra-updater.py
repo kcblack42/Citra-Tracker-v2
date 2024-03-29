@@ -53,6 +53,7 @@ from util.notesclear import notesclear
 from util.settings import autoload_settings
 from util.bagfuncs import bagitems
 from util.uisettings import defaultuisettings
+from util.logreader import logviewer
 
 # pysimplegui settings et al
 track_title = 'Ironmon Tracker'

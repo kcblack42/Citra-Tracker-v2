@@ -4,13 +4,12 @@ import pathlib
 import pandas as pd
 import re
 import io
-import plotly.express as px
-import plotly.graph_objects as go
 import numpy as np # this won't actually be needed for launch
 
 track_size = (380, 580)
 font_sizes = [14, 12, 10, 15]
 sg.set_options(font=('Franklin Gothic Medium', font_sizes[0]), text_color='white', background_color='black', element_background_color='black', text_element_background_color='black', tooltip_font=('Franklin Gothic Medium', font_sizes[1]), tooltip_time=150)
+pokemonnum = 0
 
 '''
 Useful demo for swapping entirely different window layouts (it's actually really simple): 
@@ -40,18 +39,18 @@ log.count('\n--')
 
 lsplit = log.split('\n--')
 
-if (lsplit[-1].count('Pokemon X') >= 1):
+if (lsplit[-1].count('Pokemon X') >= 1) | (lsplit[-1].count('Pokemon Y') >= 1):
     game = 'XY'
-elif (lsplit[-1].count('Pokemon Y') >= 1):
-    game = 'XY'
-elif (lsplit[-1].count('Pokemon Omega') >= 1):
+# elif (lsplit[-1].count('Pokemon Y') >= 1):
+#     game = 'XY'
+elif (lsplit[-1].count('Pokemon Omega') >= 1) | (lsplit[-1].count('Pokemon Alpha') >= 1):
     game = 'ORAS'
-elif (lsplit[-1].count('Pokemon Alpha') >= 1):
-    game = 'ORAS'
-elif (lsplit[-1].count('Pokemon Sun') >= 1):
+# elif (lsplit[-1].count('Pokemon Alpha') >= 1):
+#     game = 'ORAS'
+elif (lsplit[-1].count('Pokemon Sun') >= 1) | (lsplit[-1].count('Pokemon Moon') >= 1):
     game = 'SM'
-elif (lsplit[-1].count('Pokemon Moon') >= 1):
-    game = 'SM'
+# elif (lsplit[-1].count('Pokemon Moon') >= 1):
+#     game = 'SM'
 elif (lsplit[-1].count('Pokemon Ultra') >= 1):
     game = 'USUM'
 else:
@@ -163,6 +162,7 @@ pokemon = pd.merge(mons_df, evos_df, how = 'left', left_on='NAME', right_on='pre
 pokemon = pd.merge(pokemon, moves_df, how='left', left_on='NAME', right_on='mon').drop(columns=['num', 'mon', 'evo'])
 pokemon.columns = pokemon.columns.str.replace('col_', 'move_')
 pokemon['EVOLUTION'] = pokemon['EVOLUTION'].fillna('')
+pokemon = pokemon.sort_values('NAME')
 
 
 # charting stats
@@ -308,16 +308,44 @@ def pivotlist(game):
             j += 1
     return logpivotlocs, logpivotbase1, logpivotbase2, pivottext
 
+def searchfcn(p):
+    pkmnnum = pokemon.loc[pokemon['NUM'] == (p + 1)].iloc[0,0]
+    l = pokemon['NAME'].to_list()
+    l.sort() # this one's what we use for the actual input box
+    lcase = pokemon['NAME'].str.casefold().to_list() # allows case insensitivity
+    searchpopup = [
+        [sg.Text('Pokemon search')],
+        [sg.InputCombo(l, enable_events=True, key='-log-pkmnsearch-')],
+        [sg.Button('Search', key='-search-'), sg.Button('Cancel')]
+    ] 
+    window = sg.Window('Pokemon Search', searchpopup).Finalize()
+    
+    while True:
+        event, values = window.read()
 
+        if (event == sg.WINDOW_CLOSED) or (event == 'Cancel'):
+            break
+        elif event == '-search-':
+            try:
+                pkmnnum = lcase.index(values['-log-pkmnsearch-'].casefold())
+            except:
+                sg.popup_ok('Pokemon not found.', title='Error')
+            # print(values)
+            # print(pkmnnum)
+            break
+
+    window.close()
+
+    return pkmnnum
 
 graph=sg.Graph(canvas_size=(380,200), graph_bottom_left=(50,10), graph_top_right=(330,240),background_color='black', enable_events=True, key='-log-graph-')
 
-r = np.random.randint(0,776)
+# r = np.random.randint(0,776)
 # r = 165
-logmoves, mvlist = movelist(pokemon.iloc[r,16:])
-logabils, alist = abillist(pokemon.iloc[r])
-logevos, elist = evolist(pokemon.iloc[r])
-logtms1, logtms4, logtmsfull, gymtmlist, tmdict, tmdictfull, tmtext, tmtextfull = tmlist(pokemon.iloc[r], game)
+logmoves, mvlist = movelist(pokemon.iloc[pokemonnum,16:])
+logabils, alist = abillist(pokemon.iloc[pokemonnum])
+logevos, elist = evolist(pokemon.iloc[pokemonnum])
+logtms1, logtms4, logtmsfull, gymtmlist, tmdict, tmdictfull, tmtext, tmtextfull = tmlist(pokemon.iloc[pokemonnum], game)
 logpivotlocs, logpivotbase1, logpivotbase2, pivottext = pivotlist(game)
 
 bwidth = 1
@@ -327,13 +355,14 @@ if gen == 6:
     bfont = ('Franklin Gothic Medium', 12)
     for i in range(1, 7):
         navbar[i]=[[
-            sg.Text(' Pokemon ', enable_events=True, key=f'-lognav-pkmn{i}-', relief='groove', border_width=bwidth, pad=bpad, font=bfont),
-            sg.Text(' Trainers ', enable_events=True, key=f'-lognav-trainer{i}-', relief='groove', border_width=bwidth, pad=bpad, font=bfont),
-            sg.Text(' Pivots ', enable_events=True, key=f'-lognav-pivot{i}-', relief='groove', border_width=bwidth, pad=bpad, font=bfont),
-            sg.Text(' TMs ', enable_events=True, key=f'-lognav-tm{i}-', relief='groove', border_width=bwidth, pad=bpad, font=bfont),
+            sg.Text(' Pokemon ', enable_events=True, key=f'-lognav-pkmn{i}-', relief='groove', border_width=bwidth, pad=bpad, font=bfont, justification='c'),
+            sg.Text(' Trainers ', enable_events=True, key=f'-lognav-trainer{i}-', relief='groove', border_width=bwidth, pad=bpad, font=bfont, justification='c'),
+            sg.Text(' Pivots ', enable_events=True, key=f'-lognav-pivot{i}-', relief='groove', border_width=bwidth, pad=bpad, font=bfont, justification='c'),
+            sg.Text(' TMs ', enable_events=True, key=f'-lognav-tm{i}-', relief='groove', border_width=bwidth, pad=bpad, font=bfont, justification='c'),
             # sg.Text(' Info ', enable_events=True, key=f'-lognav-info{i}-', relief='groove', border_width=1, pad=bpad, font=bfont),
-            # sg.Text(' Search ', enable_events=True, key=f'-lognav-search{i}-', relief='groove', border_width=1, pad=bpad, font=bfont),
-            sg.Text(' Random ', enable_events=True, key=f'-lognav-random{i}-', relief='groove', border_width=bwidth, pad=bpad, font=bfont),
+            sg.Text(' Search ', enable_events=True, key=f'-lognav-search{i}-', relief='groove', border_width=1, pad=bpad, font=bfont, justification='c'),
+            # sg.Text(' Random ', enable_events=True, key=f'-lognav-random{i}-', relief='groove', border_width=bwidth, pad=bpad, font=bfont),
+            sg.Text(' X ', enable_events=True, key=f'-lognav-exit{i}-', relief='groove', border_width=1, pad=bpad, font=bfont, justification='c'),
         ]]
 elif gen == 7: # not complete, will need to fill in later
     bfont = ('Franklin Gothic Medium', 10) # need smaller font because more nav bar things, may choose to go to two rows instead but we'll see if thats needed (hopefully not), could also use abbreviations; might also roll tutor into TM for gen 7
@@ -345,8 +374,8 @@ elif gen == 7: # not complete, will need to fill in later
             sg.Text(' TMs ', enable_events=True, key=f'-lognav-tm{i}-', relief='groove', border_width=bwidth, pad=bpad, font=bfont),
             # sg.Text(' Tutors ', enable_events=True, key=f'-lognav-tutor{i}-', relief='groove', border_width=1, pad=bpad, font=bfont),
             # sg.Text(' Info ', enable_events=True, key=f'-lognav-info{i}-', relief='groove', border_width=1, pad=bpad, font=bfont),
-            # sg.Text(' Search ', enable_events=True, key=f'-lognav-search{i}-', relief='groove', border_width=1, pad=bpad, font=bfont),
-            sg.Text(' Random ', enable_events=True, key=f'-lognav-random{i}-', relief='groove', border_width=bwidth, pad=bpad, font=bfont),
+            sg.Text(' Search ', enable_events=True, key=f'-lognav-search{i}-', relief='groove', border_width=1, pad=bpad, font=bfont),
+            # sg.Text(' Random ', enable_events=True, key=f'-lognav-random{i}-', relief='groove', border_width=bwidth, pad=bpad, font=bfont),
         ]]
 
 
@@ -390,7 +419,7 @@ layout_pivots = [
 
 layout_tms = [
     [sg.Column(navbar[4], key='-log-navbar4-', size=(340,35), justification='c')],
-    [sg.Text(f'{pokemon.iloc[r,1]} ({sum(pokemon.iloc[r,3:9])} BST)', font=('Franklin Gothic Medium', 16), text_color='#f0f080', key='-log-tmpkmn-')],
+    [sg.Text(f'{pokemon.iloc[pokemonnum,1]} ({sum(pokemon.iloc[pokemonnum,3:9])} BST)', font=('Franklin Gothic Medium', 16), text_color='#f0f080', key='-log-tmpkmn-')],
     [
         sg.Text(f'Gym TMs:', font=('Franklin Gothic Medium', 14), text_color='#f0f080', size=15),
         sg.Text(f'All TMs:', font=('Franklin Gothic Medium', 14), text_color='#f0f080'),
@@ -421,17 +450,17 @@ layout = [[
 
 window = sg.Window('Log reader test', layout, track_size, finalize=True, element_padding=(1,1,0,0))
 
-statchart(pokemon.iloc[r])
-logmoves, mvlist = movelist(pokemon.iloc[r,16:], logmoves, mvlist)
-logabils, alist = abillist(pokemon.iloc[r])
-logevos, elist = evolist(pokemon.iloc[r])
-logtms1, logtms4, logtmsfull, gymtmlist, tmdict, tmdictfull, tmtext, tmtextfull = tmlist(pokemon.iloc[r], game)
+statchart(pokemon.iloc[pokemonnum])
+logmoves, mvlist = movelist(pokemon.iloc[pokemonnum,16:], logmoves, mvlist)
+logabils, alist = abillist(pokemon.iloc[pokemonnum])
+logevos, elist = evolist(pokemon.iloc[pokemonnum])
+logtms1, logtms4, logtmsfull, gymtmlist, tmdict, tmdictfull, tmtext, tmtextfull = tmlist(pokemon.iloc[pokemonnum], game)
 logpivotlocs, logpivotbase1, logpivotbase2, pivottext = pivotlist(game)
 
 l = 1 #current layout (defaults to pokemon screen)
 while True:
     event, values = window.read()
-    if event == sg.WIN_CLOSED:
+    if event in (sg.WIN_CLOSED, f'-lognav-exit{l}-'):
         break
     if event == f'-lognav-pkmn{l}-':
         window[f'-layout{l}-'].update(visible=False)
@@ -457,21 +486,16 @@ while True:
     #     window[f'-layout{l}-'].update(visible=False)
     #     l = 6
     #     window[f'-layout{l}-'].update(visible=True)
-    # if event == f'-lognav-search{l}-':
-    #     window[f'-layout{l}-'].update(visible=False)
-    #     l = 7
-    #     window[f'-layout{l}-'].update(visible=True)
-    if event in ('-lognav-random1-', '-lognav-random4-',): # only relevant for the pokemon and tm pages (and eventually tutor)
+    if event == f'-lognav-search{l}-':
+        pkmn = searchfcn(pokemonnum)
         i = 0
-        r = np.random.randint(0,776)
-        # r = 132 # testing eevee in particular
-        # r = 165 # testing ledian in particular
         graph.Erase()
-        statchart(pokemon.iloc[r])
-        logmoves, mvlist = movelist(pokemon.iloc[r,16:], logmoves, mvlist)
-        logabils, alist = abillist(pokemon.iloc[r])
-        logevos, elist = evolist(pokemon.iloc[r])
-        logtms1, logtms4, logtmsfull, gymtmlist, tmdict, tmdictfull, tmtext, tmtextfull = tmlist(pokemon.iloc[r], game)
+        statchart(pokemon.iloc[pkmn])
+        logmoves, mvlist = movelist(pokemon.iloc[pkmn,16:], logmoves, mvlist)
+        logabils, alist = abillist(pokemon.iloc[pkmn])
+        logevos, elist = evolist(pokemon.iloc[pkmn])
+        logtms1, logtms4, logtmsfull, gymtmlist, tmdict, tmdictfull, tmtext, tmtextfull = tmlist(pokemon.iloc[pkmn], game)
+        pokemonnum = pkmn - 1
         while i < len(tmtextfull):
             if i < len(mvlist):
                 window[f'-log-ml{i}-'].update(mvlist[i], visible = True)
@@ -495,7 +519,42 @@ while True:
             elif tmdictfull[tmtextfull[i]] == True:
                 window[f'-log-fulltm{i}-'].update(text_color='green')
             i += 1
-        window['-log-tmpkmn-'].update(f'{pokemon.iloc[r,1]} ({sum(pokemon.iloc[r,3:9])} BST)')
+        window['-log-tmpkmn-'].update(f'{pokemon.iloc[pkmn,1]} ({sum(pokemon.iloc[pkmn,3:9])} BST)')
+    # if event in ('-lognav-random1-', '-lognav-random4-',): # only relevant for the pokemon and tm pages (and eventually tutor)
+    #     i = 0
+    #     r = np.random.randint(0,776)
+    #     # r = 132 # testing eevee in particular
+    #     # r = 165 # testing ledian in particular
+    #     graph.Erase()
+    #     statchart(pokemon.iloc[r])
+    #     logmoves, mvlist = movelist(pokemon.iloc[r,16:], logmoves, mvlist)
+    #     logabils, alist = abillist(pokemon.iloc[r])
+    #     logevos, elist = evolist(pokemon.iloc[r])
+    #     logtms1, logtms4, logtmsfull, gymtmlist, tmdict, tmdictfull, tmtext, tmtextfull = tmlist(pokemon.iloc[r], game)
+    #     while i < len(tmtextfull):
+    #         if i < len(mvlist):
+    #             window[f'-log-ml{i}-'].update(mvlist[i], visible = True)
+    #         elif i < len(logmoves) - 1:
+    #             window[f'-log-ml{i}-'].update(visible = False)
+    #         if i < len(alist) and i == 2:
+    #             window[f'-log-al{i}-'].update(f'{alist.iloc[i]} (HA)', visible = True)
+    #         elif i < len(alist):
+    #             window[f'-log-al{i}-'].update(alist.iloc[i], visible = True)
+    #         if i == 0:
+    #             window[f'-log-evos-'].update(f'{elist}', visible = True)
+    #         if i < len(tmtext):
+    #             if tmdict[tmtext[i]] == False:
+    #                 window[f'-log-gymtm1{i}-'].update(text_color='white')
+    #                 window[f'-log-gymtm4{i}-'].update(text_color='white')
+    #             elif tmdict[tmtext[i]] == True:
+    #                 window[f'-log-gymtm1{i}-'].update(text_color='green')
+    #                 window[f'-log-gymtm4{i}-'].update(text_color='green')
+    #         if tmdictfull[tmtextfull[i]] == False:
+    #             window[f'-log-fulltm{i}-'].update(text_color='white')
+    #         elif tmdictfull[tmtextfull[i]] == True:
+    #             window[f'-log-fulltm{i}-'].update(text_color='green')
+    #         i += 1
+    #     window['-log-tmpkmn-'].update(f'{pokemon.iloc[r,1]} ({sum(pokemon.iloc[r,3:9])} BST)')
     if event in ('-logpivot-loc0-'):
         for i in range(0, len(logpivotlocs)-1): # turn off all different colors, then turn on for current
             window[f'-logpivot-loc{i}-'].update(text_color='white')
@@ -532,5 +591,7 @@ while True:
             window[f'-logpivot-mon{j}-'].update(pivottext[f'4-{j}'][0], visible = True)
             window[f'-logpivot-lvl{j}-'].update(pivottext[f'4-{j}'][1], visible = True)
 
-
 window.close()
+
+def logviewer():
+    return ''
