@@ -278,8 +278,8 @@ def tmlist(mon, game):
     return logtms1, logtms4, logtmsfull, gymtmlist, tmdict, tmdictfull, tmtext, tmtextfull
 
 def pivotlist(game):
-    logpivotlocs, logpivotheaders = [], []
-    logpivot, pivottext = {}, {}
+    logpivotlocs, logpivotbase1, logpivotbase2 = [], [], []
+    pivottext = {}
     if game == 'XY':
         sets = ['Set #22', 'Set #138', 'Set #23', 'Set #132']
         locs = ['Route 2', 'Santalune Forest', 'Route 3', 'Route 22']   
@@ -294,17 +294,19 @@ def pivotlist(game):
     f1 = ('Franklin Gothic Medium', 12)
     f2 = ('Franklin Gothic Medium', 10)
     logpivotlocs.append([sg.Text(f'Locations:', text_color='#f0f080', font=f1, visible = True)])
-    logpivotheaders.append([sg.Text(f'Pokemon', text_color='#f0f080', font=f1, visible = True)])
-    logpivotheaders.append([sg.Text(f'Level', text_color='#f0f080', font=f1, visible = True)])
+    logpivotbase1.append([sg.Text(f'Pokemon', text_color='#f0f080', font=f1, visible = True)])
+    logpivotbase2.append([sg.Text(f'Level', text_color='#f0f080', font=f1, visible = True)])
 
     for i in range(0, len(pivotlocs)):
-        logpivotlocs.append([sg.Text(f'{pivotlocs['locname'][i]}', text_color='white', font=f2, key = f'-log-pivotloc{i}-', visible = True, enable_events=True)])
+        logpivotlocs.append([sg.Text(f'{pivotlocs['locname'][i]}', text_color='white', font=f2, key = f'-logpivot-loc{i}-', visible = True, enable_events=True)])
         j = 1
         while j <= 12:
-            logpivot[f'{pivotlocs['locname'][i]}'] = [[sg.Text(f'{pivotlocs[f'pkmn_{j}'][i]}', text_color='white', font=f2, key = f'-log-pivotmon{i}-{j}-', visible = True)], [sg.Text(f'{pivotlocs[f'lvl_{j}'][i]}', text_color='white', font=f2, key = f'-log-pivotlvl{i}-{j}-', visible = True)]]
-            pivottext[f'{pivotlocs['locname'][i]}'] = [f'{pivotlocs[f'pkmn_{j}'][i]}', f'{pivotlocs[f'lvl_{j}'][i]}']
+            if i == 0:
+                logpivotbase1.append([sg.Text('', text_color='white', font=f2, key = f'-logpivot-mon{j}-', visible = True, justification='c')])
+                logpivotbase2.append([sg.Text('', text_color='white', font=f2, key = f'-logpivot-lvl{j}-', visible = True, justification='c')])
+            pivottext[f'{i}-{j}'] = [f'{pivotlocs[f'pkmn_{j}'][i]}', f'{pivotlocs[f'lvl_{j}'][i]}']
             j += 1
-    return logpivotlocs, logpivotheaders, logpivot, pivottext
+    return logpivotlocs, logpivotbase1, logpivotbase2, pivottext
 
 
 
@@ -316,7 +318,7 @@ logmoves, mvlist = movelist(pokemon.iloc[r,16:])
 logabils, alist = abillist(pokemon.iloc[r])
 logevos, elist = evolist(pokemon.iloc[r])
 logtms1, logtms4, logtmsfull, gymtmlist, tmdict, tmdictfull, tmtext, tmtextfull = tmlist(pokemon.iloc[r], game)
-logpivotlocs, logpivotheaders, logpivot, pivottext = pivotlist(game)
+logpivotlocs, logpivotbase1, logpivotbase2, pivottext = pivotlist(game)
 
 bwidth = 1
 bpad = (1,1,0,0)
@@ -361,8 +363,8 @@ blcol1 = [[
     ])
 ]]
 
-bccol3 = [logpivotheaders[0]]
-brcol3 = [logpivotheaders[1]]
+bccol3 = [logpivotbase1]
+brcol3 = [logpivotbase2]
 
 layout_pkmn = [
     [sg.Column(navbar[1], key='-log-navbar1-', size=(340,35), justification='c')],
@@ -381,8 +383,8 @@ layout_pivots = [
     [sg.Column(navbar[3], key='-log-navbar3-', size=(340,35), justification='c')],
     [
         sg.Column(logpivotlocs, key='-log-pivotlocs-', size=(150,350), justification='l'),
-        sg.Column(bccol3, size=(100,350)), 
-        sg.Column(brcol3, size=(50,350)),
+        sg.Column(logpivotbase1, size=(100,350)), 
+        sg.Column(logpivotbase2, size=(50,350)),
     ], 
 ]
 
@@ -424,7 +426,7 @@ logmoves, mvlist = movelist(pokemon.iloc[r,16:], logmoves, mvlist)
 logabils, alist = abillist(pokemon.iloc[r])
 logevos, elist = evolist(pokemon.iloc[r])
 logtms1, logtms4, logtmsfull, gymtmlist, tmdict, tmdictfull, tmtext, tmtextfull = tmlist(pokemon.iloc[r], game)
-logpivotlocs, logpivotheaders, logpivot, pivottext = pivotlist(game)
+logpivotlocs, logpivotbase1, logpivotbase2, pivottext = pivotlist(game)
 
 l = 1 #current layout (defaults to pokemon screen)
 while True:
@@ -494,5 +496,41 @@ while True:
                 window[f'-log-fulltm{i}-'].update(text_color='green')
             i += 1
         window['-log-tmpkmn-'].update(f'{pokemon.iloc[r,1]} ({sum(pokemon.iloc[r,3:9])} BST)')
+    if event in ('-logpivot-loc0-'):
+        for i in range(0, len(logpivotlocs)-1): # turn off all different colors, then turn on for current
+            window[f'-logpivot-loc{i}-'].update(text_color='white')
+        window[f'-logpivot-loc0-'].update(text_color='#f0f080')
+        for j in range(1, len(logpivotbase1)): #update rows with loc info, length of the pivotbase is number of mons + 1 due to the header
+            window[f'-logpivot-mon{j}-'].update(pivottext[f'0-{j}'][0], visible = True)
+            window[f'-logpivot-lvl{j}-'].update(pivottext[f'0-{j}'][1], visible = True)
+    if event in ('-logpivot-loc1-'):
+        for i in range(0, len(logpivotlocs)-1):
+            window[f'-logpivot-loc{i}-'].update(text_color='white')
+        window[f'-logpivot-loc1-'].update(text_color='#f0f080')
+        for j in range(1, len(logpivotbase1)): 
+            window[f'-logpivot-mon{j}-'].update(pivottext[f'1-{j}'][0], visible = True)
+            window[f'-logpivot-lvl{j}-'].update(pivottext[f'1-{j}'][1], visible = True)
+    if event in ('-logpivot-loc2-'):
+        for i in range(0, len(logpivotlocs)-1):
+            window[f'-logpivot-loc{i}-'].update(text_color='white')
+        window[f'-logpivot-loc2-'].update(text_color='#f0f080')
+        for j in range(1, len(logpivotbase1)): 
+            window[f'-logpivot-mon{j}-'].update(pivottext[f'2-{j}'][0], visible = True)
+            window[f'-logpivot-lvl{j}-'].update(pivottext[f'2-{j}'][1], visible = True)
+    if event in ('-logpivot-loc3-'):
+        for i in range(0, len(logpivotlocs)-1):
+            window[f'-logpivot-loc{i}-'].update(text_color='white')
+        window[f'-logpivot-loc3-'].update(text_color='#f0f080')
+        for j in range(1, len(logpivotbase1)): 
+            window[f'-logpivot-mon{j}-'].update(pivottext[f'3-{j}'][0], visible = True)
+            window[f'-logpivot-lvl{j}-'].update(pivottext[f'3-{j}'][1], visible = True)
+    if event in ('-logpivot-loc4-'):
+        for i in range(0, len(logpivotlocs)-1):
+            window[f'-logpivot-loc{i}-'].update(text_color='white')
+        window[f'-logpivot-loc4-'].update(text_color='#f0f080')
+        for j in range(1, len(logpivotbase1)): 
+            window[f'-logpivot-mon{j}-'].update(pivottext[f'4-{j}'][0], visible = True)
+            window[f'-logpivot-lvl{j}-'].update(pivottext[f'4-{j}'][1], visible = True)
+
 
 window.close()
