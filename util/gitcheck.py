@@ -43,9 +43,9 @@ def gitcheck(v):
         print('Version up to date.')
     elif (vzn[0] < gitvzn[0]):
         gitpopup(gitlink)
-    elif (vzn[1] < gitvzn[1]):
+    elif (vzn[1] < gitvzn[1]) & (vzn[0] <= gitvzn[0]):
         gitpopup(gitlink)
-    elif (vzn[2] < gitvzn[2]):
+    elif (vzn[2] < gitvzn[2]) & (vzn[1] <= gitvzn[1]) & (vzn[0] <= gitvzn[0]):
         gitpopup(gitlink)
     else:
         print('Version up to date.')

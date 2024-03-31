@@ -1,7 +1,7 @@
 import PySimpleGUI as sg
 from PIL import Image
 
-def defaultuisettings(font_sizes):
+def defaultuisettings(font_sizes, logview):
     topcol1 = [
         [sg.Combo([], visible=False, font=('Franklin Gothic Medium', font_sizes[1]), enable_events=True, key='-slotdrop-', readonly=True, expand_x=True, background_color='black', text_color='white')],
         [sg.Text('Loading...', key='-slot-'),],
@@ -78,7 +78,8 @@ def defaultuisettings(font_sizes):
     botcol7 = [
         [
             sg.Button('Next Seed', key='-clearnotes-', font=('Franklin Gothic Medium', font_sizes[2]), pad=(2,2,2,2), auto_size_button=True, visible=False), 
-            sg.Button('Batch Settings', key='-settings-', font=('Franklin Gothic Medium', font_sizes[2]), pad=(2,2,2,2), auto_size_button=True, visible=False)
+            sg.Button('Batch Settings', key='-settings-', font=('Franklin Gothic Medium', font_sizes[2]), pad=(2,2,2,2), auto_size_button=True, visible=False),
+            sg.Button('View Log', key='-view-log-', font=('Franklin Gothic Medium', font_sizes[2]), pad=(2,2,2,2), auto_size_button=True, visible=False)
         ],
     ]
 
@@ -193,12 +194,12 @@ def defaultuisettings(font_sizes):
             sg.Column(botcol7, key='-bc7-'),
         ]]
     
-    logviewerleft = [[]]
+    logviewerleft = logview
 
-    layout = [[
+    layout_main = [[
         sg.Column(trackerleft, size=(380, 580), key='-lc-'),
         sg.Column(logviewerleft, size=(380, 580), key='-logviewer-', visible=False),
-        sg.VerticalSeparator(key='-vs-'),
+        # sg.VerticalSeparator(key='-vs-'),
         sg.Column([[
             sg.Column(topcol1a, size=(200, 350), key='-tc1a-e-', visible = False), 
             sg.Column([[
@@ -223,6 +224,6 @@ def defaultuisettings(font_sizes):
         ], 
         [
             sg.Column(botcol7a, key='-bc7a-e-', visible = False), 
-        ]], size=(380, 580))
+        ]], size=(380, 580), key='-rc-')
     ]]
-    return layout
+    return layout_main
