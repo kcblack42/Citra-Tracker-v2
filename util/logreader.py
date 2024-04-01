@@ -132,7 +132,7 @@ def log_parser(log):
     pokemon = pd.merge(pokemon, moves_df, how='left', left_on='NAME', right_on='mon').drop(columns=['num', 'mon', 'evo'])
     pokemon.columns = pokemon.columns.str.replace('col_', 'move_')
     pokemon['EVOLUTION'] = pokemon['EVOLUTION'].fillna('')
-    pokemon = pokemon.sort_values('NAME')
+    pokemon = pokemon.sort_values('NAME').reset_index().drop(columns='index')
     return pokemon, wilds_df, tms_df, tmcompat_df, gen, game
 
 
@@ -232,8 +232,8 @@ def tmlist(mon, game, tmcompat_df, tms_df):
             logtms4.append([sg.Text(f'TM{tms_df['tmnum'][gymtmlist[i]-1]} {tms_df['move'][gymtmlist[i]-1]}', text_color='white', font=('Franklin Gothic Medium', 10), key = f'-log-gymtm4{i}-', visible = True)])
             tmdict[f'TM{tms_df['tmnum'][gymtmlist[i]-1]} {tms_df['move'][gymtmlist[i]-1]}'] = False
         else:
-            logtms1.append([sg.Text(f'TM{tms_df['tmnum'][gymtmlist[i]-1]} {tms_df['move'][gymtmlist[i]-1]}', text_color='green', font=('Franklin Gothic Medium', 10), key = f'-log-gymtm1{i}-', visible = True)])
-            logtms4.append([sg.Text(f'TM{tms_df['tmnum'][gymtmlist[i]-1]} {tms_df['move'][gymtmlist[i]-1]}', text_color='green', font=('Franklin Gothic Medium', 10), key = f'-log-gymtm4{i}-', visible = True)])
+            logtms1.append([sg.Text(f'TM{tms_df['tmnum'][gymtmlist[i]-1]} {tms_df['move'][gymtmlist[i]-1]}', text_color='#339ec4', font=('Franklin Gothic Medium', 10), key = f'-log-gymtm1{i}-', visible = True)])
+            logtms4.append([sg.Text(f'TM{tms_df['tmnum'][gymtmlist[i]-1]} {tms_df['move'][gymtmlist[i]-1]}', text_color='#339ec4', font=('Franklin Gothic Medium', 10), key = f'-log-gymtm4{i}-', visible = True)])
             tmdict[f'TM{tms_df['tmnum'][gymtmlist[i]-1]} {tms_df['move'][gymtmlist[i]-1]}'] = True
         tmtext.append(f'TM{tms_df['tmnum'][gymtmlist[i]-1]} {tms_df['move'][gymtmlist[i]-1]}')
         i += 1
@@ -242,7 +242,7 @@ def tmlist(mon, game, tmcompat_df, tms_df):
             logtmsfull.append([sg.Text(f'TM{tms_df['tmnum'][j]} {tms_df['move'][j]}', text_color='white', font=('Franklin Gothic Medium', 10), key = f'-log-fulltm{j}-', visible = True)])
             tmdictfull[f'TM{tms_df['tmnum'][j]} {tms_df['move'][j]}'] = False
         else:
-            logtmsfull.append([sg.Text(f'TM{tms_df['tmnum'][j]} {tms_df['move'][j]}', text_color='green', font=('Franklin Gothic Medium', 10), key = f'-log-fulltm{j}-', visible = True)])
+            logtmsfull.append([sg.Text(f'TM{tms_df['tmnum'][j]} {tms_df['move'][j]}', text_color='#339ec4', font=('Franklin Gothic Medium', 10), key = f'-log-fulltm{j}-', visible = True)])
             tmdictfull[f'TM{tms_df['tmnum'][j]} {tms_df['move'][j]}'] = True
         tmtextfull.append(f'TM{tms_df['tmnum'][j]} {tms_df['move'][j]}')
         j += 1
@@ -295,14 +295,17 @@ def searchfcn(pokemon, p):
         event, values = window.read()
 
         if (event == sg.WINDOW_CLOSED) or (event == 'Cancel'):
+            try:
+                pkmnnum = pokemon.loc[pokemon['NUM'] == p].iloc[0,0]
+            except:
+                pkmnnum = 0
             break
         elif event == '-search-':
             try:
                 pkmnnum = lcase.index(values['-log-pkmnsearch-'].casefold())
             except:
                 sg.popup_ok('Pokemon not found.', title='Error')
-            # print(values)
-            # print(pkmnnum)
+                pkmnnum = pokemon.loc[pokemon['NUM'] == p].iloc[0,0]
             break
 
     window.close()
@@ -366,6 +369,7 @@ def logviewer_layout(pokemonnum, pokemon, gen, logtms1, logabils, logmoves, loge
 
     layout_trainers = [
         [sg.Column(navbar[2], key='-log-navbar2-', size=(340,35), justification='c')],
+        [sg.Text('Coming soon!')],
     ]
 
     layout_pivots = [
@@ -402,7 +406,7 @@ def logviewer_layout(pokemonnum, pokemon, gen, logtms1, logabils, logmoves, loge
     # ]
 
     layout_logview = [[
-        sg.Column(layout_pkmn, key='-log-layout1-'), 
+        sg.Column(layout_pkmn, key='-log-layout1-', visible=True), 
         sg.Column(layout_trainers, key='-log-layout2-', visible=False), 
         sg.Column(layout_pivots, key='-log-layout3-', visible=False), 
         sg.Column(layout_tms, key='-log-layout4-', visible=False), 

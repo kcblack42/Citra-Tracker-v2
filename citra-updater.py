@@ -1047,7 +1047,7 @@ def run():
         except:
             settingsdict = {'batch_path':'', 'mod_path':'', 'prefix':''}
             print('Set up your settings file.')
-        pokemonnum = 0
+        pkmn_srch = 0
 
         game = ""
         print('Waiting for game to start...')
@@ -1068,13 +1068,13 @@ def run():
             log = open((batch_folder / f'{prefix}{str(seed)}.log'), encoding="utf8").read()
             log_pkmn, log_wilds, log_tms, log_tmcompat, log_gen, log_game = lr.log_parser(log)
             graph = sg.Graph(canvas_size=(380,200), graph_bottom_left=(50,10), graph_top_right=(330,240),background_color='black', enable_events=True, key='-log-graph-')
-            logmoves, mvlist = lr.movelist(log_pkmn.iloc[pokemonnum,16:])
-            logabils, alist = lr.abillist(log_pkmn.iloc[pokemonnum])
-            logevos, elist = lr.evolist(log_pkmn.iloc[pokemonnum])
-            logtms1, logtms4, logtmsfull, gymtmlist, tmdict, tmdictfull, tmtext, tmtextfull = lr.tmlist(log_pkmn.iloc[pokemonnum], log_game, log_tmcompat, log_tms)
+            logmoves, mvlist = lr.movelist(log_pkmn.iloc[pkmn_srch,16:])
+            logabils, alist = lr.abillist(log_pkmn.iloc[pkmn_srch])
+            logevos, elist = lr.evolist(log_pkmn.iloc[pkmn_srch])
+            logtms1, logtms4, logtmsfull, gymtmlist, tmdict, tmdictfull, tmtext, tmtextfull = lr.tmlist(log_pkmn.iloc[pkmn_srch], log_game, log_tmcompat, log_tms)
             logpivotlocs, logpivotbase1, logpivotbase2, pivottext = lr.pivotlist(log_game, log_gen, log_wilds)
-            layout_logview = lr.logviewer_layout(pokemonnum, log_pkmn, log_gen, logtms1, logabils, logmoves, logevos, logpivotbase1, logpivotbase2, graph, logpivotlocs, logtms4, logtmsfull)
-            lr.statchart(log_pkmn.iloc[pokemonnum], graph)
+            layout_logview = lr.logviewer_layout(pkmn_srch, log_pkmn, log_gen, logtms1, logabils, logmoves, logevos, logpivotbase1, logpivotbase2, graph, logpivotlocs, logtms4, logtmsfull)
+            lr.statchart(log_pkmn.iloc[pkmn_srch], graph)
             # print(log_pkmn, ';;;', layout_logview)
             # print(layout_logview)
         except Exception as e:
@@ -1094,7 +1094,7 @@ def run():
         layout_main = defaultuisettings(font_sizes, layout_logview) # main gui
         
         window = sg.Window(track_title, layout_main, track_size, element_padding=(1,1,0,0), background_color='black', resizable=True, finalize=True)
-        lr.statchart(log_pkmn.iloc[pokemonnum], graph)
+        lr.statchart(log_pkmn.iloc[pkmn_srch], graph)
 
         while (True):
             try:
@@ -1153,9 +1153,7 @@ def run():
                     elif event == '-clearnotes-':
                         confirm = sg.popup_ok_cancel('Load next seed?\nAfter clicking yes, wait 1 sec then Citra > Emulation > Restart.', title='Confirm')
                         if confirm == 'OK':
-                            # seed = notesclear(), returns the next seed number
                             seed = notesclear()
-                            # sg.popup_ok('Data cleared.')
                             trackdata=json.load(open(trackadd,"r+"))
                             slotchoice = ''
                             window['-slot-'].update('Waiting for new mon...')
@@ -1189,56 +1187,33 @@ def run():
                                 window['-mv{}bp-e-'.format(ct)].update(visible = False)
                                 window['-mv{}acc-e-'.format(ct)].update(visible = False)
                                 window['-mv{}ctc-e-'.format(ct)].update(visible = False)
-                            # layout = defaultuisettings()
-                            # window = sg.Window(track_title, layout, track_size, background_color='black', resizable=True)
                             time.sleep(8)
+                            log = open((batch_folder / f'{prefix}{str(seed)}.log'), encoding="utf8").read()
+                            log_pkmn, log_wilds, log_tms, log_tmcompat, log_gen, log_game = lr.log_parser(log)
+                            graph = sg.Graph(canvas_size=(380,200), graph_bottom_left=(50,10), graph_top_right=(330,240),background_color='black', enable_events=True, key='-log-graph-')
+                            logmoves, mvlist = lr.movelist(log_pkmn.iloc[pkmn_srch,16:])
+                            logabils, alist = lr.abillist(log_pkmn.iloc[pkmn_srch])
+                            logevos, elist = lr.evolist(log_pkmn.iloc[pkmn_srch])
+                            logtms1, logtms4, logtmsfull, gymtmlist, tmdict, tmdictfull, tmtext, tmtextfull = lr.tmlist(log_pkmn.iloc[pkmn_srch], log_game, log_tmcompat, log_tms)
+                            logpivotlocs, logpivotbase1, logpivotbase2, pivottext = lr.pivotlist(log_game, log_gen, log_wilds)
+                            layout_logview = lr.logviewer_layout(pkmn_srch, log_pkmn, log_gen, logtms1, logabils, logmoves, logevos, logpivotbase1, logpivotbase2, graph, logpivotlocs, logtms4, logtmsfull)
+                            lr.statchart(log_pkmn.iloc[pkmn_srch], graph)
                             continue
                     elif event == f'-view-log-':
                         window[f'-lc-'].update(visible=False)
                         window[f'-rc-'].update(visible=False)
-                        # window[f'-vs-'].update(color='black')                        
                         l = 1
-                        window[f'-logviewer-'].update(visible=True)
-                    elif event == f'-lognav-exit{l}-':
-                        window[f'-logviewer-'].update(visible=False)
-                        l = 1
-                        window[f'-lc-'].update(visible=True)
-                        # window[f'-vs-'].update(color='white')                        
-                        window[f'-rc-'].update(visible=True)
-                    elif event == f'-lognav-pkmn{l}-':
-                        window[f'-log-layout{l}-'].update(visible=False)
-                        l = 1
-                        window[f'-log-layout{l}-'].update(visible=True)
-                    elif event == f'-lognav-trainer{l}-':
-                        window[f'-log-layout{l}-'].update(visible=False)
-                        l = 2
-                        window[f'-log-layout{l}-'].update(visible=True)
-                    elif event == f'-lognav-pivot{l}-':
-                        window[f'-log-layout{l}-'].update(visible=False)
-                        l = 3
-                        window[f'-log-layout{l}-'].update(visible=True)
-                    elif event == f'-lognav-tm{l}-':
-                        window[f'-log-layout{l}-'].update(visible=False)
-                        l = 4
-                        window[f'-log-layout{l}-'].update(visible=True)
-                    # elif event == f'-lognav-tutor{l}-':
-                    #     window[f'-log-layout{l}-'].update(visible=False)
-                    #     l = 5
-                    #     window[f'-log-layout{l}-'].update(visible=True)
-                    # elif event == f'-lognav-info{l}-':
-                    #     window[f'-log-layout{l}-'].update(visible=False)
-                    #     l = 6
-                    #     window[f'-log-layout{l}-'].update(visible=True)
-                    elif event == f'-lognav-search{l}-':
-                        pkmn = lr.searchfcn(log_pkmn, pokemonnum)
-                        i = 0
+                        # update log with the mon that's in slotchoice
+                        # print(log_pkmn.loc[log_pkmn['NAME'] == slotchoice])
+                        p = log_pkmn.loc[log_pkmn['NAME'] == slotchoice].index[0]
                         graph.Erase()
-                        lr.statchart(log_pkmn.iloc[pokemonnum], graph)
-                        logmoves, mvlist = lr.movelist(log_pkmn.iloc[pokemonnum,16:])
-                        logabils, alist = lr.abillist(log_pkmn.iloc[pokemonnum])
-                        logevos, elist = lr.evolist(log_pkmn.iloc[pokemonnum])
-                        logtms1, logtms4, logtmsfull, gymtmlist, tmdict, tmdictfull, tmtext, tmtextfull = lr.tmlist(log_pkmn.iloc[pokemonnum], log_game, log_tmcompat, log_tms)
-                        pokemonnum = pkmn
+                        lr.statchart(log_pkmn.iloc[p], graph)
+                        logmoves, mvlist = lr.movelist(log_pkmn.iloc[p,16:])
+                        logabils, alist = lr.abillist(log_pkmn.iloc[p])
+                        logevos, elist = lr.evolist(log_pkmn.iloc[p])
+                        logtms1, logtms4, logtmsfull, gymtmlist, tmdict, tmdictfull, tmtext, tmtextfull = lr.tmlist(log_pkmn.iloc[p], log_game, log_tmcompat, log_tms)
+                        pkmn_srch = p
+                        i = 0
                         while i < len(tmtextfull):
                             if i < len(mvlist):
                                 window[f'-log-ml{i}-'].update(mvlist[i], visible = True)
@@ -1255,14 +1230,107 @@ def run():
                                     window[f'-log-gymtm1{i}-'].update(text_color='white')
                                     window[f'-log-gymtm4{i}-'].update(text_color='white')
                                 elif tmdict[tmtext[i]] == True:
-                                    window[f'-log-gymtm1{i}-'].update(text_color='green')
-                                    window[f'-log-gymtm4{i}-'].update(text_color='green')
+                                    window[f'-log-gymtm1{i}-'].update(text_color='#339ec4')
+                                    window[f'-log-gymtm4{i}-'].update(text_color='#339ec4')
                             if tmdictfull[tmtextfull[i]] == False:
                                 window[f'-log-fulltm{i}-'].update(text_color='white')
                             elif tmdictfull[tmtextfull[i]] == True:
-                                window[f'-log-fulltm{i}-'].update(text_color='green')
+                                window[f'-log-fulltm{i}-'].update(text_color='#339ec4')
                             i += 1
-                        window['-log-tmpkmn-'].update(f'{log_pkmn.iloc[pkmn,1]} ({sum(log_pkmn.iloc[pkmn,3:9])} BST)')
+                        window['-log-tmpkmn-'].update(f'{log_pkmn.iloc[p,1]} ({sum(log_pkmn.iloc[p,3:9])} BST)')
+                        # default tab that comes up is pokemon
+                        window[f'-lognav-trainer{l}-'].update(text_color='white')
+                        window[f'-lognav-pivot{l}-'].update(text_color='white')
+                        window[f'-lognav-tm{l}-'].update(text_color='white')
+                        window[f'-lognav-pkmn{l}-'].update(text_color='#f0f080')
+                        window[f'-logviewer-'].update(visible=True)
+                    elif event == f'-lognav-exit{l}-':
+                        window[f'-logviewer-'].update(visible=False)
+                        l = 1
+                        window[f'-lc-'].update(visible=True)
+                        window[f'-rc-'].update(visible=True)
+                    elif event == f'-lognav-pkmn{l}-':
+                        window[f'-log-layout{l}-'].update(visible=False)
+                        window[f'-lognav-trainer{l}-'].update(text_color='white')
+                        window[f'-lognav-pivot{l}-'].update(text_color='white')
+                        window[f'-lognav-tm{l}-'].update(text_color='white')
+                        l = 1
+                        window[f'-log-layout{l}-'].update(visible=True)
+                        window[f'-lognav-pkmn{l}-'].update(text_color='#f0f080')
+                    elif event == f'-lognav-trainer{l}-':
+                        window[f'-log-layout{l}-'].update(visible=False)
+                        window[f'-lognav-pkmn{l}-'].update(text_color='white')
+                        window[f'-lognav-pivot{l}-'].update(text_color='white')
+                        window[f'-lognav-tm{l}-'].update(text_color='white')
+                        l = 2
+                        window[f'-log-layout{l}-'].update(visible=True)
+                        window[f'-lognav-trainer{l}-'].update(text_color='#f0f080')
+                    elif event == f'-lognav-pivot{l}-':
+                        window[f'-log-layout{l}-'].update(visible=False)
+                        window[f'-lognav-trainer{l}-'].update(text_color='white')
+                        window[f'-lognav-pkmn{l}-'].update(text_color='white')
+                        window[f'-lognav-tm{l}-'].update(text_color='white')
+                        l = 3
+                        window[f'-log-layout{l}-'].update(visible=True)
+                        window[f'-lognav-pivot{l}-'].update(text_color='#f0f080')
+                    elif event == f'-lognav-tm{l}-':
+                        window[f'-log-layout{l}-'].update(visible=False)
+                        window[f'-lognav-trainer{l}-'].update(text_color='white')
+                        window[f'-lognav-pivot{l}-'].update(text_color='white')
+                        window[f'-lognav-pkmn{l}-'].update(text_color='white')
+                        l = 4
+                        window[f'-log-layout{l}-'].update(visible=True)
+                        window[f'-lognav-tm{l}-'].update(text_color='#f0f080')
+                    # elif event == f'-lognav-tutor{l}-':
+                        # window[f'-log-layout{l}-'].update(visible=False)
+                        # window[f'-lognav-trainer{l}-'].update(color='white')
+                        # window[f'-lognav-pivot{l}-'].update(color='white')
+                        # window[f'-lognav-tm{l}-'].update(color='white')
+                        # l = 5
+                        # window[f'-lognav-tutor{l}-'].update(color='#f0f080')
+                        # window[f'-log-layout{l}-'].update(visible=True)
+                    # elif event == f'-lognav-info{l}-':
+                        # window[f'-log-layout{l}-'].update(visible=False)
+                        # window[f'-lognav-trainer{l}-'].update(color='white')
+                        # window[f'-lognav-pivot{l}-'].update(color='white')
+                        # window[f'-lognav-tm{l}-'].update(color='white')
+                        # l = 6
+                        # window[f'-lognav-info{l}-'].update(color='#f0f080')
+                        # window[f'-log-layout{l}-'].update(visible=True)
+                    elif event == f'-lognav-search{l}-':
+                        p = lr.searchfcn(log_pkmn, pkmn_srch)
+                        graph.Erase()
+                        lr.statchart(log_pkmn.iloc[p], graph)
+                        logmoves, mvlist = lr.movelist(log_pkmn.iloc[p,16:])
+                        logabils, alist = lr.abillist(log_pkmn.iloc[p])
+                        logevos, elist = lr.evolist(log_pkmn.iloc[p])
+                        logtms1, logtms4, logtmsfull, gymtmlist, tmdict, tmdictfull, tmtext, tmtextfull = lr.tmlist(log_pkmn.iloc[p], log_game, log_tmcompat, log_tms)
+                        pkmn_srch = p
+                        i = 0
+                        while i < len(tmtextfull):
+                            if i < len(mvlist):
+                                window[f'-log-ml{i}-'].update(mvlist[i], visible = True)
+                            elif i < len(logmoves) - 1:
+                                window[f'-log-ml{i}-'].update(visible = False)
+                            if i < len(alist) and i == 2:
+                                window[f'-log-al{i}-'].update(f'{alist.iloc[i]} (HA)', visible = True)
+                            elif i < len(alist):
+                                window[f'-log-al{i}-'].update(alist.iloc[i], visible = True)
+                            if i == 0:
+                                window[f'-log-evos-'].update(f'{elist}', visible = True)
+                            if i < len(tmtext):
+                                if tmdict[tmtext[i]] == False:
+                                    window[f'-log-gymtm1{i}-'].update(text_color='white')
+                                    window[f'-log-gymtm4{i}-'].update(text_color='white')
+                                elif tmdict[tmtext[i]] == True:
+                                    window[f'-log-gymtm1{i}-'].update(text_color='#339ec4')
+                                    window[f'-log-gymtm4{i}-'].update(text_color='#339ec4')
+                            if tmdictfull[tmtextfull[i]] == False:
+                                window[f'-log-fulltm{i}-'].update(text_color='white')
+                            elif tmdictfull[tmtextfull[i]] == True:
+                                window[f'-log-fulltm{i}-'].update(text_color='#339ec4')
+                            i += 1
+                        window['-log-tmpkmn-'].update(f'{log_pkmn.iloc[p,1]} ({sum(log_pkmn.iloc[p,3:9])} BST)')
                     elif event in ('-logpivot-loc0-'):
                         for i in range(0, len(logpivotlocs)-1): # turn off all different colors, then turn on for current
                             window[f'-logpivot-loc{i}-'].update(text_color='white')
@@ -1357,6 +1425,7 @@ def run():
                             if (slotchoice == ''):
                                 slotchoice = pkmn.name # only kicks the first time through the code
                                 antici = 0
+                            pkmn_srch = log_pkmn.loc[log_pkmn['NAME'] == slotchoice].index[0]
                             window['-slotdrop-'].Update(values=slot, value=slotchoice, visible=True)
                             # print(c, ';;;', getGame(c), ';;;', pkmn, ';;;', items)
                             hphl, statushl, pphl = bagitems(c, getGame(c), pkmn, items)
