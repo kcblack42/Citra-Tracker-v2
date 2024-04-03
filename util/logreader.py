@@ -31,7 +31,7 @@ def log_parser(log):
     else:
         print('Error reading log.')
 
-    if game in ('XY', 'ORAS'):
+    if game in ('XY'):
         gen = 6
         evos = lsplit[1] # done
         mons = lsplit[2] # done
@@ -40,17 +40,30 @@ def log_parser(log):
         tmcompat = lsplit[9] # done
         trainer = lsplit[10] # done
         wildmons = lsplit[12] # done
+    elif game in ('ORAS'): # not verified yet
+        gen = 6
+        evos = lsplit[1] # done
+        mons = lsplit[2] # done
+        moves = lsplit[7] # done
+        tms = lsplit[8] # done
+        tmcompat = lsplit[9] # done
+        trainer = lsplit[12] # done
+        wildmons = lsplit[14] # done
+        # tutormoves = lsplit[10]
+        # tutorcompat = lsplit[11]
     elif game in ('SM', 'USUM'): # not verified yet, will do after gen 6 is done
         gen = 7
-        evos = lsplit[1] 
-        mons = lsplit[2] 
-        moves = lsplit[7] 
-        tms = lsplit[8] 
-        tmcompat = lsplit[9] 
-        trainer = lsplit[10] 
-        wildmons = lsplit[12] 
-        tutormoves = lsplit[12]
-        tutorcompat = lsplit[12]
+        evos = lsplit[1] # done
+        mons = lsplit[2] # done
+        moves = lsplit[7] # done
+        tms = lsplit[8] # done
+        tmcompat = lsplit[9] # done
+        trainer = lsplit[12] # done
+        wildmons = lsplit[15] # done
+        ## to be added later:
+        # tutormoves = lsplit[10]
+        # tutorcompat = lsplit[11]
+        # totems = lsplit[14]
 
 
     def parser(data, pattern, s):
@@ -98,9 +111,12 @@ def log_parser(log):
     tms_df['tmnum'] = tms_df['tmnum'].str.replace('TM', '').astype(int)
 
     # trainers
-    trainer_regex = r"#(?P<number>[0-9]+)\s\((?P<name>[ï\-ç♂♀\&A-Z0-9\sa-z\é\~\[\]]*)\=\>\s[-ïç♂♀a-zA-Z\s\&]*\)\s\-\s(?P<team>.+)"
-    trainer_df = pd.DataFrame(parser(trainer, trainer_regex, '\n'))
-    # team_regex = r"(?P<name>\S+)+\s+Lv(?P<level>[0-9]+)"
+    trainer_df = pd.DataFrame(trainer.replace('Trainers Pokemon--\n', '').split('\n'))
+    trainer_df[['trainer', 'team']] = trainer_df[0].str.split(' - ', expand=True)
+    trainer_df = trainer_df.drop(columns=0)
+    trainer_df[['trainernum', 'trainername']] = trainer_df['trainer'].str.split(' \\(', expand=True, n=1)
+    trainer_df[['trainerorig', 'trainerrename']] = trainer_df['trainername'].str.split('=>', expand=True, n=1)
+    trainer_df = trainer_df.drop(columns=['trainer', 'trainerrename', 'trainername'])
     trainer_team = trainer_df['team'].str.split(',', expand=True)
     for (index, colname) in enumerate(trainer_team):
         new_col1 = 'pkmn_' + str(colname + 1)
@@ -115,16 +131,28 @@ def log_parser(log):
         wilds_df = pd.DataFrame(wildmons.replace('Wild Pokemon--\n', '').split('\n\n')).rename(columns={0:'set'})
         wilds_df = wilds_df['set'].str.split('\n', expand=True)
         wilds_df[['set', 'loc']] = wilds_df[0].str.split('-', expand=True)
-        wilds_df.drop(columns=0, inplace=True)
+        wilds_df = wilds_df.drop(columns=0)
         for (index, colname) in enumerate(wilds_df.iloc[:, 0:12]):
             new_col1 = 'pkmn_' + str(colname)
             new_col2 = 'lvl_' + str(colname)
             wilds_df[colname] = wilds_df[colname].str[0:24].str.strip()
             wilds_df[[new_col1, new_col2]] = wilds_df[colname].str.split(' Lv', expand=True)
-            wilds_df.drop(columns=colname, inplace=True)
+            wilds_df = wilds_df.drop(columns=colname)
     elif gen == 7:
         wilds_df = pd.DataFrame(wildmons.replace('Wild Pokemon--\n', '').split('\n\n')).rename(columns={0:'set'})
-        # need to figure this one out, with all of the SOS stuff
+        wilds_df = wilds_df['set'].str.split('\n', expand=True)
+        wilds_df = wilds_df.map(lambda x: None if str(x).__contains__('SOS') else x)
+        wilds_df = wilds_df.dropna(axis=1, how='all')
+        wilds_df.columns = list(range(0,11)) # renaming the lists now that we've gotten rid of the SOS cols
+        wilds_df[['set', 'loc']] = wilds_df[0].str.split(' - ', expand=True)
+        wilds_df = wilds_df.map(lambda x: str(x).replace('Lvs', 'Lv'))
+        wilds_df = wilds_df.drop(columns=0)
+        for (index, colname) in enumerate(wilds_df.iloc[:, 0:10]):
+            new_col1 = 'pkmn_' + str(colname)
+            new_col2 = 'lvl_' + str(colname)
+            wilds_df[colname] = wilds_df[colname].str[0:29].str.strip()
+            wilds_df[[new_col1, new_col2]] = wilds_df[colname].str.split(' Lv', expand=True)
+            wilds_df = wilds_df.drop(columns=colname)
     wilds_df = wilds_df.map(lambda x: x.strip() if isinstance(x, str) else x)
 
     # joins for easier event handling later
@@ -140,7 +168,7 @@ def log_parser(log):
 def statchart(mon, graph):
     base = 50
     i = 0
-    stat = ['HP', 'ATK', 'DEF', 'SATK', 'SDEF', 'SPD']
+    stat = ['HP', 'ATK', 'DEF', 'SPA', 'SPD', 'SPE']
     for s in mon[3:9]:
         x1 = 70 + (40 * i)
         y1 = base
@@ -255,11 +283,11 @@ def pivotlist(game, gen, wilds_df):
         sets = ['Set #22', 'Set #138', 'Set #23', 'Set #132']
         locs = ['Route 2', 'Santalune Forest', 'Route 3', 'Route 22']   
     elif game == 'ORAS':
-        sets = ['Set #22', 'Set #138', 'Set #23', 'Set #132', 'Set #134'] # need to find these
+        sets = ['Set #34', 'Set #39', 'Set #48', 'Set #57', 'Set #346']
         locs = ['Route 101', 'Route 102', 'Route 103', 'Route 104', 'Petalburg Woods']
     elif gen == 7:
-        sets = ['??????????']
-        locs = ['Route 1 Grass #1']
+        sets = ['Set #1', 'Set #2', 'Set #12', 'Set #13', 'Set #14', 'Set #3', 'Set #10', 'Set #80', 'Set #81', 'Set #82', 'Set #83', 'Set #29', 'Set #31', 'Set #28', 'Set #30', 'Set #49', 'Set #53', 'Set #52', 'Set #54', 'Set #56', 'Set #57', 'Set #68', 'Set #69', 'Set #34', 'Set #43', 'Set #47', 'Set #70', 'Set #71']
+        locs = ['Route 1 Grass #1', 'Route 1 Grass #2', 'Route 1 Grass #3', 'Route 1 Grass #4', 'Route 1 Grass #5', "Professor's House #1", "Professor's House #2", 'Trainers School #1', 'Trainers School #2', 'Trainers School #3', 'Trainers School #4', 'Hauoli Grass Area #1', 'Hauoli Grass Area #2', 'Hauoli Grass Area #3', 'Hauoli Grass Area #4', 'Route 2 Grass #1', 'Route 2 Grass #2', 'Route 2 Grass #3', 'Route 2 Grass #4', 'Route 2 Grass #5', 'Route 2 Grass #6', 'Hauoli Cemetary #1', 'Hauoli Cemetary #2', 'Route 3 Grass #1', 'Route 3 Grass #2', 'Route 3 Grass #3', 'Melemele Meadow', 'Seaward Cave']
     pivotlocs = pd.merge(wilds_df, pd.DataFrame(sets, locs).reset_index(), how = 'inner', left_on='set', right_on=0).rename(columns={'index':'locname'})
 
     f1 = ('Franklin Gothic Medium', 12)
@@ -271,13 +299,33 @@ def pivotlist(game, gen, wilds_df):
     for i in range(0, len(pivotlocs)):
         logpivotlocs.append([sg.Text(f'{pivotlocs['locname'][i]}', text_color='white', font=f2, key = f'-logpivot-loc{i}-', visible = True, enable_events=True)])
         j = 1
-        while j <= 12:
-            if i == 0:
-                logpivotbase1.append([sg.Text('', text_color='white', font=f2, key = f'-logpivot-mon{j}-', visible = True, justification='c')])
-                logpivotbase2.append([sg.Text('', text_color='white', font=f2, key = f'-logpivot-lvl{j}-', visible = True, justification='c')])
-            pivottext[f'{i}-{j}'] = [f'{pivotlocs[f'pkmn_{j}'][i]}', f'{pivotlocs[f'lvl_{j}'][i]}']
-            j += 1
+        if gen == 6:
+            while j <= 12: # 12 encounter slots in gen 6
+                if i == 0:
+                    logpivotbase1.append([sg.Text('', text_color='white', font=f2, key = f'-logpivot-mon{j}-', visible = True, justification='c')])
+                    logpivotbase2.append([sg.Text('', text_color='white', font=f2, key = f'-logpivot-lvl{j}-', visible = True, justification='c')])
+                pivottext[f'{i}-{j}'] = [f'{pivotlocs[f'pkmn_{j}'][i]}', f'{pivotlocs[f'lvl_{j}'][i]}']
+                j += 1
+        elif gen == 7: 
+            while j <= 10: # 10 encounter slots in gen 7
+                if i == 0:
+                    logpivotbase1.append([sg.Text('', text_color='white', font=f2, key = f'-logpivot-mon{j}-', visible = True, justification='c')])
+                    logpivotbase2.append([sg.Text('', text_color='white', font=f2, key = f'-logpivot-lvl{j}-', visible = True, justification='c')])
+                pivottext[f'{i}-{j}'] = [f'{pivotlocs[f'pkmn_{j}'][i]}', f'{pivotlocs[f'lvl_{j}'][i]}']
+                j += 1
     return logpivotlocs, logpivotbase1, logpivotbase2, pivottext
+
+def trainerlist(game):
+    if game == 'XY':
+        name = ['Viola', 'Grant', 'Korrina', 'Ramos', 'Clemont', 'Valarie', 'Olympia', 'Wulfric']
+        idx = [5, 75, 20, 21, 22, 23, 24, 25]
+    elif game == 'ORAS':
+        name = ['Viola', 'Grant', 'Korrina', 'Ramos', 'Clemont', 'Valarie', 'Olympia', 'Wulfric']
+        idx = [6, 76, 21, 22, 23, 24, 25, 26]
+    elif game in ('SM', 'USUM'):
+        name = ['Viola', 'Grant', 'Korrina', 'Ramos', 'Clemont', 'Valarie', 'Olympia', 'Wulfric']
+        idx = [6, 76, 21, 22, 23, 24, 25, 26]
+    return name, idx
 
 def searchfcn(pokemon, p):
     pkmnnum = pokemon.loc[pokemon['NUM'] == (p + 1)].iloc[0,0]

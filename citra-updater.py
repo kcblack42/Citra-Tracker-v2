@@ -373,8 +373,11 @@ class Pokemon:
             case 801: ### Magearna
                 query+= " and pokemonsuffix is null"
             case 19 | 20 | 26 | 27 | 28 | 37 | 38 | 50 | 51 | 52 | 53 | 74 | 75 | 76 | 88 | 89 | 103 | 105: ###alolan forms-none have separate forms so just case them for if their form > 0
-                if form > 4:
-                    query+= " and pokemonsuffix is 'alola'"
+                match form:
+                    case 8 | 10 | 12: # honestly not sure if any are genderless but sure
+                        query+= " and pokemonsuffix is 'alola'"
+                    case _:
+                        query+= " and pokemonsuffix is null"
             # case 81 | 82 | 100 | 101 | 120 | 121 | 137 | 233 | 292 | 337 | 338 | 343 | 344 | 374 | 375 | 376 | 436 | 437 | 462 | 474 | 489 | 490 | 599 | 600 | 601 | 615 | 622 | 623 | 703 | 774 | 781 | 854 | 855 | 770 | 132 | 144 | 145 | 146 | 201 | 243 | 244 | 245 | 249 | 250 | 251 | 377 | 378 | 379 | 382 | 383 | 384 | 385 | 386 | 480 | 481 | 482 | 483 | 484 | 486 | 491 | 493 | 494 | 638 | 639 | 640 | 643 | 644 | 646 | 647 | 649 | 716 | 717 | 718 | 719 | 721: ### Genderless exceptions
             #     query+= " and pokemonsuffix is null"
             case _:
