@@ -1191,16 +1191,42 @@ def run():
                                 window['-mv{}acc-e-'.format(ct)].update(visible = False)
                                 window['-mv{}ctc-e-'.format(ct)].update(visible = False)
                             time.sleep(8)
+                            # need to fire up the log for the next one
+                            pkmn_srch = 0
+                            i = 0
                             log = open((batch_folder / f'{prefix}{str(seed)}.log'), encoding="utf8").read()
                             log_pkmn, log_wilds, log_tms, log_tmcompat, log_gen, log_game = lr.log_parser(log)
-                            graph = sg.Graph(canvas_size=(380,200), graph_bottom_left=(50,10), graph_top_right=(330,240),background_color='black', enable_events=True, key='-log-graph-')
+                            graph.Erase()
+                            lr.statchart(log_pkmn.iloc[pkmn_srch], graph)
                             logmoves, mvlist = lr.movelist(log_pkmn.iloc[pkmn_srch,16:])
                             logabils, alist = lr.abillist(log_pkmn.iloc[pkmn_srch])
                             logevos, elist = lr.evolist(log_pkmn.iloc[pkmn_srch])
                             logtms1, logtms4, logtmsfull, gymtmlist, tmdict, tmdictfull, tmtext, tmtextfull = lr.tmlist(log_pkmn.iloc[pkmn_srch], log_game, log_tmcompat, log_tms)
                             logpivotlocs, logpivotbase1, logpivotbase2, pivottext = lr.pivotlist(log_game, log_gen, log_wilds)
-                            layout_logview = lr.logviewer_layout(pkmn_srch, log_pkmn, log_gen, logtms1, logabils, logmoves, logevos, logpivotbase1, logpivotbase2, graph, logpivotlocs, logtms4, logtmsfull)
-                            lr.statchart(log_pkmn.iloc[pkmn_srch], graph)
+                            # layout_logview = lr.logviewer_layout(pkmn_srch, log_pkmn, log_gen, logtms1, logabils, logmoves, logevos, logpivotbase1, logpivotbase2, graph, logpivotlocs, logtms4, logtmsfull)
+                            while i < len(tmtextfull):
+                                if i < len(mvlist):
+                                    window[f'-log-ml{i}-'].update(mvlist[i], visible = True)
+                                elif i < len(logmoves) - 1:
+                                    window[f'-log-ml{i}-'].update(visible = False)
+                                if i < len(alist) and i == 2:
+                                    window[f'-log-al{i}-'].update(f'{alist.iloc[i]} (HA)', visible = True)
+                                elif i < len(alist):
+                                    window[f'-log-al{i}-'].update(alist.iloc[i], visible = True)
+                                if i == 0:
+                                    window[f'-log-evos-'].update(f'{elist}', visible = True)
+                                if i < len(tmtext):
+                                    if tmdict[tmtext[i]] == False:
+                                        window[f'-log-gymtm1{i}-'].update(text_color='white')
+                                        window[f'-log-gymtm4{i}-'].update(text_color='white')
+                                    elif tmdict[tmtext[i]] == True:
+                                        window[f'-log-gymtm1{i}-'].update(text_color='#339ec4')
+                                        window[f'-log-gymtm4{i}-'].update(text_color='#339ec4')
+                                if tmdictfull[tmtextfull[i]] == False:
+                                    window[f'-log-fulltm{i}-'].update(text_color='white')
+                                elif tmdictfull[tmtextfull[i]] == True:
+                                    window[f'-log-fulltm{i}-'].update(text_color='#339ec4')
+                                i += 1
                             continue
                     elif event == f'-view-log-':
                         window[f'-lc-'].update(visible=False)

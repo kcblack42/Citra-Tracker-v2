@@ -26,10 +26,10 @@ def log_parser(log):
     else:
         game = 'UNK'
 
-    if game != 'UNK':
-        print(f'Log from pokemon {game}.')
-    else:
-        print('Error reading log.')
+    # if game != 'UNK':
+    #     print(f'Log from pokemon {game}.')
+    # else:
+    #     print('Error reading log.')
 
     if game in ('XY'):
         gen = 6
