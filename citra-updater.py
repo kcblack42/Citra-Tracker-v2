@@ -1234,7 +1234,10 @@ def run():
                         l = 1
                         # update log with the mon that's in slotchoice
                         # print(log_pkmn.loc[log_pkmn['NAME'] == slotchoice])
-                        p = log_pkmn.loc[log_pkmn['NAME'] == slotchoice].index[0]
+                        try:
+                            p = log_pkmn.loc[log_pkmn['NAME'] == slotchoice].index[0]
+                        except:
+                            p = 'Bulbasaur' # probably able to get this better somewhere down the line but for now lets just have it load at #1
                         graph.Erase()
                         lr.statchart(log_pkmn.iloc[p], graph)
                         logmoves, mvlist = lr.movelist(log_pkmn.iloc[p,16:])
@@ -1454,7 +1457,12 @@ def run():
                             if (slotchoice == ''):
                                 slotchoice = pkmn.name # only kicks the first time through the code
                                 antici = 0
-                            pkmn_srch = log_pkmn.loc[log_pkmn['NAME'] == slotchoice].index[0]
+                            try:
+                                pkmn_srch = log_pkmn.loc[log_pkmn['NAME'] == slotchoice].index[0]
+                            except:
+                                if slotchoice == pkmn.name:
+                                    pkmn_srch = log_pkmn.loc[log_pkmn['NUM'] == pkmn.species_num()].index[0]
+                                    print(pkmn.species_num())
                             window['-slotdrop-'].Update(values=slot, value=slotchoice, visible=True)
                             # print(c, ';;;', getGame(c), ';;;', pkmn, ';;;', items)
                             hphl, statushl, pphl = bagitems(c, getGame(c), pkmn, items)
