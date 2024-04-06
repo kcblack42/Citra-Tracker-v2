@@ -5,6 +5,15 @@ import pandas as pd
 import re
 import io
 
+def set_size(element, size):
+    # Only work for sg.Column when `scrollable=True` or `size not (None, None)`
+    options = {'width':size[0], 'height':size[1]}
+    if element.Scrollable or element.Size!=(None, None):
+        element.Widget.canvas.configure(**options)
+    else:
+        element.Widget.pack_propagate(0)
+        element.set_size(size)
+
 def log_parser(log):
     log.count('\n--')
     lsplit = log.split('\n--')
@@ -161,7 +170,7 @@ def log_parser(log):
     pokemon.columns = pokemon.columns.str.replace('col_', 'move_')
     pokemon['EVOLUTION'] = pokemon['EVOLUTION'].fillna('')
     pokemon = pokemon.sort_values('NAME').reset_index().drop(columns='index')
-    return pokemon, wilds_df, tms_df, tmcompat_df, gen, game
+    return pokemon, wilds_df, tms_df, tmcompat_df, gen, game, trainer_df
 
 
 # charting stats
@@ -315,17 +324,63 @@ def pivotlist(game, gen, wilds_df):
                 j += 1
     return logpivotlocs, logpivotbase1, logpivotbase2, pivottext
 
-def trainerlist(game):
+def trainerlist(game, trainer_df):
+    log_tlist, log_tparty1, log_tparty2, log_tparty3 = [], [], [], []
+    tfont = ('Franklin Gothic Medium', 12)
+    tfont2 = ('Franklin Gothic Medium', 10)
     if game == 'XY':
-        name = ['Viola', 'Grant', 'Korrina', 'Ramos', 'Clemont', 'Valarie', 'Olympia', 'Wulfric']
-        idx = [5, 75, 20, 21, 22, 23, 24, 25]
+        name = ['Viola', 'Grant', 'Korrina', 'Ramos', 'Clemont', 'Valarie', 'Olympia', 'Wulfric', 'E4 Wikstrom', 'E4 Malva', 'E4 Drasna', 'E4 Siebold', 'Diantha', 'Lysandre #1', 'Lysandre #2', 'Lysandre #3']
+        idx = [5, 75, 20, 21, 22, 23, 24, 25, 186, 268, 269, 270, 275, 302, 524, 525]
+        titles = ['Rivals', 'Gym Leaders', 'Elite Four', 'Team Flare']
+        t_dict = {titles[0]:'', 
+            titles[1]:{name[0]:[idx[0]], name[1]:[idx[1]], name[2]:[idx[2]], name[3]:[idx[3]], name[4]:[idx[4]], name[5]:[idx[5]], name[6]:[idx[6]], name[7]:[idx[7]]}, 
+            titles[2]:{name[8]:[idx[8]], name[9]:[idx[9]], name[10]:[idx[10]], name[11]:[idx[11]], name[12]:[idx[12]]},
+            titles[3]:{name[13]:[idx[13]], name[14]:[idx[14]], name[15]:[idx[15]]}}
     elif game == 'ORAS':
-        name = ['Viola', 'Grant', 'Korrina', 'Ramos', 'Clemont', 'Valarie', 'Olympia', 'Wulfric']
-        idx = [6, 76, 21, 22, 23, 24, 25, 26]
-    elif game in ('SM', 'USUM'):
-        name = ['Viola', 'Grant', 'Korrina', 'Ramos', 'Clemont', 'Valarie', 'Olympia', 'Wulfric']
-        idx = [6, 76, 21, 22, 23, 24, 25, 26]
-    return name, idx
+        name = ['Wally', 'Roxanne', 'Brawly', 'Wattson', 'Flannery', 'Norman', 'Winona', 'Tate & Liza', 'Wallace', 'E4 Sidney', 'E4 Phoebe', 'E4 Glacia', 'E4 Drake', 'Steven', 'Archie #1', 'Archie #2', 'Maxie #1', 'Maxie #2']
+        idx = [560, 562, 566, 568, 569, 570, 551, 571, 552, 553, 554, 555, 556, 582, 230, 177, 235, 234]
+        titles = ['Rivals', 'Gym Leaders', 'Elite Four', 'Magma/Aqua']
+        t_dict = {titles[0]:{name[0]:[idx[0]]}, 
+            titles[1]:{name[1]:[idx[1]], name[2]:[idx[2]], name[3]:[idx[3]], name[4]:[idx[4]], name[5]:[idx[5]], name[6]:[idx[6]], name[7]:[idx[7]], name[8]:[idx[8]]}, 
+            titles[2]:{name[9]:[idx[9]], name[10]:[idx[10]], name[11]:[idx[11]], name[12]:[idx[12]], name[13]:[idx[13]]},
+            titles[3]:{name[14]:[idx[14]], name[15]:[idx[15]], name[16]:[idx[16]], name[17]:[idx[17]]}}
+    elif game == 'SM':
+        name = ['Hala', 'Olivia', 'Nanu #1', 'Nanu #2', 'Hapu', 'E4 Molayne', 'E4 Olivia', 'E4 Acerola', 'E4 Kahili', 'Hau (Champ) v1', 'Hau (Champ) v2', 'Hau (Champ) v3', 'Guzma #1', 'Guzma #2', 'Guzma #3', 'Lusamine']
+        idx = [22, 89, 153, 507, 496, 488, 152, 148, 155, 493, 494, 495, 137, 234, 235, 130]
+        titles = ['Hau', 'Kahunas', 'Elite Four', 'Skull/Aether']
+        t_dict = {titles[0]:'', 
+            titles[1]:{name[0]:[idx[0]], name[1]:[idx[1]], name[2]:[idx[2]], name[3]:[idx[3]], name[4]:[idx[4]]}, 
+            titles[2]:{name[5]:[idx[5]], name[6]:[idx[6]], name[7]:[idx[7]], name[8]:[idx[8]], name[9]:[idx[9]], name[10]:[idx[10]], name[11]:[idx[11]]},
+            titles[3]:{name[12]:[idx[12]], name[13]:[idx[13]], name[14]:[idx[14]], name[15]:[idx[15]]}}
+    elif game == 'USUM':
+        name = ['Hala', 'Olivia', 'Nanu #1', 'Nanu #2', 'Hapu', 'E4 Molayne', 'E4 Olivia', 'E4 Acerola', 'E4 Kahili', 'Hau (Champ) v1', 'Hau (Champ) v2', 'Hau (Champ) v3', 'Guzma #1', 'Guzma #2', 'Guzma #3', 'Lusamine']
+        idx = [22, 89, 153, 507, 496, 488, 152, 148, 155, 493, 494, 495, 137, 234, 235, 130]
+        titles = ['Hau', 'Kahunas', 'Elite Four', 'Skull/Aether']
+        t_dict = {titles[0]:'', 
+            titles[1]:{name[0]:[idx[0]], name[1]:[idx[1]], name[2]:[idx[2]], name[3]:[idx[3]], name[4]:[idx[4]]}, 
+            titles[2]:{name[5]:[idx[5]], name[6]:[idx[6]], name[7]:[idx[7]], name[8]:[idx[8]], name[9]:[idx[9]], name[10]:[idx[10]], name[11]:[idx[11]]},
+            titles[3]:{name[12]:[idx[12]], name[13]:[idx[13]], name[14]:[idx[14]], name[15]:[idx[15]]}}
+    # when dealing with mons, be careful with ones that have held items (it'll be [mon]@[item])
+    r = r'(?P<mon>[^@]+)+\@+(?P<item>[^@]+)'
+    for i in range(0, len(titles)):
+        for j in range(0, len(idx)):
+            if t_dict[titles[i]] == '':
+                continue
+            elif name[j] in t_dict[titles[i]]:
+                t_dict[titles[i]][name[j]].append(trainer_df.iloc[idx[j], 2:].to_list())
+                z = 0
+                for k in t_dict[titles[i]][name[j]][1]:
+                    if str(k).find('@') != -1:
+                        t_dict[titles[i]][name[j]][1][z] = re.split(r, str(k))[1:3]
+                    if z/2 == int(z/2): # need a length 6, will fill in the values in the event statements
+                        y = int(z/2)
+                        log_tparty1.append([sg.Text(f'', text_color='white', font=tfont2, key = f'-log-train-pkmnname-{y}-', visible = True, justification='c', enable_events=True)])
+                        log_tparty2.append([sg.Text(f'', text_color='white', font=tfont2, key = f'-log-train-pkmnlvl-{y}-', visible = True, justification='c', enable_events=True)])
+                        log_tparty3.append([sg.Text(f'', text_color='white', font=tfont2, key = f'-log-train-pkmnitem-{y}-', visible = True, justification='c', enable_events=True)])
+                    z += 1
+                log_tlist.append([sg.Text(f'{name[j]}', text_color='white', font=tfont2, key = f'-log-train-{j}-', visible = True, justification='c', enable_events=True)])
+    return t_dict, titles, log_tlist, log_tparty1, log_tparty2, log_tparty3, name
+
 
 def searchfcn(pokemon, p):
     pkmnnum = pokemon.loc[pokemon['NUM'] == (p + 1)].iloc[0,0]
@@ -360,7 +415,8 @@ def searchfcn(pokemon, p):
 
     return pkmnnum
 
-def logviewer_layout(pokemonnum, pokemon, gen, logtms1, logabils, logmoves, logevos, logpivotbase1, logpivotbase2, graph, logpivotlocs, logtms4, logtmsfull):
+
+def logviewer_layout(pokemonnum, pokemon, gen, logtms1, logabils, logmoves, logevos, logpivotbase1, logpivotbase2, graph, logpivotlocs, logtms4, logtmsfull, t_types, log_tlist, log_tparty1, log_tparty2, log_tparty3, t_dict):
     bwidth = 1
     bpad = (1,1,0,0)
     navbar = {}
@@ -415,9 +471,39 @@ def logviewer_layout(pokemonnum, pokemon, gen, logtms1, logabils, logmoves, loge
         ],
     ]
 
+    d,tl,tn = 0,[],[]
+    for i in t_dict: # separates the log list of trainers into the dict lists
+        tl.append(log_tlist[d:d + len(t_dict[i])])
+        tn.append(d) # needed for calls later
+        d = d + len(t_dict[i])
+    tn.append(d)
+    tfont = ('Franklin Gothic Medium', 10)
+    tfont2 = ('Franklin Gothic Medium', 12)
     layout_trainers = [
-        [sg.Column(navbar[2], key='-log-navbar2-', size=(340,35), justification='c')],
-        [sg.Text('Coming soon!')],
+        [sg.Column(navbar[2], key='-log-navbar4-', size=(340,35), justification='c')],
+        [
+            sg.Text(f' {t_types[0]} ', font=tfont, text_color='white', relief='groove', enable_events=True, key='-log-train-rival-'),
+            sg.Text(f' {t_types[1]} ', font=tfont, text_color='#f0f080', relief='groove', enable_events=True, key='-log-train-leader-'),
+            sg.Text(f' {t_types[2]} ', font=tfont, text_color='white', relief='groove', enable_events=True, key='-log-train-e4-'),
+            sg.Text(f' {t_types[3]} ', font=tfont, text_color='white', relief='groove', enable_events=True, key='-log-train-other-'),
+        ],
+        [
+            sg.Text(f'Trainers:', text_color='#f0f080', font=tfont2, visible = True, size=15), 
+            sg.Text(f'PKMN', text_color='#f0f080', font=tfont2, visible = True, size=8), 
+            sg.Text(f'LVL', text_color='#f0f080', font=tfont2, visible = True, size=4), 
+            sg.Text(f'ITEM', text_color='#f0f080', font=tfont2, visible = True, size=9),
+        ],
+        [sg.Column([
+            [
+                sg.Column(tl[0], size=(0,400), key='-log-tcol-0-', visible = True, pad=(0,0,0,0)),
+                sg.Column(tl[1], size=(120,400), key='-log-tcol-1-', visible = True, pad=(0,0,0,0)),
+                sg.Column(tl[2], size=(0,400), key='-log-tcol-2-', visible = True, pad=(0,0,0,0)),
+                sg.Column(tl[3], size=(0,400), key='-log-tcol-3-', visible = True, pad=(0,0,0,0)),
+                sg.Column(log_tparty1, size=(90,400)),
+                sg.Column(log_tparty2, size=(25,400)),
+                sg.Column(log_tparty3, size=(90,400)),
+            ],
+        ])]
     ]
 
     layout_pivots = [
@@ -459,4 +545,4 @@ def logviewer_layout(pokemonnum, pokemon, gen, logtms1, logabils, logmoves, loge
         sg.Column(layout_pivots, key='-log-layout3-', visible=False), 
         sg.Column(layout_tms, key='-log-layout4-', visible=False), 
     ]]
-    return layout_logview
+    return layout_logview, tn

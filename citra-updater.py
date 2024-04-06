@@ -1069,14 +1069,16 @@ def run():
         ## will need a bunch of try/excepts for this but for now lets get something functionally in place
         try:
             log = open((batch_folder / f'{prefix}{str(seed)}.log'), encoding="utf8").read()
-            log_pkmn, log_wilds, log_tms, log_tmcompat, log_gen, log_game = lr.log_parser(log)
+            log_pkmn, log_wilds, log_tms, log_tmcompat, log_gen, log_game, trainer_df = lr.log_parser(log)
             graph = sg.Graph(canvas_size=(380,200), graph_bottom_left=(50,10), graph_top_right=(330,240),background_color='black', enable_events=True, key='-log-graph-')
+            t_dict, t_types, log_tlist, log_tparty1, log_tparty2, log_tparty3, t_names = lr.trainerlist(log_game, trainer_df)
             logmoves, mvlist = lr.movelist(log_pkmn.iloc[pkmn_srch,16:])
             logabils, alist = lr.abillist(log_pkmn.iloc[pkmn_srch])
             logevos, elist = lr.evolist(log_pkmn.iloc[pkmn_srch])
             logtms1, logtms4, logtmsfull, gymtmlist, tmdict, tmdictfull, tmtext, tmtextfull = lr.tmlist(log_pkmn.iloc[pkmn_srch], log_game, log_tmcompat, log_tms)
             logpivotlocs, logpivotbase1, logpivotbase2, pivottext = lr.pivotlist(log_game, log_gen, log_wilds)
-            layout_logview = lr.logviewer_layout(pkmn_srch, log_pkmn, log_gen, logtms1, logabils, logmoves, logevos, logpivotbase1, logpivotbase2, graph, logpivotlocs, logtms4, logtmsfull)
+            t = t_types[1] #current trainer subclass selected (defaults to gym leaders/kahunas)
+            layout_logview, tn = lr.logviewer_layout(pkmn_srch, log_pkmn, log_gen, logtms1, logabils, logmoves, logevos, logpivotbase1, logpivotbase2, graph, logpivotlocs, logtms4, logtmsfull, t_types, log_tlist, log_tparty1, log_tparty2, log_tparty3, t_dict)
             lr.statchart(log_pkmn.iloc[pkmn_srch], graph)
             # print(log_pkmn, ';;;', layout_logview)
             # print(layout_logview)
@@ -1277,8 +1279,14 @@ def run():
                         window[f'-lognav-pkmn{l}-'].update(text_color='#f0f080')
                         window[f'-logviewer-'].update(visible=True)
                     elif event == f'-lognav-exit{l}-':
-                        window[f'-logviewer-'].update(visible=False)
+                        window[f'-log-layout{l}-'].update(visible=False)
+                        window[f'-lognav-trainer{l}-'].update(text_color='white')
+                        window[f'-lognav-pivot{l}-'].update(text_color='white')
+                        window[f'-lognav-tm{l}-'].update(text_color='white')
                         l = 1
+                        window[f'-log-layout{l}-'].update(visible=True)
+                        window[f'-lognav-pkmn{l}-'].update(text_color='#f0f080')
+                        window[f'-logviewer-'].update(visible=False)
                         window[f'-lc-'].update(visible=True)
                         window[f'-rc-'].update(visible=True)
                     elif event == f'-lognav-pkmn{l}-':
@@ -1363,42 +1371,72 @@ def run():
                                 window[f'-log-fulltm{i}-'].update(text_color='#339ec4')
                             i += 1
                         window['-log-tmpkmn-'].update(f'{log_pkmn.iloc[p,1]} ({sum(log_pkmn.iloc[p,3:9])} BST)')
-                    elif event in ('-logpivot-loc0-'):
+                    elif event in ('-logpivot-loc0-', '-logpivot-loc1-', '-logpivot-loc2-', '-logpivot-loc3-', '-logpivot-loc4-'):
+                        n = int(event[-2:].replace('-',''))
                         for i in range(0, len(logpivotlocs)-1): # turn off all different colors, then turn on for current
                             window[f'-logpivot-loc{i}-'].update(text_color='white')
-                        window[f'-logpivot-loc0-'].update(text_color='#f0f080')
+                        window[event].update(text_color='#f0f080')
                         for j in range(1, len(logpivotbase1)): #update rows with loc info, length of the pivotbase is number of mons + 1 due to the header
-                            window[f'-logpivot-mon{j}-'].update(pivottext[f'0-{j}'][0], visible = True)
-                            window[f'-logpivot-lvl{j}-'].update(pivottext[f'0-{j}'][1], visible = True)
-                    elif event in ('-logpivot-loc1-'):
-                        for i in range(0, len(logpivotlocs)-1):
-                            window[f'-logpivot-loc{i}-'].update(text_color='white')
-                        window[f'-logpivot-loc1-'].update(text_color='#f0f080')
-                        for j in range(1, len(logpivotbase1)): 
-                            window[f'-logpivot-mon{j}-'].update(pivottext[f'1-{j}'][0], visible = True)
-                            window[f'-logpivot-lvl{j}-'].update(pivottext[f'1-{j}'][1], visible = True)
-                    elif event in ('-logpivot-loc2-'):
-                        for i in range(0, len(logpivotlocs)-1):
-                            window[f'-logpivot-loc{i}-'].update(text_color='white')
-                        window[f'-logpivot-loc2-'].update(text_color='#f0f080')
-                        for j in range(1, len(logpivotbase1)): 
-                            window[f'-logpivot-mon{j}-'].update(pivottext[f'2-{j}'][0], visible = True)
-                            window[f'-logpivot-lvl{j}-'].update(pivottext[f'2-{j}'][1], visible = True)
-                    elif event in ('-logpivot-loc3-'):
-                        for i in range(0, len(logpivotlocs)-1):
-                            window[f'-logpivot-loc{i}-'].update(text_color='white')
-                        window[f'-logpivot-loc3-'].update(text_color='#f0f080')
-                        for j in range(1, len(logpivotbase1)): 
-                            window[f'-logpivot-mon{j}-'].update(pivottext[f'3-{j}'][0], visible = True)
-                            window[f'-logpivot-lvl{j}-'].update(pivottext[f'3-{j}'][1], visible = True)
-                    elif event in ('-logpivot-loc4-'):
-                        for i in range(0, len(logpivotlocs)-1):
-                            window[f'-logpivot-loc{i}-'].update(text_color='white')
-                        window[f'-logpivot-loc4-'].update(text_color='#f0f080')
-                        for j in range(1, len(logpivotbase1)): 
-                            window[f'-logpivot-mon{j}-'].update(pivottext[f'4-{j}'][0], visible = True)
-                            window[f'-logpivot-lvl{j}-'].update(pivottext[f'4-{j}'][1], visible = True)
-                    
+                            window[f'-logpivot-mon{j}-'].update(pivottext[f'{n}-{j}'][0], visible = True)
+                            window[f'-logpivot-lvl{j}-'].update(pivottext[f'{n}-{j}'][1], visible = True)
+                    elif event in ('-log-train-rival-', '-log-train-leader-', '-log-train-e4-', '-log-train-other-'):
+                        window['-log-train-rival-'].update(text_color='white')
+                        window['-log-train-leader-'].update(text_color='white')
+                        window['-log-train-e4-'].update(text_color='white')
+                        window['-log-train-other-'].update(text_color='white')
+                        window[event].update(text_color='#f0f080')
+                        if event == '-log-train-rival-':
+                            t = t_types[0]
+                            lr.set_size(window['-log-tcol-0-'], (120, 400))
+                            lr.set_size(window['-log-tcol-1-'], (0, 400))
+                            lr.set_size(window['-log-tcol-2-'], (0, 400))
+                            lr.set_size(window['-log-tcol-3-'], (0, 400))
+                        elif event == '-log-train-leader-':
+                            t = t_types[1]
+                            lr.set_size(window['-log-tcol-0-'], (0, 400))
+                            lr.set_size(window['-log-tcol-1-'], (120, 400))
+                            lr.set_size(window['-log-tcol-2-'], (0, 400))
+                            lr.set_size(window['-log-tcol-3-'], (0, 400))
+                        elif event == '-log-train-e4-':
+                            t = t_types[2]
+                            lr.set_size(window['-log-tcol-0-'], (0, 400))
+                            lr.set_size(window['-log-tcol-1-'], (0, 400))
+                            lr.set_size(window['-log-tcol-2-'], (120, 400))
+                            lr.set_size(window['-log-tcol-3-'], (0, 400))
+                        elif event == '-log-train-other-':
+                            t = t_types[3]
+                            lr.set_size(window['-log-tcol-0-'], (0, 400))
+                            lr.set_size(window['-log-tcol-1-'], (0, 400))
+                            lr.set_size(window['-log-tcol-2-'], (0, 400))
+                            lr.set_size(window['-log-tcol-3-'], (120, 400))
+                        for i in range(0, 6): # clearing previous tab's trainer data
+                            window[f'-log-train-pkmnname-{i}-'].update('')
+                            window[f'-log-train-pkmnitem-{i}-'].update('')
+                            window[f'-log-train-pkmnlvl-{i}-'].update('')
+                        # for i in range(0, len(log_tlist)):
+                        #     if i in list(l):
+                        #         window[f'-log-train-{i}-'].update(visible=True)
+                        #     else:
+                        #         window[f'-log-train-{i}-'].update(visible=False)
+                    elif event in ('-log-train-0-', '-log-train-1-', '-log-train-2-', '-log-train-3-', '-log-train-4-', '-log-train-5-', '-log-train-6-', '-log-train-7-', '-log-train-8-', '-log-train-9-', '-log-train-10-', '-log-train-11-', '-log-train-12-', '-log-train-13-', '-log-train-14-', '-log-train-15-', '-log-train-16-', '-log-train-17-'):
+                        n = int(event[-3:].replace('-',''))
+                        for i in range(0, len(log_tlist)):
+                            window[f'-log-train-{i}-'].update(text_color='white')
+                        window[event].update(text_color='#f0f080')
+                        for i in range(0,6):
+                            j = int(i * 2)
+                            if t_dict[t][t_names[n]][1][j] == None: # if less than 6 mons
+                                window[f'-log-train-pkmnname-{i}-'].update('')
+                                window[f'-log-train-pkmnitem-{i}-'].update('')
+                                window[f'-log-train-pkmnlvl-{i}-'].update('')
+                            elif isinstance(t_dict[t][t_names[n]][1][j], list) == True: # check for held item
+                                window[f'-log-train-pkmnname-{i}-'].update(t_dict[t][t_names[n]][1][j][0])
+                                window[f'-log-train-pkmnitem-{i}-'].update(t_dict[t][t_names[n]][1][j][1])
+                                window[f'-log-train-pkmnlvl-{i}-'].update(t_dict[t][t_names[n]][1][j+1])
+                            else: # no held item
+                                window[f'-log-train-pkmnname-{i}-'].update(t_dict[t][t_names[n]][1][j])
+                                window[f'-log-train-pkmnitem-{i}-'].update('')
+                                window[f'-log-train-pkmnlvl-{i}-'].update(t_dict[t][t_names[n]][1][j+1])
                     partyadd,enemyadd,ppadd,curoppnum,enctype,mongap=getaddresses(c)
                     # print("loops" + str(loops))
                     loops+=1

@@ -6,8 +6,12 @@ def bagitems(c, game, pkmn, items):
         pphl={"total":0}
         if game=="X/Y":
             itmdl=[147236508,9952,10208,10640,11016,12616,0x67E852C]   #70F62C #67E892C xy trainers
-        if game=="OmegaRuby/AlphaSapphire":
+        elif game=="OmegaRuby/AlphaSapphire":
             itmdl=[147250640,9952,10208,10640,11024,12624] #reverse-berries,meds,tms,keys,items
+        elif game=='Sun/Moon': # don't have bag info for gen 7 yet
+            return 0, 0, 0
+        elif game=='UltraSun/UltraMoon':
+            return 0, 0, 0
         #print(int.from_bytes(c.read_memory(itmdl[0]-itmdl[5],2),"little")) #items
         #print(int.from_bytes(c.read_memory(itmdl[0]-itmdl[4],2),"little")) #key items
         #print(str(c.read_memory(147236508-0x67E892C,100),"utf-8")) #0x71A500 oras
