@@ -1069,9 +1069,9 @@ def run():
         ## will need a bunch of try/excepts for this but for now lets get something functionally in place
         try:
             log = open((batch_folder / f'{prefix}{str(seed)}.log'), encoding="utf8").read()
-            log_pkmn, log_wilds, log_tms, log_tmcompat, log_gen, log_game, trainer_df = lr.log_parser(log)
+            log_pkmn, log_wilds, log_tms, log_tmcompat, log_gen, log_game, log_trainer = lr.log_parser(log)
             graph = sg.Graph(canvas_size=(380,200), graph_bottom_left=(50,10), graph_top_right=(330,240),background_color='black', enable_events=True, key='-log-graph-')
-            t_dict, t_types, log_tlist, log_tparty1, log_tparty2, log_tparty3, t_names = lr.trainerlist(log_game, trainer_df)
+            t_dict, t_types, log_tlist, log_tparty1, log_tparty2, log_tparty3, t_names = lr.trainerlist(log_game, log_trainer)
             logmoves, mvlist = lr.movelist(log_pkmn.iloc[pkmn_srch,16:])
             logabils, alist = lr.abillist(log_pkmn.iloc[pkmn_srch])
             logevos, elist = lr.evolist(log_pkmn.iloc[pkmn_srch])
@@ -1197,14 +1197,16 @@ def run():
                             pkmn_srch = 0
                             i = 0
                             log = open((batch_folder / f'{prefix}{str(seed)}.log'), encoding="utf8").read()
-                            log_pkmn, log_wilds, log_tms, log_tmcompat, log_gen, log_game = lr.log_parser(log)
+                            log_pkmn, log_wilds, log_tms, log_tmcompat, log_gen, log_game, log_trainer = lr.log_parser(log)
                             graph.Erase()
                             lr.statchart(log_pkmn.iloc[pkmn_srch], graph)
+                            t_dict, t_types, log_tlist, log_tparty1, log_tparty2, log_tparty3, t_names = lr.trainerlist(log_game, log_trainer)
                             logmoves, mvlist = lr.movelist(log_pkmn.iloc[pkmn_srch,16:])
                             logabils, alist = lr.abillist(log_pkmn.iloc[pkmn_srch])
                             logevos, elist = lr.evolist(log_pkmn.iloc[pkmn_srch])
                             logtms1, logtms4, logtmsfull, gymtmlist, tmdict, tmdictfull, tmtext, tmtextfull = lr.tmlist(log_pkmn.iloc[pkmn_srch], log_game, log_tmcompat, log_tms)
                             logpivotlocs, logpivotbase1, logpivotbase2, pivottext = lr.pivotlist(log_game, log_gen, log_wilds)
+                            t = t_types[1]
                             # layout_logview = lr.logviewer_layout(pkmn_srch, log_pkmn, log_gen, logtms1, logabils, logmoves, logevos, logpivotbase1, logpivotbase2, graph, logpivotlocs, logtms4, logtmsfull)
                             while i < len(tmtextfull):
                                 if i < len(mvlist):
