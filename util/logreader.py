@@ -545,4 +545,4 @@ def logviewer_layout(pokemonnum, pokemon, gen, logtms1, logabils, logmoves, loge
         sg.Column(layout_pivots, key='-log-layout3-', visible=False), 
         sg.Column(layout_tms, key='-log-layout4-', visible=False), 
     ]]
-    return layout_logview, tn
+    return layout_logview

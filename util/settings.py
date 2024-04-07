@@ -5,17 +5,22 @@ scale = 1.3
 font_sizes = [14, 12, 10, 15]
 sg.set_options(font=('Franklin Gothic Medium', font_sizes[0]), text_color='white', background_color='black', element_background_color='black', text_element_background_color='black', tooltip_font=('Franklin Gothic Medium', font_sizes[1]), tooltip_time=200, scaling=scale)
 
-def settings_ui():
+def settings_load():
+    settingsfile=r"settings.json"
     try:
-        settingsfile=r"settings.json"
+        settingsdict=json.load(open(settingsfile,"r+"))
     except:
-        settingsfile = {'batch_path':'', 'mod_path':'', 'prefix':''}
+        settingsdict = {'batch_path':'', 'mod_path':'', 'prefix':''}
+    with open(settingsfile,'w+') as f:
+        json.dump(settingsdict,f)
+    return settingsfile
 
 def autoload_settings():
     try:
         settingsfile=r"settings.json"
         settingsdict=json.load(open(settingsfile,"r+"))
     except:
+        settingsfile=r"settings.json"
         settingsdict = {'batch_path':'', 'mod_path':'', 'prefix':''}
 
     layout = [

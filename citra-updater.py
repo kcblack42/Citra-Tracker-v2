@@ -52,18 +52,18 @@ except:
 
 from util.gitcheck import gitcheck
 from util.notesclear import notesclear
-from util.settings import autoload_settings
+from util.settings import autoload_settings, settings_load
 from util.bagfuncs import bagitems
 from util.uisettings import defaultuisettings
-# from util.logreader import log_parser
 import util.logreader as lr
+from util.logreadersolo import logloader_solo
 
 # pysimplegui settings et al
 track_title = 'Ironmon Tracker'
 scale = 1.3
 track_size = (600, 600)
-font_sizes = [14, 12, 10, 15]
-sg.set_options(font=('Franklin Gothic Medium', font_sizes[0]), text_color='white', background_color='black', element_background_color='black', text_element_background_color='black', tooltip_font=('Franklin Gothic Medium', font_sizes[1]), tooltip_time=150, scaling=scale)
+font_sizes = [12, 11, 9, 15, 14]
+sg.set_options(font=('Franklin Gothic Medium', font_sizes[0]), text_color='white', background_color='black', element_background_color='black', text_element_background_color='black', tooltip_font=('Franklin Gothic Medium', font_sizes[1]), tooltip_time=100, scaling=scale, element_padding=(0,0,0,0))
 refresh_rate = 4000
 
 curr_version = open('version.txt', 'r').read()
@@ -71,7 +71,8 @@ gitcheck(curr_version)
 
 trackadd=r"trackerdata.json"
 # will also need to try/except some of this as well
-settingsfile=r"settings.json"
+# settingsfile=r"settings.json"
+settingsfile=settings_load()
 
 def crypt(data, seed, i):
     value = data[i]
@@ -1042,7 +1043,8 @@ def run():
             seed = int(open('seed.txt', 'r').read())
         except:
             seed = 1
-            settingsdict = {'batch_path':'', 'mod_path':'', 'prefix':''}
+            with open('seed.txt','w+') as f:
+                json.dump(seed,f)
         try:
             settingsdict=json.load(open(settingsfile,"r+"))
             batch_folder = pathlib.Path(str(settingsdict['batch_path']).strip())
@@ -1078,28 +1080,26 @@ def run():
             logtms1, logtms4, logtmsfull, gymtmlist, tmdict, tmdictfull, tmtext, tmtextfull = lr.tmlist(log_pkmn.iloc[pkmn_srch], log_game, log_tmcompat, log_tms)
             logpivotlocs, logpivotbase1, logpivotbase2, pivottext = lr.pivotlist(log_game, log_gen, log_wilds)
             t = t_types[1] #current trainer subclass selected (defaults to gym leaders/kahunas)
-            layout_logview, tn = lr.logviewer_layout(pkmn_srch, log_pkmn, log_gen, logtms1, logabils, logmoves, logevos, logpivotbase1, logpivotbase2, graph, logpivotlocs, logtms4, logtmsfull, t_types, log_tlist, log_tparty1, log_tparty2, log_tparty3, t_dict)
+            layout_logview = lr.logviewer_layout(pkmn_srch, log_pkmn, log_gen, logtms1, logabils, logmoves, logevos, logpivotbase1, logpivotbase2, graph, logpivotlocs, logtms4, logtmsfull, t_types, log_tlist, log_tparty1, log_tparty2, log_tparty3, t_dict)
             lr.statchart(log_pkmn.iloc[pkmn_srch], graph)
             # print(log_pkmn, ';;;', layout_logview)
             # print(layout_logview)
         except Exception as e:
-            print(e)
-            with open('errorlog.txt','a+') as f:
+            layout_logview = [[]] #if there isn't a log present, turn off the log feature entirely
+            with open('errorlog.txt','a+') as f: #print to log, but don't print the error to console
                 errorLog = str(datetime.now())+": "+str(e)+'\n'
                 f.write(errorLog)
-            # traceback.print_exc()
-            import sys, os, traceback
-            exc_type, exc_obj, exc_tb = sys.exc_info()
-            tb = traceback.extract_tb(exc_tb)[-1]
-            print(exc_type, tb[2], tb[1])
+            print('Log not found - if using LayeredFS and tracker seed advancement, check your batch gen.')
+            print('Log viewer will be disabled.')
             time.sleep(5)
-            print(errorLog)
 
         ### SET UP TRACKER GUI ###
         layout_main = defaultuisettings(font_sizes, layout_logview) # main gui
         
         window = sg.Window(track_title, layout_main, track_size, element_padding=(1,1,0,0), background_color='black', resizable=True, finalize=True)
-        lr.statchart(log_pkmn.iloc[pkmn_srch], graph)
+
+        if layout_logview != [[]]:
+            lr.statchart(log_pkmn.iloc[pkmn_srch], graph)
 
         while (True):
             try:
@@ -1161,7 +1161,7 @@ def run():
                             seed = notesclear()
                             trackdata=json.load(open(trackadd,"r+"))
                             slotchoice = ''
-                            window['-slot-'].update('Waiting for new mon...')
+                            window['-ph1-'].update('Waiting for new mon...', visible=True)
                             # clearing visual tracker info
                             window['-ability-'].update('')
                             window['-item-'].update('')
@@ -1193,45 +1193,48 @@ def run():
                                 window['-mv{}acc-e-'.format(ct)].update(visible = False)
                                 window['-mv{}ctc-e-'.format(ct)].update(visible = False)
                             time.sleep(8)
-                            # need to fire up the log for the next one
-                            pkmn_srch = 0
-                            i = 0
-                            log = open((batch_folder / f'{prefix}{str(seed)}.log'), encoding="utf8").read()
-                            log_pkmn, log_wilds, log_tms, log_tmcompat, log_gen, log_game, log_trainer = lr.log_parser(log)
-                            graph.Erase()
-                            lr.statchart(log_pkmn.iloc[pkmn_srch], graph)
-                            t_dict, t_types, log_tlist, log_tparty1, log_tparty2, log_tparty3, t_names = lr.trainerlist(log_game, log_trainer)
-                            logmoves, mvlist = lr.movelist(log_pkmn.iloc[pkmn_srch,16:])
-                            logabils, alist = lr.abillist(log_pkmn.iloc[pkmn_srch])
-                            logevos, elist = lr.evolist(log_pkmn.iloc[pkmn_srch])
-                            logtms1, logtms4, logtmsfull, gymtmlist, tmdict, tmdictfull, tmtext, tmtextfull = lr.tmlist(log_pkmn.iloc[pkmn_srch], log_game, log_tmcompat, log_tms)
-                            logpivotlocs, logpivotbase1, logpivotbase2, pivottext = lr.pivotlist(log_game, log_gen, log_wilds)
-                            t = t_types[1]
-                            # layout_logview = lr.logviewer_layout(pkmn_srch, log_pkmn, log_gen, logtms1, logabils, logmoves, logevos, logpivotbase1, logpivotbase2, graph, logpivotlocs, logtms4, logtmsfull)
-                            while i < len(tmtextfull):
-                                if i < len(mvlist):
-                                    window[f'-log-ml{i}-'].update(mvlist[i], visible = True)
-                                elif i < len(logmoves) - 1:
-                                    window[f'-log-ml{i}-'].update(visible = False)
-                                if i < len(alist) and i == 2:
-                                    window[f'-log-al{i}-'].update(f'{alist.iloc[i]} (HA)', visible = True)
-                                elif i < len(alist):
-                                    window[f'-log-al{i}-'].update(alist.iloc[i], visible = True)
-                                if i == 0:
-                                    window[f'-log-evos-'].update(f'{elist}', visible = True)
-                                if i < len(tmtext):
-                                    if tmdict[tmtext[i]] == False:
-                                        window[f'-log-gymtm1{i}-'].update(text_color='white')
-                                        window[f'-log-gymtm4{i}-'].update(text_color='white')
-                                    elif tmdict[tmtext[i]] == True:
-                                        window[f'-log-gymtm1{i}-'].update(text_color='#339ec4')
-                                        window[f'-log-gymtm4{i}-'].update(text_color='#339ec4')
-                                if tmdictfull[tmtextfull[i]] == False:
-                                    window[f'-log-fulltm{i}-'].update(text_color='white')
-                                elif tmdictfull[tmtextfull[i]] == True:
-                                    window[f'-log-fulltm{i}-'].update(text_color='#339ec4')
-                                i += 1
-                            continue
+                            try:
+                                # need to fire up the log for the next one
+                                pkmn_srch = 0
+                                i = 0
+                                log = open((batch_folder / f'{prefix}{str(seed)}.log'), encoding="utf8").read()
+                                log_pkmn, log_wilds, log_tms, log_tmcompat, log_gen, log_game, log_trainer = lr.log_parser(log)
+                                graph.Erase()
+                                lr.statchart(log_pkmn.iloc[pkmn_srch], graph)
+                                t_dict, t_types, log_tlist, log_tparty1, log_tparty2, log_tparty3, t_names = lr.trainerlist(log_game, log_trainer)
+                                logmoves, mvlist = lr.movelist(log_pkmn.iloc[pkmn_srch,16:])
+                                logabils, alist = lr.abillist(log_pkmn.iloc[pkmn_srch])
+                                logevos, elist = lr.evolist(log_pkmn.iloc[pkmn_srch])
+                                logtms1, logtms4, logtmsfull, gymtmlist, tmdict, tmdictfull, tmtext, tmtextfull = lr.tmlist(log_pkmn.iloc[pkmn_srch], log_game, log_tmcompat, log_tms)
+                                logpivotlocs, logpivotbase1, logpivotbase2, pivottext = lr.pivotlist(log_game, log_gen, log_wilds)
+                                t = t_types[1]
+                                # layout_logview = lr.logviewer_layout(pkmn_srch, log_pkmn, log_gen, logtms1, logabils, logmoves, logevos, logpivotbase1, logpivotbase2, graph, logpivotlocs, logtms4, logtmsfull)
+                                while i < len(tmtextfull):
+                                    if i < len(mvlist):
+                                        window[f'-log-ml{i}-'].update(mvlist[i], visible = True)
+                                    elif i < len(logmoves) - 1:
+                                        window[f'-log-ml{i}-'].update(visible = False)
+                                    if i < len(alist) and i == 2:
+                                        window[f'-log-al{i}-'].update(f'{alist.iloc[i]} (HA)', visible = True)
+                                    elif i < len(alist):
+                                        window[f'-log-al{i}-'].update(alist.iloc[i], visible = True)
+                                    if i == 0:
+                                        window[f'-log-evos-'].update(f'{elist}', visible = True)
+                                    if i < len(tmtext):
+                                        if tmdict[tmtext[i]] == False:
+                                            window[f'-log-gymtm1{i}-'].update(text_color='white')
+                                            window[f'-log-gymtm4{i}-'].update(text_color='white')
+                                        elif tmdict[tmtext[i]] == True:
+                                            window[f'-log-gymtm1{i}-'].update(text_color='#339ec4')
+                                            window[f'-log-gymtm4{i}-'].update(text_color='#339ec4')
+                                    if tmdictfull[tmtextfull[i]] == False:
+                                        window[f'-log-fulltm{i}-'].update(text_color='white')
+                                    elif tmdictfull[tmtextfull[i]] == True:
+                                        window[f'-log-fulltm{i}-'].update(text_color='#339ec4')
+                                    i += 1
+                                continue
+                            except:
+                                print('No log found, continuing without log support. If you have just set up your settings file, please reload the tracker.')
                     elif event == f'-view-log-':
                         window[f'-lc-'].update(visible=False)
                         window[f'-rc-'].update(visible=False)
@@ -1415,11 +1418,6 @@ def run():
                             window[f'-log-train-pkmnname-{i}-'].update('')
                             window[f'-log-train-pkmnitem-{i}-'].update('')
                             window[f'-log-train-pkmnlvl-{i}-'].update('')
-                        # for i in range(0, len(log_tlist)):
-                        #     if i in list(l):
-                        #         window[f'-log-train-{i}-'].update(visible=True)
-                        #     else:
-                        #         window[f'-log-train-{i}-'].update(visible=False)
                     elif event in ('-log-train-0-', '-log-train-1-', '-log-train-2-', '-log-train-3-', '-log-train-4-', '-log-train-5-', '-log-train-6-', '-log-train-7-', '-log-train-8-', '-log-train-9-', '-log-train-10-', '-log-train-11-', '-log-train-12-', '-log-train-13-', '-log-train-14-', '-log-train-15-', '-log-train-16-', '-log-train-17-'):
                         n = int(event[-3:].replace('-',''))
                         for i in range(0, len(log_tlist)):
@@ -1439,6 +1437,8 @@ def run():
                                 window[f'-log-train-pkmnname-{i}-'].update(t_dict[t][t_names[n]][1][j])
                                 window[f'-log-train-pkmnitem-{i}-'].update('')
                                 window[f'-log-train-pkmnlvl-{i}-'].update(t_dict[t][t_names[n]][1][j+1])
+                    elif event in ('-load-log-'):
+                        logloader_solo((380, 580))
                     partyadd,enemyadd,ppadd,curoppnum,enctype,mongap=getaddresses(c)
                     # print("loops" + str(loops))
                     loops+=1
@@ -1500,7 +1500,7 @@ def run():
                             try:
                                 pkmn_srch = log_pkmn.loc[log_pkmn['NAME'] == slotchoice].index[0]
                             except:
-                                if slotchoice == pkmn.name:
+                                if slotchoice == pkmn.name and layout_logview != [[]]:
                                     pkmn_srch = log_pkmn.loc[log_pkmn['NUM'] == pkmn.species_num()].index[0]
                                     print(pkmn.species_num())
                             window['-slotdrop-'].Update(values=slot, value=slotchoice, visible=True)
@@ -1605,7 +1605,8 @@ def run():
                                         where itemname = '{pkmn.held_item_name}' and genid <= {gen}
                                         """
                                     itemname,itemdesc = cursor.execute(query).fetchone()
-                                    window['-slot-'].Update('Seed {} - Battle'.format(seed))
+                                    window['-ph1-'].update('', visible=False)
+                                    window['-slot-'].Update(f'Seed {seed}')
                                     try:
                                         window['-monimg-'].Update(resize('images/homemodels/{}.png'.format(pkmn.name), (120,120)), visible = True)
                                     except:
@@ -1639,17 +1640,11 @@ def run():
                                     window[confusestat].set_tooltip('{} causes confusion'.format(confuseberry))
                                     window['-bstlabel-'].Update(visible = True)
                                     window['-hp-'].Update('{}/{}'.format(hpnum[0], hpnum[1]))
-                                    window['-hp-'].set_tooltip('EV: ' + str(pkmn.evhp))
                                     window['-att-'].Update(pkmn.attack, text_color=natureformatting(naturelist, 0))
-                                    window['-att-'].set_tooltip('EV: ' + str(pkmn.evattack))
                                     window['-def-'].Update(pkmn.defense, text_color=natureformatting(naturelist, 1))
-                                    window['-def-'].set_tooltip('EV: ' + str(pkmn.evdefense))
                                     window['-spatt-'].Update(pkmn.spatk, text_color=natureformatting(naturelist, 2))
-                                    window['-spatt-'].set_tooltip('EV: ' + str(pkmn.evspatk))
                                     window['-spdef-'].Update(pkmn.spdef, text_color=natureformatting(naturelist, 3))
-                                    window['-spdef-'].set_tooltip('EV: ' + str(pkmn.evspdef))
                                     window['-speed-'].Update(pkmn.speed, text_color=natureformatting(naturelist, 4))
-                                    window['-speed-'].set_tooltip('EV: ' + str(pkmn.evspeed))
 
                                     # Update stat stage modifiers, and only apply if within proper range
                                     modatt = int.from_bytes(c.read_memory((ppadd+(mongap*(pk-1))-20),1))
@@ -1685,7 +1680,9 @@ def run():
                                     window['-movecontacthdr-'].update('C')
                                     window['-clearnotes-'].update(visible=True)
                                     window['-settings-'].update(visible=True)
-                                    window['-view-log-'].update(visible=True)
+                                    if layout_logview != [[]]:
+                                        window['-view-log-'].update(visible=True)
+                                    window['-load-log-'].update(visible=True)
                                     for move in pkmn.moves:
                                         stab = ''
                                         movetyp=movetype(pkmn,move,pkmn.held_item_num)
@@ -1869,7 +1866,6 @@ def run():
                                     window['-bc6a-e-'].Update(visible = True)
                                     window['-bc7a-e-'].Update(visible = True)
                                     # update enemy slot info
-                                    window['-slot-e-'].Update('Battle')
                                     try:
                                         window['-monimg-e-'].Update(resize('images/homemodels/{}.png'.format(pkmn.name), (120,120)), visible = True)
                                     except:
@@ -2038,7 +2034,8 @@ def run():
                                     where itemname = '{pkmn.held_item_name}' and genid <= {gen}
                                     """
                                 itemname,itemdesc = cursor.execute(query).fetchone()
-                                window['-slot-'].Update('Seed {} - Overworld'.format(seed))
+                                window['-ph1-'].update('', visible = False)
+                                window['-slot-'].Update(f'Seed {seed}')
                                 try:
                                     window['-monimg-'].Update(resize('images/homemodels/{}.png'.format(pkmn.name), (120,120)), visible = True)
                                 except:
@@ -2072,17 +2069,11 @@ def run():
                                 window[confusestat].set_tooltip('{} causes confusion'.format(confuseberry))
                                 window['-bstlabel-'].update(visible = True)
                                 window['-hp-'].update('{}/{}'.format(pkmn.cur_hp, pkmn.maxhp))
-                                window['-hp-'].set_tooltip('EV: ' + str(pkmn.evhp))
                                 window['-att-'].update(pkmn.attack, text_color=natureformatting(naturelist, 0))
-                                window['-att-'].set_tooltip('EV: ' + str(pkmn.evattack))
                                 window['-def-'].update(pkmn.defense, text_color=natureformatting(naturelist, 1))
-                                window['-def-'].set_tooltip('EV: ' + str(pkmn.evdefense))
                                 window['-spatt-'].update(pkmn.spatk, text_color=natureformatting(naturelist, 2))
-                                window['-spatt-'].set_tooltip('EV: ' + str(pkmn.evspatk))
                                 window['-spdef-'].update(pkmn.spdef, text_color=natureformatting(naturelist, 3))
-                                window['-spdef-'].set_tooltip('EV: ' + str(pkmn.evspdef))
                                 window['-speed-'].update(pkmn.speed, text_color=natureformatting(naturelist, 4))
-                                window['-speed-'].set_tooltip('EV: ' + str(pkmn.evspeed))
                                 window['-bst-'].update(pkmn.bst)
                                 window['-attmod-'].update('images/modifiers/modifier6.png')
                                 window['-defmod-'].update('images/modifiers/modifier6.png')
@@ -2101,7 +2092,9 @@ def run():
                                 window['-movecontacthdr-'].update('C')
                                 window['-clearnotes-'].update(visible=True)
                                 window['-settings-'].update(visible=True)
-                                window['-view-log-'].update(visible=True)
+                                if layout_logview != [[]]:
+                                    window['-view-log-'].update(visible=True)
+                                window['-load-log-'].update(visible=True)
                                 for move in pkmn.moves:
                                     stab = ''
                                     movetyp=movetype(pkmn,move,pkmn.held_item_num)
@@ -2173,6 +2166,7 @@ def run():
         exc_type, exc_obj, exc_tb = sys.exc_info()
         tb = traceback.extract_tb(exc_tb)[-1]
         print(exc_type, tb[2], tb[1])
+        time.sleep(5)
         if "cannot unpack non-iterable NoneType object" in str(e):
             print("Waiting for a starter...")
             time.sleep(15)
