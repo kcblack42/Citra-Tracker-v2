@@ -20,60 +20,41 @@ def log_parser(log):
 
     if (lsplit[-1].count('Pokemon X') >= 1) | (lsplit[-1].count('Pokemon Y') >= 1):
         game = 'XY'
-    # elif (lsplit[-1].count('Pokemon Y') >= 1):
-    #     game = 'XY'
     elif (lsplit[-1].count('Pokemon Omega') >= 1) | (lsplit[-1].count('Pokemon Alpha') >= 1):
         game = 'ORAS'
-    # elif (lsplit[-1].count('Pokemon Alpha') >= 1):
-    #     game = 'ORAS'
     elif (lsplit[-1].count('Pokemon Sun') >= 1) | (lsplit[-1].count('Pokemon Moon') >= 1):
         game = 'SM'
-    # elif (lsplit[-1].count('Pokemon Moon') >= 1):
-    #     game = 'SM'
     elif (lsplit[-1].count('Pokemon Ultra') >= 1):
         game = 'USUM'
     else:
         game = 'UNK'
 
-    # if game != 'UNK':
-    #     print(f'Log from pokemon {game}.')
-    # else:
-    #     print('Error reading log.')
-
-    if game in ('XY'):
+    if game in ('XY', 'ORAS'):
         gen = 6
-        evos = lsplit[1] # done
-        mons = lsplit[2] # done
-        moves = lsplit[7] # done
-        tms = lsplit[8] # done
-        tmcompat = lsplit[9] # done
-        trainer = lsplit[10] # done
-        wildmons = lsplit[12] # done
-    elif game in ('ORAS'): # not verified yet
-        gen = 6
-        evos = lsplit[1] # done
-        mons = lsplit[2] # done
-        moves = lsplit[7] # done
-        tms = lsplit[8] # done
-        tmcompat = lsplit[9] # done
-        trainer = lsplit[12] # done
-        wildmons = lsplit[14] # done
-        # tutormoves = lsplit[10]
-        # tutorcompat = lsplit[11]
-    elif game in ('SM', 'USUM'): # not verified yet, will do after gen 6 is done
+    elif game in ('SM', 'USUM'):
         gen = 7
-        evos = lsplit[1] # done
-        mons = lsplit[2] # done
-        moves = lsplit[7] # done
-        tms = lsplit[8] # done
-        tmcompat = lsplit[9] # done
-        trainer = lsplit[12] # done
-        wildmons = lsplit[15] # done
-        ## to be added later:
-        # tutormoves = lsplit[10]
-        # tutorcompat = lsplit[11]
-        # totems = lsplit[14]
 
+    for i in lsplit:
+        if i.startswith('Randomized Evolutions'):
+            evos = i
+        elif i.startswith('Pokemon Base Stats & Types'):
+            mons = i
+        elif i.startswith('Pokemon Movesets'):
+            moves = i
+        elif i.startswith('TM Moves'):
+            tms = i
+        elif i.startswith('TM Compatibility'):
+            tmcompat = i
+        elif i.startswith('Trainers Pokemon'):
+            trainer = i
+        elif i.startswith('Wild Pokemon'):
+            wildmons = i
+        elif i.startswith('Totem Pokemon'):
+            totems = i
+        elif i.startswith('Move Tutor Moves'):
+            tutormoves = i
+        elif i.startswith('Move Tutor Compatibility'):
+            tutorcompat = i
 
     def parser(data, pattern, s):
         groups = [m.groupdict() for line in data.split(sep=s) if (m := re.match(pattern, line))]
@@ -345,13 +326,13 @@ def trainerlist(game, trainer_df):
             titles[2]:{name[9]:[idx[9]], name[10]:[idx[10]], name[11]:[idx[11]], name[12]:[idx[12]], name[13]:[idx[13]]},
             titles[3]:{name[14]:[idx[14]], name[15]:[idx[15]], name[16]:[idx[16]], name[17]:[idx[17]]}}
     elif game == 'SM':
-        name = ['Hala', 'Olivia', 'Nanu #1', 'Nanu #2', 'Hapu', 'E4 Molayne', 'E4 Olivia', 'E4 Acerola', 'E4 Kahili', 'Hau (Champ) v1', 'Hau (Champ) v2', 'Hau (Champ) v3', 'Guzma #1', 'Guzma #2', 'Guzma #3', 'Lusamine']
-        idx = [22, 89, 153, 507, 496, 488, 152, 148, 155, 493, 494, 495, 137, 234, 235, 130]
+        name = ['Hala', 'Olivia', 'Nanu', 'Hapu', 'E4 Hala', 'E4 Olivia', 'E4 Acerola', 'E4 Kahili', 'Kukui v1', 'Kukui v2', 'Kukui v3', 'Guzma #1', 'Guzma #2', 'Guzma #3', 'Lusamine #1', 'Lusamine #2']
+        idx = [22, 89, 153, 154, 151, 152, 148, 155, 128, 412, 413, 137, 234, 235, 130, 157]
         titles = ['Hau', 'Kahunas', 'Elite Four', 'Skull/Aether']
         t_dict = {titles[0]:'', 
-            titles[1]:{name[0]:[idx[0]], name[1]:[idx[1]], name[2]:[idx[2]], name[3]:[idx[3]], name[4]:[idx[4]]}, 
-            titles[2]:{name[5]:[idx[5]], name[6]:[idx[6]], name[7]:[idx[7]], name[8]:[idx[8]], name[9]:[idx[9]], name[10]:[idx[10]], name[11]:[idx[11]]},
-            titles[3]:{name[12]:[idx[12]], name[13]:[idx[13]], name[14]:[idx[14]], name[15]:[idx[15]]}}
+            titles[1]:{name[0]:[idx[0]], name[1]:[idx[1]], name[2]:[idx[2]], name[3]:[idx[3]]}, 
+            titles[2]:{name[4]:[idx[4]], name[5]:[idx[5]], name[6]:[idx[6]], name[7]:[idx[7]], name[8]:[idx[8]], name[9]:[idx[9]], name[10]:[idx[10]]},
+            titles[3]:{name[11]:[idx[11]], name[12]:[idx[12]], name[13]:[idx[13]], name[14]:[idx[14]], name[15]:[idx[15]]}}
     elif game == 'USUM':
         name = ['Hala', 'Olivia', 'Nanu #1', 'Nanu #2', 'Hapu', 'E4 Molayne', 'E4 Olivia', 'E4 Acerola', 'E4 Kahili', 'Hau (Champ) v1', 'Hau (Champ) v2', 'Hau (Champ) v3', 'Guzma #1', 'Guzma #2', 'Guzma #3', 'Lusamine']
         idx = [22, 89, 153, 507, 496, 488, 152, 148, 155, 493, 494, 495, 137, 234, 235, 130]

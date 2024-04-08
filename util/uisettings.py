@@ -79,7 +79,8 @@ def defaultuisettings(font_sizes, logview):
             [
                 sg.Button('Next Seed', key='-clearnotes-', font=('Franklin Gothic Medium', font_sizes[2]), pad=(2,2,2,2), auto_size_button=True, visible=False), 
                 sg.Button('Batch Settings', key='-settings-', font=('Franklin Gothic Medium', font_sizes[2]), pad=(2,2,2,2), auto_size_button=True, visible=False),
-            ],
+                sg.Button('Load Log', key='-load-log-', font=('Franklin Gothic Medium', font_sizes[2]), pad=(2,2,2,2), auto_size_button=True, visible=False),
+        ],
         ]
     else:
         botcol7 = [
