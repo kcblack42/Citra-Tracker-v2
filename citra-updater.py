@@ -51,7 +51,7 @@ except:
     import pandas as pd
 
 from util.gitcheck import gitcheck
-from util.notesclear import notesclear
+from util.notesclear import notesclear, notesclear_solo
 from util.settings import autoload_settings, settings_load
 from util.bagfuncs import bagitems
 from util.uisettings import defaultuisettings
@@ -62,8 +62,8 @@ from util.logreadersolo import logloader_solo
 track_title = 'Ironmon Tracker'
 scale = 1.3
 track_size = (600, 600)
-font_sizes = [12, 11, 9, 15, 14]
-sg.set_options(font=('Franklin Gothic Medium', font_sizes[0]), text_color='white', background_color='black', element_background_color='black', text_element_background_color='black', tooltip_font=('Franklin Gothic Medium', font_sizes[1]), tooltip_time=100, scaling=scale, element_padding=(0,0,0,0))
+font_sizes = [14, 11, 9, 15, 12]
+sg.set_options(font=('Franklin Gothic Medium', font_sizes[0]), text_color='white', background_color='black', element_background_color='black', text_element_background_color='black', tooltip_font=('Franklin Gothic Medium', font_sizes[1]), tooltip_time=100, scaling=scale, element_padding=(2,2,2,2))
 refresh_rate = 4000
 
 curr_version = open('version.txt', 'r').read()
@@ -166,6 +166,12 @@ class Pokemon:
                         query+= " and pokemonsuffix = 'mega-x'"
                     case 16 | 18:
                         query+= " and pokemonsuffix = 'mega-y'"
+            case 25: # Pikachu partner forms
+                match form:
+                    case 0 | 2:
+                        query+= " and pokemonsuffix is null"
+                    case _: # no idea how many partner forms there are, but they're all here apparently
+                        query+= " and pokemonsuffix is partner"
             case 150: ### Mewtwo
                 match form:
                     case 4:
@@ -1039,6 +1045,7 @@ def run():
         enemymon = ''
         enemydict = {"abilities": [], "stats": ["", "", "", "", "", ""], "notes": "", "levels": [], "moves": []}
         change = ''
+        hphl, statushl, pphl = '', '', ''
         try:
             seed = int(open('seed.txt', 'r').read())
         except:
@@ -1153,8 +1160,23 @@ def run():
                         remabil = abil_popup(enemydict['abilities'])
                         trackdata[enemymon]['abilities'].remove(remabil)
                         window['-abillist-e-'].update(trackdata[enemymon]['abilities'])
+                    elif event == '-hpheals-':
+                        # making stuff readable
+                        h = hphl
+                        del h['percent']
+                        h1 = f'HP Heals:\n{str(h).replace("'", '').replace('{', '').replace('}', '').title()}'
+                        h2 = f'Status Heals:\n{str(statushl).replace("'", '').replace('{', '').replace('}', '').title()}'
+                        h3 = f'PP Heals:\n{str(pphl).replace("'", '').replace('{', '').replace('}', '').title()}'
+                        sg.popup_ok(h1, h2, h3, title='Healing Items')
                     elif event == '-settings-':
                         autoload_settings()
+                    elif event == '-clearnotes-solo-':
+                        confirm = sg.popup_ok_cancel('Reset tracker data?', title='Confirm')
+                        if confirm == 'OK':
+                            seed = notesclear_solo()
+                            trackdata = json.load(open(trackadd,"r+"))
+                        else:
+                            continue
                     elif event == '-clearnotes-':
                         confirm = sg.popup_ok_cancel('Load next seed?\nAfter clicking yes, wait 1 sec then Citra > Emulation > Restart.', title='Confirm')
                         if confirm == 'OK':
@@ -1501,8 +1523,9 @@ def run():
                                 pkmn_srch = log_pkmn.loc[log_pkmn['NAME'] == slotchoice].index[0]
                             except:
                                 if slotchoice == pkmn.name and layout_logview != [[]]:
+                                    # pkmn_srch = 0
                                     pkmn_srch = log_pkmn.loc[log_pkmn['NUM'] == pkmn.species_num()].index[0]
-                                    print(pkmn.species_num())
+                                    # print(pkmn.species_num())
                             window['-slotdrop-'].Update(values=slot, value=slotchoice, visible=True)
                             # print(c, ';;;', getGame(c), ';;;', pkmn, ';;;', items)
                             hphl, statushl, pphl = bagitems(c, getGame(c), pkmn, items)
@@ -1628,9 +1651,14 @@ def run():
                                     window['-ability-'].set_tooltip(str(pkmn.ability['description']))
                                     window['-item-'].Update(pkmn.held_item_name)
                                     window['-item-'].set_tooltip(itemdesc)
-                                    window['-hpheals-'].update("Heals: "+str(hphl["percent"])+"% ("+str(hphl["total"])+")", visible = True, text_color="#f0f080")
-                                    # test=hphl.pop("percent")
-                                    window['-hpheals-'].set_tooltip("Heals: "+str(hphl)+"\nStatus:"+str(statushl)+"\nPP:"+str(pphl))
+                                    if gen == 6:
+                                        window['-hpheals-'].update("Heals: "+str(hphl["percent"])+"% ("+str(hphl["total"])+")", visible = True, text_color="#f0f080")
+                                        window['-hpheals-'].set_tooltip(f'Click to view in new window. \n' +
+                                            f'HP Heals: {str(hphl).replace("'", '').replace('{', '').replace('}', '').title()}\n'+
+                                            f'Status Heals: {str(statushl).replace("'", '').replace('{', '').replace('}', '').title()}\n'+
+                                            f'PP Heals: {str(pphl).replace("'", '').replace('{', '').replace('}', '').title()}')
+                                    else: # don't currently have support for gen 7 :<
+                                        window['-hpheals-'].update(visible = False)
                                     window['-hplabel-'].update(visible = True)
                                     window['-attlabel-'].update(visible = True, text_color=natureformatting(naturelist, 0))
                                     window['-deflabel-'].update(visible = True, text_color=natureformatting(naturelist, 1))
@@ -2057,9 +2085,14 @@ def run():
                                 window['-ability-'].set_tooltip(str(pkmn.ability['description']))
                                 window['-item-'].update(pkmn.held_item_name)
                                 window['-item-'].set_tooltip(itemdesc)
-                                window['-hpheals-'].update("Heals: "+str(hphl["percent"])+"% ("+str(hphl["total"])+")", visible = True, text_color="#f0f080")
-                                # test=hphl.pop("percent")
-                                window['-hpheals-'].set_tooltip("Heals: "+str(hphl)+"\nStatus:"+str(statushl)+"\nPP:"+str(pphl))
+                                if gen == 6:
+                                    window['-hpheals-'].update("Heals: "+str(hphl["percent"])+"% ("+str(hphl["total"])+")", visible = True, text_color="#f0f080")
+                                    window['-hpheals-'].set_tooltip(f'Click to view in new window. \n' +
+                                        f'HP Heals: {str(hphl).replace("'", '').replace('{', '').replace('}', '').title()}\n'+
+                                        f'Status Heals: {str(statushl).replace("'", '').replace('{', '').replace('}', '').title()}\n'+
+                                        f'PP Heals: {str(pphl).replace("'", '').replace('{', '').replace('}', '').title()}')
+                                else: # don't currently have support for gen 7 :<
+                                    window['-hpheals-'].update(visible = False)
                                 window['-hplabel-'].update(visible = True)
                                 window['-attlabel-'].update(visible = True, text_color=natureformatting(naturelist, 0))
                                 window['-deflabel-'].update(visible = True, text_color=natureformatting(naturelist, 1))

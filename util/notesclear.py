@@ -71,3 +71,31 @@ def notesclear():
 
     # time.sleep(5)
     return next_seed
+
+
+def notesclear_solo():
+    trackadd=r"trackerdata.json"
+    trackdata=json.load(open(trackadd,"r+"))
+    for mon in trackdata:
+        for n in range(0,6):
+            trackdata[mon]["stats"][n]=' '
+        trackdata[mon]["notes"]=""
+        trackdata[mon]["levels"]=[]
+        trackdata[mon]["moves"]={}
+        trackdata[mon]["abilities"]=[]
+    with open(trackadd,'w') as f:
+        json.dump(trackdata,f)
+
+    try:
+        curr_seed = int(open('seed.txt', 'r').read())
+    except Exception as e:
+        # if no seed file present, this is likely the first seed being played.
+        print('No seed file found - setting seed counter to 1 and creating file.')
+        curr_seed = 1
+    
+    next_seed = curr_seed + 1
+
+    new_seed = open('seed.txt', 'w+').write(str(next_seed))
+    print(open('seed.txt', 'r').read())
+
+    return next_seed

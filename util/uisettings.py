@@ -15,36 +15,36 @@ def defaultuisettings(font_sizes, logview):
     ]
     topcol2 = [
         # [sg.Text(' ', key='-slot1-', visible=True, font=('Franklin Gothic Medium', font_sizes[1]))],
-        [sg.Text('HP:', key='-hplabel-', visible=False, font=('Franklin Gothic Medium', font_sizes[4]), pad=padvar)],
-        [sg.Text('ATK:', key='-attlabel-', visible=False, font=('Franklin Gothic Medium', font_sizes[4]), pad=padvar)],
-        [sg.Text('DEF:', key='-deflabel-', visible=False, font=('Franklin Gothic Medium', font_sizes[4]), pad=padvar)],
-        [sg.Text('SPA:', key='-spattlabel-', visible=False, font=('Franklin Gothic Medium', font_sizes[4]), pad=padvar)],
-        [sg.Text('SPD:', key='-spdeflabel-', visible=False, font=('Franklin Gothic Medium', font_sizes[4]), pad=padvar)],
-        [sg.Text('SPE:', key='-speedlabel-', visible=False, font=('Franklin Gothic Medium', font_sizes[4]), pad=padvar)],
-        [sg.Text('BST:', key='-bstlabel-', visible=False, font=('Franklin Gothic Medium', font_sizes[4]), pad=padvar)],
+        [sg.Text('HP:', key='-hplabel-', visible=False, pad=padvar)],
+        [sg.Text('ATK:', key='-attlabel-', visible=False, pad=padvar)],
+        [sg.Text('DEF:', key='-deflabel-', visible=False, pad=padvar)],
+        [sg.Text('SPA:', key='-spattlabel-', visible=False, pad=padvar)],
+        [sg.Text('SPD:', key='-spdeflabel-', visible=False, pad=padvar)],
+        [sg.Text('SPE:', key='-speedlabel-', visible=False, pad=padvar)],
+        [sg.Text('BST:', key='-bstlabel-', visible=False, pad=padvar)],
     ]
     topcol2b = [
-        [sg.Text(key='-hpheals-', font=('Franklin Gothic Medium', font_sizes[4]))],
+        [sg.Text(key='-hpheals-', enable_events=True)],
         # [sg.Text(key='-statusheals-')],
-        [sg.Text('Acc: ', key='-accevalabel-', visible=False, font=('Franklin Gothic Medium', font_sizes[4])), sg.Image(key='-accmod-', visible=False), sg.Text('  Eva: ', key='-accevaph-', visible=False, font=('Franklin Gothic Medium', font_sizes[4])), sg.Image(key='-evamod-', visible=False)],
+        [sg.Text('Acc: ', key='-accevalabel-', visible=False), sg.Image(key='-accmod-', visible=False), sg.Text('  Eva: ', key='-accevaph-', visible=False), sg.Image(key='-evamod-', visible=False)],
     ]
     topcol3 = [
         # [sg.Text(' ', key='-slot2-', visible=True, justification='r', font=('Franklin Gothic Medium', font_sizes[1]))],
-        [sg.Text(key='-hp-', justification='r', font=('Franklin Gothic Medium', font_sizes[4]), pad=padvar)],
-        [sg.Image(key='-attmod-'), sg.Text(key='-att-', justification='r', font=('Franklin Gothic Medium', font_sizes[4]), pad=padvar)],
-        [sg.Image(key='-defmod-'), sg.Text(key='-def-', justification='r', font=('Franklin Gothic Medium', font_sizes[4]), pad=padvar)],
-        [sg.Image(key='-spattmod-'), sg.Text(key='-spatt-', justification='r', font=('Franklin Gothic Medium', font_sizes[4]), pad=padvar)],
-        [sg.Image(key='-spdefmod-'), sg.Text(key='-spdef-', justification='r', font=('Franklin Gothic Medium', font_sizes[4]), pad=padvar)],
-        [sg.Image(key='-speedmod-'), sg.Text(key='-speed-', justification='r', font=('Franklin Gothic Medium', font_sizes[4]), pad=padvar)],
-        [sg.Text(key='-bst-', justification='r', font=('Franklin Gothic Medium', font_sizes[4]), pad=padvar)],
+        [sg.Text(key='-hp-', justification='r', pad=padvar)],
+        [sg.Image(key='-attmod-'), sg.Text(key='-att-', justification='r', pad=padvar)],
+        [sg.Image(key='-defmod-'), sg.Text(key='-def-', justification='r', pad=padvar)],
+        [sg.Image(key='-spattmod-'), sg.Text(key='-spatt-', justification='r', pad=padvar)],
+        [sg.Image(key='-spdefmod-'), sg.Text(key='-spdef-', justification='r', pad=padvar)],
+        [sg.Image(key='-speedmod-'), sg.Text(key='-speed-', justification='r', pad=padvar)],
+        [sg.Text(key='-bst-', justification='r', pad=padvar)],
     ]
 
     botcol1 = [
         [sg.Text(key='-movehdr-', justification='l')],
-        [sg.Image(key='-mv1type-'), sg.Text(key='-mv1text-', size=13)],
-        [sg.Image(key='-mv2type-'), sg.Text(key='-mv2text-', size=13)],
-        [sg.Image(key='-mv3type-'), sg.Text(key='-mv3text-', size=13)],
-        [sg.Image(key='-mv4type-'), sg.Text(key='-mv4text-', size=13)],
+        [sg.Image(key='-mv1type-'), sg.Text(key='-mv1text-', size=15)],
+        [sg.Image(key='-mv2type-'), sg.Text(key='-mv2text-', size=15)],
+        [sg.Image(key='-mv3type-'), sg.Text(key='-mv3text-', size=15)],
+        [sg.Image(key='-mv4type-'), sg.Text(key='-mv4text-', size=15)],
     ]
     botcol2 = [
         [sg.Text(key='-movepphdr-', size=5, justification='c')],
@@ -77,7 +77,7 @@ def defaultuisettings(font_sizes, logview):
     if logview == [[]]:
         botcol7 = [
             [
-                sg.Button('Next Seed', key='-clearnotes-', font=('Franklin Gothic Medium', font_sizes[2]), pad=(2,2,2,2), auto_size_button=True, visible=False), 
+                sg.Button('Clear Data', key='-clearnotes-solo-', font=('Franklin Gothic Medium', font_sizes[2]), pad=(2,2,2,2), auto_size_button=True, visible=False), 
                 sg.Button('Batch Settings', key='-settings-', font=('Franklin Gothic Medium', font_sizes[2]), pad=(2,2,2,2), auto_size_button=True, visible=False),
                 sg.Button('Load Log', key='-load-log-', font=('Franklin Gothic Medium', font_sizes[2]), pad=(2,2,2,2), auto_size_button=True, visible=False),
         ],
@@ -104,13 +104,13 @@ def defaultuisettings(font_sizes, logview):
         [sg.Text(key='-note-e-', text_color='light blue', size=(25,2))],
     ]
     topcol2a = [
-        [sg.Text('HP:', key='-hplabel-e-', font=('Franklin Gothic Medium', 14))],
-        [sg.Text('ATK:', key='-attlabel-e-', font=('Franklin Gothic Medium', 14))],
-        [sg.Text('DEF:', key='-deflabel-e-', font=('Franklin Gothic Medium', 14))],
-        [sg.Text('SPA:', key='-spattlabel-e-', font=('Franklin Gothic Medium', 14))],
-        [sg.Text('SPD:', key='-spdeflabel-e-', font=('Franklin Gothic Medium', 14))],
-        [sg.Text('SPE:', key='-speedlabel-e-', font=('Franklin Gothic Medium', 14))],
-        [sg.Text('BST:', key='-bstlabel-e-', font=('Franklin Gothic Medium', 14))],
+        [sg.Text('HP:', key='-hplabel-e-')],
+        [sg.Text('ATK:', key='-attlabel-e-')],
+        [sg.Text('DEF:', key='-deflabel-e-')],
+        [sg.Text('SPA:', key='-spattlabel-e-')],
+        [sg.Text('SPD:', key='-spdeflabel-e-')],
+        [sg.Text('SPE:', key='-speedlabel-e-')],
+        [sg.Text('BST:', key='-bstlabel-e-')],
         # [sg.Text('Acc:', key='-accevalabel-e-'), sg.Image(key='-accmod-e-')],
         # [sg.Button(' + Ability ', key='-addabil-e-', font=('Franklin Gothic Medium', font_sizes[2]), auto_size_button=True)], 
         # [sg.Button('Add Note', key='-addnote-e-', font=('Franklin Gothic Medium', font_sizes[2]), auto_size_button=True)],
@@ -122,7 +122,7 @@ def defaultuisettings(font_sizes, logview):
         [sg.Image(key='-spattmod-e-'), sg.Text('[ ]', key='-spatt-e-', enable_events=True, font=('Consolas', font_sizes[3]))],
         [sg.Image(key='-spdefmod-e-'), sg.Text('[ ]', key='-spdef-e-', enable_events=True, font=('Consolas', font_sizes[3]))],
         [sg.Image(key='-speedmod-e-'), sg.Text('[ ]', key='-speed-e-', enable_events=True, font=('Consolas', font_sizes[3]))],
-        [sg.Text(key='-bst-e-', font=('Franklin Gothic Medium', 14))],
+        [sg.Text(key='-bst-e-')],
         # [sg.Text('Eva:', key='-accevaph-e-'), sg.Image(key="-evamod-e-")],
         # [sg.Button(' - Ability ', key='-remabil-e-', font=('Franklin Gothic Medium', font_sizes[2]), auto_size_button=True)],
         # [sg.Text('')], 
@@ -135,10 +135,10 @@ def defaultuisettings(font_sizes, logview):
 
     botcol1a = [
         [sg.Text(key='-movehdr-e-', justification='l')],
-        [sg.Image(key='-mv1type-e-'), sg.Text(key='-mv1text-e-')],
-        [sg.Image(key='-mv2type-e-'), sg.Text(key='-mv2text-e-')],
-        [sg.Image(key='-mv3type-e-'), sg.Text(key='-mv3text-e-')],
-        [sg.Image(key='-mv4type-e-'), sg.Text(key='-mv4text-e-')],
+        [sg.Image(key='-mv1type-e-'), sg.Text(key='-mv1text-e-', size=15)],
+        [sg.Image(key='-mv2type-e-'), sg.Text(key='-mv2text-e-', size=15)],
+        [sg.Image(key='-mv3type-e-'), sg.Text(key='-mv3text-e-', size=15)],
+        [sg.Image(key='-mv4type-e-'), sg.Text(key='-mv4text-e-', size=15)],
     ]
     botcol2a = [
         [sg.Text('PP', key='-movepphdr-e-', size=5, justification='c')],
@@ -184,7 +184,7 @@ def defaultuisettings(font_sizes, logview):
     trackerleft = [[
             sg.Column(topcol1, key='-tc1-', size=(200, 350)), 
             sg.Column([
-                [sg.Text('', key='-slot-', expand_x=True, font=('Franklin Gothic Medium', font_sizes[4]))],
+                [sg.Text('', key='-slot-', expand_x=True)],
                 [
                     sg.Column(topcol2, key='-tc2-', size=(80, 190)), 
                     sg.Column(topcol3, element_justification='right', key='-tc3-', size=(100, 190))
