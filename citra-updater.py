@@ -63,7 +63,7 @@ track_title = 'Ironmon Tracker'
 scale = 1.3
 track_size = (600, 600)
 font_sizes = [14, 11, 9, 15, 12]
-sg.set_options(font=('Franklin Gothic Medium', font_sizes[0]), text_color='white', background_color='black', element_background_color='black', text_element_background_color='black', tooltip_font=('Franklin Gothic Medium', font_sizes[1]), tooltip_time=100, scaling=scale, element_padding=(2,2,2,2))
+sg.set_options(font=('Franklin Gothic Medium', font_sizes[0]), text_color='white', background_color='black', element_background_color='black', text_element_background_color='black', tooltip_font=('Franklin Gothic Medium', font_sizes[1]), tooltip_time=100, scaling=scale, element_padding=(2,2,2,2), suppress_error_popups=True)
 refresh_rate = 4000
 
 curr_version = open('version.txt', 'r').read()
@@ -1046,6 +1046,7 @@ def run():
         enemydict = {"abilities": [], "stats": ["", "", "", "", "", ""], "notes": "", "levels": [], "moves": []}
         change = ''
         hphl, statushl, pphl = '', '', ''
+        frisk, antici = 0, 0
         try:
             seed = int(open('seed.txt', 'r').read())
         except:
@@ -1607,8 +1608,8 @@ def run():
                                         order by ga.generationid desc
                                         """ 
                                     # print(batabilnum, ';;;', gen)
-                                    if batabilnum > 0:
-                                        abilityname,abilitydescription = cursor.execute(query).fetchone()
+                                    try: abilityname,abilitydescription = cursor.execute(query).fetchone()
+                                    except: continue # if this errors then the data stream is invalid anyway
                                     ### STATS ########
                                     #print(int.from_bytes(c.read_memory((ppadd+(mongap*(pk-1))-264),1)))
                                     attackchange,defchange,spatkchange,spdefchange,speedchange = pkmn.getStatChanges()
@@ -1768,8 +1769,8 @@ def run():
                                                 modimage="4"
                                             elif typemult==.5:
                                                 modimage="5"
-                                            elif typemult==1:
-                                                modimage="6"
+                                            # elif typemult==1:
+                                            #     modimage="6"
                                             elif typemult==2:
                                                 modimage="7"
                                                 antici = 1
@@ -1865,8 +1866,11 @@ def run():
                                         order by ga.generationid desc
                                         """
                                     totallearn,nextmove,learnedcount,learnstr = pkmn.getMoves(gamegroupid)
-                                    abilityname,abilitydescription = cursor.execute(query).fetchone()
-                                    startupabils=["Air Lock","Cloud Nine","Delta Stream","Desolate Land","Download","Drizzle","Drought","Forewarn","Imposter","Intimidate","Mold Breaker","Pressure","Primordial Sea","Sand Stream","Slow Start","Snow Warning","Teravolt","Turboblaze","Trace","Unnerve","Aura Break","Fairy Aura","Dark Aura",]
+                                    try: abilityname,abilitydescription = cursor.execute(query).fetchone()
+                                    except: 
+                                        emon = ''
+                                        continue # if this errors then the data stream is invalid anyway
+                                    startupabils=["Air Lock","Cloud Nine","Delta Stream","Desolate Land","Download","Drizzle","Drought","Forewarn","Imposter","Intimidate","Mold Breaker","Pressure","Primordial Sea","Sand Stream","Slow Start","Snow Warning","Teravolt","Turboblaze","Trace","Unnerve","Aura Break","Fairy Aura","Dark Aura",'Psychic Surge','Electric Surge','Misty Surge','Grassy Surge','Comatose']
                                     if frisk == 1:
                                         startupabils.append('Frisk')
                                     if antici == 1:
@@ -1944,10 +1948,6 @@ def run():
                                     ### MOVES ########
                                     totallearn,nextmove,learnedcount,learnstr = pkmn.getMoves(gamegroupid)
                                     # counts = pkmn.getCoverage(gen,gamegroupid)
-                                    # countstr = ''
-                                    # for dmg,count in counts:
-                                    #     countstr+='<div class="damage-bracket">['+str(dmg)+'x]</div>'
-                                    #     countstr+='<div class="bracket-count">'+str(count)+'</div>'
                                     if pkmn.level not in trackdata[pkmn.name]['levels']:
                                         trackdata[pkmn.name]['levels'].append(pkmn.level)
                                     nmove = (' - ' if not nextmove else nextmove)
@@ -1955,24 +1955,23 @@ def run():
                                     for move in pkmn.moves:
                                         if int.from_bytes(c.read_memory(ppadd+(mongap*(pk-1))+(14*(pkmn.moves).index(move)),1))==int.from_bytes(c.read_memory(ppadd+1+(mongap*(pk-1))+(14*(pkmn.moves).index(move)),1)): 
                                             continue
-                                        # if movetyp!=None:
-                                        #     for type in currmon.types:
-                                        #         typemult=typemult*(typetable[movetyp][typedic[type]])
-                                        # if move["category"]!="Non-Damaging":
-                                        #     if typemult==.25:
-                                        #         modimage="4"
-                                        #     elif typemult==.5:
-                                        #         modimage="5"
-                                        #     elif typemult==1:
-                                        #         modimage="6"
-                                        #     elif typemult==2:
-                                        #         modimage="7"
-                                        #     elif typemult==4:
-                                        #         modimage="8"
-                                        #     elif typemult==0:
-                                        #         modimage="X"
-                                        # else:
-                                        #     modimage="6"
+                                        if movetyp!=None:
+                                            for type in currmon.types:
+                                                typemult=typemult*(typetable[movetyp][typedic[type]])
+                                        modimage="6"
+                                        if move["category"]!="Non-Damaging":
+                                            if typemult==.25:
+                                                modimage="4"
+                                            elif typemult==.5:
+                                                modimage="5"
+                                            # elif typemult==1:
+                                            #     modimage="6"
+                                            elif typemult==2:
+                                                modimage="7"
+                                            elif typemult==4:
+                                                modimage="8"
+                                            elif typemult==0:
+                                                modimage="X"
                                         stab = ''
                                         for type in pkmn.types:
                                             if move['type'] == type[0]:
