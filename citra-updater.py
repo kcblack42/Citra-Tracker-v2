@@ -1707,11 +1707,13 @@ def run():
                                     window['-movebphdr-'].update('Pow')
                                     window['-moveacchdr-'].update('Acc')
                                     window['-movecontacthdr-'].update('C')
-                                    window['-clearnotes-'].update(visible=True)
-                                    window['-settings-'].update(visible=True)
                                     if layout_logview != [[]]:
+                                        window['-clearnotes-'].update(visible=True)
                                         window['-view-log-'].update(visible=True)
+                                    else: 
+                                        window['-clearnotes-solo-'].update(visible=True)
                                     window['-load-log-'].update(visible=True)
+                                    window['-settings-'].update(visible=True)
                                     for move in pkmn.moves:
                                         stab = ''
                                         movetyp=movetype(pkmn,move,pkmn.held_item_num)
@@ -1953,25 +1955,50 @@ def run():
                                     nmove = (' - ' if not nextmove else nextmove)
                                     movect = 0
                                     for move in pkmn.moves:
-                                        if int.from_bytes(c.read_memory(ppadd+(mongap*(pk-1))+(14*(pkmn.moves).index(move)),1))==int.from_bytes(c.read_memory(ppadd+1+(mongap*(pk-1))+(14*(pkmn.moves).index(move)),1)): 
-                                            continue
-                                        if movetyp!=None:
-                                            for type in currmon.types:
-                                                typemult=typemult*(typetable[movetyp][typedic[type]])
-                                        modimage="6"
-                                        if move["category"]!="Non-Damaging":
-                                            if typemult==.25:
-                                                modimage="4"
-                                            elif typemult==.5:
-                                                modimage="5"
-                                            # elif typemult==1:
-                                            #     modimage="6"
-                                            elif typemult==2:
-                                                modimage="7"
-                                            elif typemult==4:
-                                                modimage="8"
-                                            elif typemult==0:
-                                                modimage="X"
+                                        # typetable={
+                                        #     "Normal":[1,1,1,1,1,.5,1,0,.5,1,1,1,1,1,1,1,1,1,1],
+                                        #     "Fighting":[2,1,.5,.5,1,2,.5,0,2,1,1,1,1,.5,2,1,2,.5,1],
+                                        #     "Flying":[1,2,1,1,1,.5,2,1,.5,1,1,2,.5,1,1,1,1,1,1],
+                                        #     "Poison":[1,1,1,.5,.5,.5,1,.5,0,1,1,2,1,1,1,1,1,2,1],
+                                        #     "Ground":[1,1,0,2,1,2,.5,1,2,2,1,.5,2,1,1,1,1,1,1],
+                                        #     "Rock":[1,.5,2,1,.5,1,2,1,.5,2,1,1,1,1,2,1,1,1,1],
+                                        #     "Bug":[1,.5,.5,.5,1,1,1,.5,.5,.5,1,2,1,2,1,1,2,.5,1],
+                                        #     "Ghost":[0,1,1,1,1,1,1,2,1,1,1,1,1,2,1,1,.5,1,1],
+                                        #     "Steel":[1,1,1,1,1,2,1,1,.5,.5,.5,1,.5,1,2,1,1,2,1],
+                                        #     "Fire":[1,1,1,1,1,.5,2,1,2,.5,.5,2,1,1,2,.5,1,1,1],
+                                        #     "Water":[1,1,1,1,2,2,1,1,1,2,.5,.5,1,1,1,.5,1,1,1],
+                                        #     "Grass":[1,1,.5,.5,2,2,.5,1,.5,.5,2,.5,1,1,1,.5,1,1,1],
+                                        #     "Electric":[1,1,2,1,0,1,1,1,1,1,2,.5,.5,1,1,.5,1,1,1],
+                                        #     "Psychic":[1,2,1,2,1,1,1,1,.5,1,1,1,1,.5,1,1,0,1,1],
+                                        #     "Ice":[1,1,2,1,2,1,1,1,.5,.5,.5,2,1,1,.5,2,1,1,1],
+                                        #     "Dragon":[1,1,1,1,1,1,1,1,.5,1,1,1,1,1,1,2,1,0,1],
+                                        #     "Dark":[1,.5,1,1,1,1,1,2,1,1,1,1,1,2,1,1,.5,.5,1],
+                                        #     "Fairy":[1,2,1,.5,1,1,1,1,.5,.5,1,1,1,1,1,2,2,1,1],
+                                        #     "Null":[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+                                        #     "-":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+                                        # }
+                                        # typedic={"Normal":0,"Fighting":1,"Flying":2,"Poison":3,"Ground":4,"Rock":5,"Bug":6,"Ghost":7,"Steel":8,"Fire":9,"Water":10,"Grass":11,"Electric":12,"Psychic":13,"Ice":14,"Dragon":15,"Dark":16,"Fairy":17,"Null":18}
+
+                                        # if int.from_bytes(c.read_memory(ppadd+(mongap*(pk-1))+(14*(pkmn.moves).index(move)),1))==int.from_bytes(c.read_memory(ppadd+1+(mongap*(pk-1))+(14*(pkmn.moves).index(move)),1)): 
+                                        #     continue
+                                        # print(currmon.types)
+                                        # if movetyp!=None:
+                                        #     for type in currmon.types:
+                                        #         typemult=typemult*(typetable[movetyp][typedic[type]])
+                                        # modimage="6"
+                                        # if move["category"]!="Non-Damaging":
+                                        #     if typemult==.25:
+                                        #         modimage="4"
+                                        #     elif typemult==.5:
+                                        #         modimage="5"
+                                        #     # elif typemult==1:
+                                        #     #     modimage="6"
+                                        #     elif typemult==2:
+                                        #         modimage="7"
+                                        #     elif typemult==4:
+                                        #         modimage="8"
+                                        #     elif typemult==0:
+                                        #         modimage="X"
                                         stab = ''
                                         for type in pkmn.types:
                                             if move['type'] == type[0]:
@@ -2122,11 +2149,13 @@ def run():
                                 window['-movebphdr-'].update('Pow')
                                 window['-moveacchdr-'].update('Acc')
                                 window['-movecontacthdr-'].update('C')
-                                window['-clearnotes-'].update(visible=True)
-                                window['-settings-'].update(visible=True)
                                 if layout_logview != [[]]:
+                                    window['-clearnotes-'].update(visible=True)
                                     window['-view-log-'].update(visible=True)
+                                else: 
+                                    window['-clearnotes-solo-'].update(visible=True)
                                 window['-load-log-'].update(visible=True)
+                                window['-settings-'].update(visible=True)                                
                                 for move in pkmn.moves:
                                     stab = ''
                                     movetyp=movetype(pkmn,move,pkmn.held_item_num)
