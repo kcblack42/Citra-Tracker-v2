@@ -19,19 +19,19 @@ def log_parser(log):
     lsplit = log.split('\n--')
 
     if (lsplit[-1].count('Pokemon X') >= 1) | (lsplit[-1].count('Pokemon Y') >= 1):
-        game = 'XY'
+        game = 'X/Y'
     elif (lsplit[-1].count('Pokemon Omega') >= 1) | (lsplit[-1].count('Pokemon Alpha') >= 1):
-        game = 'ORAS'
+        game = 'OmegaRuby/AlphaSapphire'
     elif (lsplit[-1].count('Pokemon Sun') >= 1) | (lsplit[-1].count('Pokemon Moon') >= 1):
-        game = 'SM'
+        game = 'Sun/Moon'
     elif (lsplit[-1].count('Pokemon Ultra') >= 1):
-        game = 'USUM'
+        game = 'UltraSun/UltraMoon'
     else:
         game = 'UNK'
 
-    if game in ('XY', 'ORAS'):
+    if game in ('X/Y', 'OmegaRuby/AlphaSapphire'):
         gen = 6
-    elif game in ('SM', 'USUM'):
+    elif game in ('Sun/Moon', 'UltraSun/UltraMoon'):
         gen = 7
 
     for i in lsplit:
@@ -234,13 +234,13 @@ def evolist(mon):
 def tmlist(mon, game, tmcompat_df, tms_df):
     logtms1, logtms4, logtmsfull, tmtext, tmtextfull = [], [], [], [], []
     tmdict, tmdictfull = {}, {}
-    if game == 'XY':
+    if game == 'X/Y':
         gymtmlist = [83, 39, 98, 86, 24, 99, 4, 13]
-    elif game == 'ORAS':
+    elif game == 'OmegaRuby/AlphaSapphire':
         gymtmlist = [39, 8, 72, 50, 67, 19, 4, 31] #TM31 is 
-    elif game == 'SM':
+    elif game == 'Sun/Moon':
         gymtmlist = [4, 13, 24, 39, 83, 86, 98, 99]
-    elif game == 'USUM':
+    elif game == 'UltraSun/UltraMoon':
         gymtmlist = [1, 19, 54, 43, 67, 29, 66]
     logtms1.append([sg.Text(f'Leader TMs:', text_color='#f0f080', font=('Franklin Gothic Medium', 14), visible = True)])
     i,j = 0,0
@@ -269,10 +269,10 @@ def tmlist(mon, game, tmcompat_df, tms_df):
 def pivotlist(game, gen, wilds_df):
     logpivotlocs, logpivotbase1, logpivotbase2 = [], [], []
     pivottext = {}
-    if game == 'XY':
+    if game == 'X/Y':
         sets = ['Set #22', 'Set #138', 'Set #23', 'Set #132']
         locs = ['Route 2', 'Santalune Forest', 'Route 3', 'Route 22']   
-    elif game == 'ORAS':
+    elif game == 'OmegaRuby/AlphaSapphire':
         sets = ['Set #34', 'Set #39', 'Set #48', 'Set #57', 'Set #346']
         locs = ['Route 101', 'Route 102', 'Route 103', 'Route 104', 'Petalburg Woods']
     elif gen == 7:
@@ -309,7 +309,7 @@ def trainerlist(game, trainer_df):
     log_tlist, log_tparty1, log_tparty2, log_tparty3 = [], [], [], []
     tfont = ('Franklin Gothic Medium', 12)
     tfont2 = ('Franklin Gothic Medium', 10)
-    if game == 'XY':
+    if game == 'X/Y':
         name = ['Viola', 'Grant', 'Korrina', 'Ramos', 'Clemont', 'Valarie', 'Olympia', 'Wulfric', 'E4 Wikstrom', 'E4 Malva', 'E4 Drasna', 'E4 Siebold', 'Diantha', 'Lysandre #1', 'Lysandre #2', 'Lysandre #3']
         idx = [5, 75, 20, 21, 22, 23, 24, 25, 186, 268, 269, 270, 275, 302, 524, 525]
         titles = ['Rivals', 'Gym Leaders', 'Elite Four', 'Team Flare']
@@ -317,7 +317,7 @@ def trainerlist(game, trainer_df):
             titles[1]:{name[0]:[idx[0]], name[1]:[idx[1]], name[2]:[idx[2]], name[3]:[idx[3]], name[4]:[idx[4]], name[5]:[idx[5]], name[6]:[idx[6]], name[7]:[idx[7]]}, 
             titles[2]:{name[8]:[idx[8]], name[9]:[idx[9]], name[10]:[idx[10]], name[11]:[idx[11]], name[12]:[idx[12]]},
             titles[3]:{name[13]:[idx[13]], name[14]:[idx[14]], name[15]:[idx[15]]}}
-    elif game == 'ORAS':
+    elif game == 'OmegaRuby/AlphaSapphire':
         name = ['Wally', 'Roxanne', 'Brawly', 'Wattson', 'Flannery', 'Norman', 'Winona', 'Tate & Liza', 'Wallace', 'E4 Sidney', 'E4 Phoebe', 'E4 Glacia', 'E4 Drake', 'Steven', 'Archie #1', 'Archie #2', 'Maxie #1', 'Maxie #2']
         idx = [560, 562, 566, 568, 569, 570, 551, 571, 552, 553, 554, 555, 556, 582, 230, 177, 235, 234]
         titles = ['Rivals', 'Gym Leaders', 'Elite Four', 'Magma/Aqua']
@@ -325,7 +325,7 @@ def trainerlist(game, trainer_df):
             titles[1]:{name[1]:[idx[1]], name[2]:[idx[2]], name[3]:[idx[3]], name[4]:[idx[4]], name[5]:[idx[5]], name[6]:[idx[6]], name[7]:[idx[7]], name[8]:[idx[8]]}, 
             titles[2]:{name[9]:[idx[9]], name[10]:[idx[10]], name[11]:[idx[11]], name[12]:[idx[12]], name[13]:[idx[13]]},
             titles[3]:{name[14]:[idx[14]], name[15]:[idx[15]], name[16]:[idx[16]], name[17]:[idx[17]]}}
-    elif game == 'SM':
+    elif game == 'Sun/Moon':
         name = ['Hala', 'Olivia', 'Nanu', 'Hapu', 'E4 Hala', 'E4 Olivia', 'E4 Acerola', 'E4 Kahili', 'Kukui v1', 'Kukui v2', 'Kukui v3', 'Guzma #1', 'Guzma #2', 'Guzma #3', 'Lusamine #1', 'Lusamine #2']
         idx = [22, 89, 153, 154, 151, 152, 148, 155, 128, 412, 413, 137, 234, 235, 130, 157]
         titles = ['Hau', 'Kahunas', 'Elite Four', 'Skull/Aether']
@@ -333,7 +333,7 @@ def trainerlist(game, trainer_df):
             titles[1]:{name[0]:[idx[0]], name[1]:[idx[1]], name[2]:[idx[2]], name[3]:[idx[3]]}, 
             titles[2]:{name[4]:[idx[4]], name[5]:[idx[5]], name[6]:[idx[6]], name[7]:[idx[7]], name[8]:[idx[8]], name[9]:[idx[9]], name[10]:[idx[10]]},
             titles[3]:{name[11]:[idx[11]], name[12]:[idx[12]], name[13]:[idx[13]], name[14]:[idx[14]], name[15]:[idx[15]]}}
-    elif game == 'USUM':
+    elif game == 'UltraSun/UltraMoon':
         name = ['Hala', 'Olivia', 'Nanu #1', 'Nanu #2', 'Hapu', 'E4 Molayne', 'E4 Olivia', 'E4 Acerola', 'E4 Kahili', 'Hau (Champ) v1', 'Hau (Champ) v2', 'Hau (Champ) v3', 'Guzma #1', 'Guzma #2', 'Guzma #3', 'Lusamine']
         idx = [22, 89, 153, 507, 496, 488, 152, 148, 155, 493, 494, 495, 137, 234, 235, 130]
         titles = ['Hau', 'Kahunas', 'Elite Four', 'Skull/Aether']

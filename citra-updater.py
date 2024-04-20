@@ -1080,6 +1080,10 @@ def run():
         try:
             log = open((batch_folder / f'{prefix}{str(seed)}.log'), encoding="utf8").read()
             log_pkmn, log_wilds, log_tms, log_tmcompat, log_gen, log_game, log_trainer = lr.log_parser(log)
+            if log_game != game:
+                layout_logview = [[]] 
+                print('Log and game do not match. Loading without native log reading functionality.')
+                raise Exception
             graph = sg.Graph(canvas_size=(380,200), graph_bottom_left=(50,10), graph_top_right=(330,240),background_color='black', enable_events=True, key='-log-graph-')
             t_dict, t_types, log_tlist, log_tparty1, log_tparty2, log_tparty3, t_names = lr.trainerlist(log_game, log_trainer)
             logmoves, mvlist = lr.movelist(log_pkmn.iloc[pkmn_srch,16:])
