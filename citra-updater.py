@@ -1872,10 +1872,14 @@ def run():
                                         order by ga.generationid desc
                                         """
                                     totallearn,nextmove,learnedcount,learnstr = pkmn.getMoves(gamegroupid)
-                                    try: abilityname,abilitydescription = cursor.execute(query).fetchone()
-                                    except: 
-                                        emon = ''
-                                        continue # if this errors then the data stream is invalid anyway
+                                    if gen == 7:
+                                        try: 
+                                            abilityname,abilitydescription = cursor.execute(query).fetchone()
+                                        except: 
+                                            emon = ''
+                                            continue # if this errors then the data stream is invalid anyway
+                                    else:
+                                        abilityname,abilitydescription = cursor.execute(query).fetchone()
                                     startupabils=["Air Lock","Cloud Nine","Delta Stream","Desolate Land","Download","Drizzle","Drought","Forewarn","Imposter","Intimidate","Mold Breaker","Pressure","Primordial Sea","Sand Stream","Slow Start","Snow Warning","Teravolt","Turboblaze","Trace","Unnerve","Aura Break","Fairy Aura","Dark Aura",'Psychic Surge','Electric Surge','Misty Surge','Grassy Surge','Comatose']
                                     if frisk == 1:
                                         startupabils.append('Frisk')
@@ -1959,6 +1963,8 @@ def run():
                                     nmove = (' - ' if not nextmove else nextmove)
                                     movect = 0
                                     for move in pkmn.moves:
+                                        if int.from_bytes(c.read_memory(ppadd+(mongap*(pk-1))+(14*(pkmn.moves).index(move)),1))==int.from_bytes(c.read_memory(ppadd+1+(mongap*(pk-1))+(14*(pkmn.moves).index(move)),1)): 
+                                            continue
                                         # typetable={
                                         #     "Normal":[1,1,1,1,1,.5,1,0,.5,1,1,1,1,1,1,1,1,1,1],
                                         #     "Fighting":[2,1,.5,.5,1,2,.5,0,2,1,1,1,1,.5,2,1,2,.5,1],
@@ -1983,8 +1989,6 @@ def run():
                                         # }
                                         # typedic={"Normal":0,"Fighting":1,"Flying":2,"Poison":3,"Ground":4,"Rock":5,"Bug":6,"Ghost":7,"Steel":8,"Fire":9,"Water":10,"Grass":11,"Electric":12,"Psychic":13,"Ice":14,"Dragon":15,"Dark":16,"Fairy":17,"Null":18}
 
-                                        # if int.from_bytes(c.read_memory(ppadd+(mongap*(pk-1))+(14*(pkmn.moves).index(move)),1))==int.from_bytes(c.read_memory(ppadd+1+(mongap*(pk-1))+(14*(pkmn.moves).index(move)),1)): 
-                                        #     continue
                                         # print(currmon.types)
                                         # if movetyp!=None:
                                         #     for type in currmon.types:
