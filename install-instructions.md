@@ -13,7 +13,7 @@
 <div><img src="https://github.com/kcblack42/Citra-Tracker-v2/blob/main/images/screens/setup1.png" height="282" width="617" /></div>
 <div><img src="https://github.com/kcblack42/Citra-Tracker-v2/blob/main/images/screens/setup2.png" height="47" width="314" /></div>
 
-4. Generate a bunch of seeds using the randomizer in your batch folder from above, but be sure to use the LayeredFS option. If you've used .cxis in the past, this will be MUCH faster (and WAY smaller in size), as it effectively just mods your game rather than creating entirely new ROMs.
+4. Generate a bunch of seeds using the randomizer in your batch folder from above, but be sure to use the LayeredFS option. If you've used .cxis in the past, this will be MUCH faster (and WAY smaller in size), as it effectively just mods your game rather than creating entirely new ROMs. If you include logs with all of these, you'll be able to view them with the native log viewer (added in v1.1; just remember that looking at the log while you're on a run is obviously not legal).
 
 <div><img src="https://github.com/kcblack42/Citra-Tracker-v2/blob/main/images/screens/setup3.png" height="122" width="495" /></div>
 

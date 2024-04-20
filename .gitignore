@@ -3,9 +3,9 @@ citra.py
 errorlog.txt
 seed.txt
 settings.json
-trackerdata.json
 bagitems.json
 citra-updater backup.py
+trackerdata.json
 
 # pycache files
 __pycache__/*
