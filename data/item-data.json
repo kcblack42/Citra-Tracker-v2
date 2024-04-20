@@ -69,47 +69,58 @@
     },
     "17": {
       "name": "Potion",
-      "hex": "0011"
+      "hex": "0011",
+      "heal":{"type":"set","value":"20"}
     },
     "18": {
       "name": "Antidote",
-      "hex": "0012"
+      "hex": "0012",
+      "heal":{"type":"status"}
     },
     "19": {
       "name": "Burn Heal",
-      "hex": "0013"
+      "hex": "0013",
+      "heal":{"type":"status"}
     },
     "20": {
       "name": "Ice Heal",
-      "hex": "0014"
+      "hex": "0014",
+      "heal":{"type":"status"}
     },
     "21": {
       "name": "Awakening",
-      "hex": "0015"
+      "hex": "0015",
+      "heal":{"type":"status"}
     },
     "22": {
       "name": "Paralyze Heal",
-      "hex": "0016"
+      "hex": "0016",
+      "heal":{"type":"status"}
     },
     "23": {
       "name": "Full Restore",
-      "hex": "0017"
+      "hex": "0017",
+      "heal":{"type":"per","value":"100"}
     },
     "24": {
       "name": "Max Potion",
-      "hex": "0018"
+      "hex": "0018",
+      "heal":{"type":"per","value":"100"}
     },
     "25": {
       "name": "Hyper Potion",
-      "hex": "0019"
+      "hex": "0019",
+      "heal":{"type":"set","value":"200"}
     },
     "26": {
       "name": "Super Potion",
-      "hex": "001A"
+      "hex": "001A",
+      "heal":{"type":"set","value":"50"}
     },
     "27": {
       "name": "Full Heal",
-      "hex": "001B"
+      "hex": "001B",
+      "heal":{"type":"status"}
     },
     "28": {
       "name": "Revive",
@@ -121,31 +132,38 @@
     },
     "30": {
       "name": "Fresh Water",
-      "hex": "001E"
+      "hex": "001E",
+      "heal":{"type":"set","value":"50"}
     },
     "31": {
       "name": "Soda Pop",
-      "hex": "001F"
+      "hex": "001F",
+      "heal":{"type":"set","value":"60"}
     },
     "32": {
       "name": "Lemonade",
-      "hex": "0020"
+      "hex": "0020",
+      "heal":{"type":"set","value":"80"}
     },
     "33": {
       "name": "Moomoo Milk",
-      "hex": "0021"
+      "hex": "0021",
+      "heal":{"type":"set","value":"100"}
     },
     "34": {
       "name": "Energy Powder",
-      "hex": "0022"
+      "hex": "0022",
+      "heal":{"type":"set","value":"50"}
     },
     "35": {
       "name": "Energy Root",
-      "hex": "0023"
+      "hex": "0023",
+      "heal":{"type":"set","value":"200"}
     },
     "36": {
       "name": "Heal Powder",
-      "hex": "0024"
+      "hex": "0024",
+      "heal":{"type":"status"}
     },
     "37": {
       "name": "Revival Herb",
@@ -153,27 +171,33 @@
     },
     "38": {
       "name": "Ether",
-      "hex": "0026"
+      "hex": "0026",
+      "heal":{"type":"pp"}
     },
     "39": {
       "name": "Max Ether",
-      "hex": "0027"
+      "hex": "0027",
+      "heal":{"type":"pp"}
     },
     "40": {
       "name": "Elixir",
-      "hex": "0028"
+      "hex": "0028",
+      "heal":{"type":"pp"}
     },
     "41": {
       "name": "Max Elixir",
-      "hex": "0029"
+      "hex": "0029",
+      "heal":{"type":"pp"}
     },
     "42": {
       "name": "Lava Cookie",
-      "hex": "002A"
+      "hex": "002A",
+      "heal":{"type":"status"}
     },
     "43": {
       "name": "Berry Juice",
-      "hex": "002B"
+      "hex": "002B",
+      "heal":{"type":"set","value":"20"}
     },
     "44": {
       "name": "Sacred Ash",
@@ -217,7 +241,8 @@
     },
     "54": {
       "name": "Old Gateau",
-      "hex": "0036"
+      "hex": "0036",
+      "heal":{"type":"status"}
     },
     "55": {
       "name": "Guard Spec.",
@@ -537,7 +562,8 @@
     },
     "134": {
       "name": "Sweet Heart",
-      "hex": "0086"
+      "hex": "0086",
+      "heal":{"type":"set","value":"20"}
     },
     "135": {
       "name": "Adamant Orb",
@@ -597,63 +623,78 @@
     },
     "149": {
       "name": "Cheri Berry",
-      "hex": "0095"
+      "hex": "0095",
+      "heal":{"type":"status"}
     },
     "150": {
       "name": "Chesto Berry",
-      "hex": "0096"
+      "hex": "0096",
+      "heal":{"type":"status"}
     },
     "151": {
       "name": "Pecha Berry",
-      "hex": "0097"
+      "hex": "0097",
+      "heal":{"type":"status"}
     },
     "152": {
       "name": "Rawst Berry",
-      "hex": "0098"
+      "hex": "0098",
+      "heal":{"type":"status"}
     },
     "153": {
       "name": "Aspear Berry",
-      "hex": "0099"
+      "hex": "0099",
+      "heal":{"type":"status"}
     },
     "154": {
       "name": "Leppa Berry",
-      "hex": "009A"
+      "hex": "009A",
+      "heal":{"type":"pp"}
     },
     "155": {
       "name": "Oran Berry",
-      "hex": "009B"
+      "hex": "009B",
+      "heal":{"type":"set","value":"10"}
     },
     "156": {
       "name": "Persim Berry",
-      "hex": "009C"
+      "hex": "009C",
+      "heal":{"type":"status"}
     },
     "157": {
       "name": "Lum Berry",
-      "hex": "009D"
+      "hex": "009D",
+      "heal":{"type":"status"}
     },
     "158": {
       "name": "Sitrus Berry",
-      "hex": "009E"
+      "hex": "009E",
+      "heal":{"type":"per","value":"25"}
     },
     "159": {
       "name": "Figy Berry",
-      "hex": "009F"
+      "hex": "009F",
+      "heal":{"type":"per","value":"13"}
     },
     "160": {
       "name": "Wiki Berry",
-      "hex": "00A0"
+      "hex": "00A0",
+      "heal":{"type":"per","value":"13"}
     },
     "161": {
       "name": "Mago Berry",
-      "hex": "00A1"
+      "hex": "00A1",
+      "heal":{"type":"per","value":"13"}
     },
     "162": {
       "name": "Aguav Berry",
-      "hex": "00A2"
+      "hex": "00A2",
+      "heal":{"type":"per","value":"13"}
     },
     "163": {
       "name": "Iapapa Berry",
-      "hex": "00A3"
+      "hex": "00A3",
+      "heal":{"type":"per","value":"13"}
     },
     "164": {
       "name": "Razz Berry",
@@ -2017,7 +2058,8 @@
     },
     "504": {
       "name": "Rage Candy Bar",
-      "hex": "01F8"
+      "hex": "01F8",
+      "heal":{"type":"set","value":"20"}
     },
     "505": {
       "name": "Data Card 01",
@@ -2365,7 +2407,8 @@
     },
     "591": {
       "name": "Casteliacone",
-      "hex": "024F"
+      "hex": "024F",
+      "heal":{"type":"status"}
     },
     "592": {
       "name": "Dire Hit 2",
@@ -2833,11 +2876,13 @@
     },
     "708": {
       "name": "Lumiose Galette",
-      "hex": "02C4"
+      "hex": "02C4",
+      "heal":{"type":"status"}
     },
     "709": {
       "name": "Shalour Sable",
-      "hex": "02C5"
+      "hex": "02C5",
+      "heal":{"type":"status"}
     },
     "710": {
       "name": "Jaw Fossil",
@@ -3409,7 +3454,8 @@
     },
     "852": {
       "name": "Big Malasada",
-      "hex": "0354"
+      "hex": "0354",
+      "heal":{"type":"status"}
     },
     "853": {
       "name": "Red Nectar",

@@ -3,6 +3,8 @@ citra.py
 errorlog.txt
 seed.txt
 settings.json
+bagitems.json
+citra-updater backup.py
 trackerdata.json
 
 # pycache files
@@ -14,4 +16,7 @@ util\__pycache__\*
 archive/*
 
 # upcoming update files
-util/logreader.py
+util/logreader test.py
+util/Gen_6_Curve_Testing_-_Trainer_Mappings.csv
+util/PokemonLevelRateTesting-Gen6.py
+util/kaizo260.log
