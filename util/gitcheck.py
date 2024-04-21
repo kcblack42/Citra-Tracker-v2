@@ -34,8 +34,9 @@ def gitcheck(v):
     print('Citra Ironmon Tracker', v)
     # print(gitname)
 
-    vzn = v.replace('v', '').split('.')
-    gitvzn = gittag.replace('v', '').split('.')
+    vzn = [eval(i) for i in v.replace('v', '').split('.')]
+    gitvzn = [eval(i) for i in gittag.replace('v', '').split('.')]
+    # gitvzn = [1,2,0]
     # print('vzn = ', vzn)
     # print('gitvzn = ', gitvzn)
 
@@ -51,4 +52,4 @@ def gitcheck(v):
         print('Version up to date.')
 
 
-# gitcheck('v1.0.1')
+gitcheck('v1.2.0')

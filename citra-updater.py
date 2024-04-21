@@ -1271,7 +1271,7 @@ def run():
                         try:
                             p = log_pkmn.loc[log_pkmn['NAME'] == slotchoice].index[0]
                         except:
-                            p = 'Bulbasaur' # probably able to get this better somewhere down the line but for now lets just have it load at #1
+                            p = log_pkmn.loc[log_pkmn['NAME'] == 'Bulbasaur'].index[0] # probably able to get this better somewhere down the line but for now lets just have it load at #1
                         graph.Erase()
                         lr.statchart(log_pkmn.iloc[p], graph)
                         logmoves, mvlist = lr.movelist(log_pkmn.iloc[p,16:])
