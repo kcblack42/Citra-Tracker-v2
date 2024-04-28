@@ -13,6 +13,6 @@ Keep in mind this is an early version (especially for gen 7), do not expect perf
 
 Big thanks to brdy for creating the initial display that this was based on, and his database for the data. Additionally, thanks to UTDZac for helping with some of the features being imported from Citra, and [this](https://github.com/EverOddish/PokeStreamer-Tools) for the citra party data. And thanks to Accrueblue for putting everything together the first time, none of this would be remotely possible without all of this pre-work.
 
-Python interface is required link [here](https://www.python.org/downloads/). BE SURE TO ADD YOUR PYTHON TO PATH WHEN PROMPTED IN THE INSTALL.
+Python interface is required link [here](https://www.python.org/downloads/), version 3.12 or later is required. BE SURE TO ADD YOUR PYTHON TO PATH WHEN PROMPTED IN THE INSTALL.
 
 If you were looking for different games, there are trackers available for the [NDS games](https://github.com/Brian0255/NDS-Ironmon-Tracker)(DPPt, HGSS, BW, B2W2) requiring Bizhawk and the [GBA games](https://github.com/besteon/Ironmon-Tracker)(FRLG, RSE) using Bizhawk or mGBA emulator.
