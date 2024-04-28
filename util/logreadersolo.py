@@ -565,6 +565,8 @@ def logloader_solo(track_size):
     logabils, alist = abillist(pokemon.iloc[pokemonnum])
     logevos, elist = evolist(pokemon.iloc[pokemonnum])
     logtms1, logtms4, logtmsfull, gymtmlist, tmdict, tmdictfull, tmtext, tmtextfull = tmlist(pokemon.iloc[pokemonnum], game, tmcompat_df, tms_df)
+    # print(tmtext)
+    # print(tmtextfull)
     logpivotlocs, logpivotbase1, logpivotbase2, pivottext = pivotlist(game)
 
     l = 1 #current layout (defaults to pokemon screen)

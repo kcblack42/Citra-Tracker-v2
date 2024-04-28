@@ -14,7 +14,17 @@ import re
 import os
 from io import BytesIO
 import pathlib
+from contextlib import contextmanager
 
+@contextmanager
+def suppress_stdout():
+    with open(os.devnull, "w") as devnull:
+        old_stdout = sys.stdout
+        sys.stdout = devnull
+        try:  
+            yield
+        finally:
+            sys.stdout = old_stdout
 
 def install(package):
     print(f'Installing [{package}]')
@@ -839,6 +849,18 @@ def calcPower(pkmn,move,hp1,hp2):
     else:
         return ('-' if not move['power'] else int(move['power']))
     
+def calcAcc(move, pkmn1lvl, pkmn2lvl):
+    if move['name'] in ('Horn Drill', 'Sheer Cold', 'Guillotine', 'Fissure'):
+        if pkmn1lvl >= pkmn2lvl:
+            a = 30 + pkmn1lvl - pkmn2lvl
+            return a
+        else:
+            return 'X'
+    elif not move['acc']:
+        return '-'
+    else: 
+        return int(move['acc'])
+
 def movetype(pkmn,move,item):
     if move=="Revelation Dance":
         return (pkmn.types)[0]
@@ -1041,8 +1063,8 @@ def run():
         #print('connected to citra')
         loops = 0
         l = 1 # corresponding layout
-        slotchoice = ''
-        enemymon = ''
+        slotchoice, slotlevel = '', 1
+        enemymon, enemylevel = '', 1
         enemydict = {"abilities": [], "stats": ["", "", "", "", "", ""], "notes": "", "levels": [], "moves": []}
         change = ''
         hphl, statushl, pphl = '', '', ''
@@ -1093,7 +1115,8 @@ def run():
             logpivotlocs, logpivotbase1, logpivotbase2, pivottext = lr.pivotlist(log_game, log_gen, log_wilds)
             t = t_types[1] #current trainer subclass selected (defaults to gym leaders/kahunas)
             layout_logview = lr.logviewer_layout(pkmn_srch, log_pkmn, log_gen, logtms1, logabils, logmoves, logevos, logpivotbase1, logpivotbase2, graph, logpivotlocs, logtms4, logtmsfull, t_types, log_tlist, log_tparty1, log_tparty2, log_tparty3, t_dict)
-            lr.statchart(log_pkmn.iloc[pkmn_srch], graph)
+            with suppress_stdout(): # suppressing the spam of "YOU HAVEN'T FINALIZED THE GRAPH YET" messages
+                lr.statchart(log_pkmn.iloc[pkmn_srch], graph)
             # print(log_pkmn, ';;;', layout_logview)
             # print(layout_logview)
         except Exception as e:
@@ -1249,15 +1272,15 @@ def run():
                                         window[f'-log-evos-'].update(f'{elist}', visible = True)
                                     if i < len(tmtext):
                                         if tmdict[tmtext[i]] == False:
-                                            window[f'-log-gymtm1{i}-'].update(text_color='white')
-                                            window[f'-log-gymtm4{i}-'].update(text_color='white')
+                                            window[f'-log-gymtm1{i}-'].update(f'{tmtext[i]}', text_color='white')
+                                            window[f'-log-gymtm4{i}-'].update(f'{tmtext[i]}', text_color='white')
                                         elif tmdict[tmtext[i]] == True:
-                                            window[f'-log-gymtm1{i}-'].update(text_color='#339ec4')
-                                            window[f'-log-gymtm4{i}-'].update(text_color='#339ec4')
+                                            window[f'-log-gymtm1{i}-'].update(f'{tmtext[i]}', text_color='#339ec4')
+                                            window[f'-log-gymtm4{i}-'].update(f'{tmtext[i]}', text_color='#339ec4')
                                     if tmdictfull[tmtextfull[i]] == False:
-                                        window[f'-log-fulltm{i}-'].update(text_color='white')
+                                        window[f'-log-fulltm{i}-'].update(f'{tmtextfull[i]}', text_color='white')
                                     elif tmdictfull[tmtextfull[i]] == True:
-                                        window[f'-log-fulltm{i}-'].update(text_color='#339ec4')
+                                        window[f'-log-fulltm{i}-'].update(f'{tmtextfull[i]}', text_color='#339ec4')
                                     i += 1
                                 continue
                             except:
@@ -1598,6 +1621,7 @@ def run():
                                         levelnum=int.from_bytes(c.read_memory(ppadd+(mongap*(pk-1))-486,1))
                                         batabilnum=int.from_bytes(c.read_memory((ppadd+(mongap*(pk-1))+0x36),1))
                                         hpnum=[int.from_bytes(c.read_memory((ppadd+(mongap*(pk-1))-494),2),"little"),int.from_bytes(c.read_memory((ppadd+(mongap*(pk-1))-496),2),"little")]
+                                    slotlevel = levelnum
                                     if pkmn.status != '':
                                         window['-status-'].Update(resize('images/statuses/{}.png'.format(pkmn.status), (75, 20)), visible = True)
                                     else:
@@ -1650,7 +1674,7 @@ def run():
                                     window['-bc6-'].update(visible = True)
                                     window['-monname-'].Update(pkmn.name.replace("Farfetchd","Farfetch'd"))
                                     window['-monnum-'].Update('#{}'.format(str(pkmn.species_num())))
-                                    window['-level-'].Update('Level: {}'.format(levelnum))
+                                    window['-level-'].Update('Level: {}'.format(slotlevel))
                                     # window['-level-'].set_tooltip('Seen at {}'.format(trackdata[pkmn.name]["levels"]))
                                     window['-ability-'].Update(str(pkmn.ability['name']), text_color="#f0f080")
                                     window['-ability-'].set_tooltip(str(pkmn.ability['description']))
@@ -1786,7 +1810,8 @@ def run():
                                             elif typemult==0:
                                                 modimage="X"
                                         # movepower = calcPower(pkmn,move,hpnum[0],hpnum[1])
-                                        acc = '-' if not move['acc'] else int(move['acc'])
+                                        # acc = '-' if not move['acc'] else int(move['acc'])
+                                        acc = calcAcc(move, slotlevel, enemylevel)
                                         contact = ('Y' if move['contact'] else 'N')
                                         window['-mv{}type-'.format(pkmn.moves.index(move) + 1)].update(resize('images/categories/{}.png'.format(move["category"]), (27,20)))
                                         window['-mv{}text-'.format(pkmn.moves.index(move) + 1)].update(move["name"], text_color=typeformatting(movetyp))
@@ -1858,6 +1883,7 @@ def run():
                                         levelnum=int.from_bytes(c.read_memory(ppadd+(mongap*(pk-1))-486,1))
                                         batabilnum=int.from_bytes(c.read_memory((ppadd+(mongap*(pk-1))+0x36),1))
                                         hpnum=[int.from_bytes(c.read_memory((ppadd+(mongap*(pk-1))-494),2),"little"),int.from_bytes(c.read_memory((ppadd+(mongap*(pk-1))-496),2),"little")]
+                                    enemylevel = levelnum
                                     if pkmn.status != '':
                                         window['-status-e-'].Update(resize('images/statuses/{}.png'.format(pkmn.status), (75, 20)), visible = True)
                                     else:
@@ -1879,7 +1905,10 @@ def run():
                                             emon = ''
                                             continue # if this errors then the data stream is invalid anyway
                                     else:
-                                        abilityname,abilitydescription = cursor.execute(query).fetchone()
+                                        try: 
+                                            abilityname,abilitydescription = cursor.execute(query).fetchone()
+                                        except: 
+                                            continue # if this errors then the data stream is invalid anyway
                                     startupabils=["Air Lock","Cloud Nine","Delta Stream","Desolate Land","Download","Drizzle","Drought","Forewarn","Imposter","Intimidate","Mold Breaker","Pressure","Primordial Sea","Sand Stream","Slow Start","Snow Warning","Teravolt","Turboblaze","Trace","Unnerve","Aura Break","Fairy Aura","Dark Aura",'Psychic Surge','Electric Surge','Misty Surge','Grassy Surge','Comatose']
                                     if frisk == 1:
                                         startupabils.append('Frisk')
@@ -1915,7 +1944,7 @@ def run():
                                         print(Exception)
                                     window['-monname-e-'].Update(pkmn.name.replace("Farfetchd","Farfetch'd"))
                                     window['-monnum-e-'].Update(f'#{str(pkmn.species_num())}')
-                                    window['-level-e-'].Update(f'Level: {levelnum} (Seen {len(trackdata[pkmn.name]["levels"])})')
+                                    window['-level-e-'].Update(f'Level: {enemylevel} (Seen {len(trackdata[pkmn.name]["levels"])})')
                                     window['-level-e-'].set_tooltip(f'Seen at {trackdata[pkmn.name]["levels"]}')
                                     window['-note-e-'].update(trackdata[pkmn.name]["notes"])
                                     window['-note-e-'].set_tooltip(trackdata[pkmn.name]["notes"])
@@ -2013,7 +2042,8 @@ def run():
                                                 stab = move['type']
                                                 continue
                                         movepower = calcPower(pkmn,move,1,1)
-                                        acc = '-' if not move['acc'] else int(move['acc'])
+                                        # acc = '-' if not move['acc'] else int(move['acc'])
+                                        acc = calcAcc(move, enemylevel, slotlevel)
                                         contact = ('Y' if move['contact'] else 'N')
                                         if move['name'] not in trackdata[pkmn.name]['moves']:
                                             trackdata[pkmn.name]['moves'][move['name']]=[]

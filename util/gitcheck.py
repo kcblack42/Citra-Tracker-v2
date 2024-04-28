@@ -52,4 +52,4 @@ def gitcheck(v):
         print('Version up to date.')
 
 
-gitcheck('v1.2.0')
+# gitcheck('v1.2.0')
