@@ -988,7 +988,7 @@ def typeformatting(typing):
     #               'Ice':'#42bfff', 'Fighting':'#ffa202', 'Poison':'#994dcf', 'Ground':'#ab7939', 'Flying':'#95c9ff',
     #               'Psychic':'#ff637f', 'Bug':'#9fa523', 'Rock':'#bcb889', 'Ghost':'#6e4570', 'Dragon':'#7e44ed', 
     #               'Dark':'#2f4f4f', 'Steel':'#708090', 'Fairy':'#ffb1ff'}
-    typecolor = typecolordict[typing]
+    typecolor = typecolordict.get(typing, '#FFFFFF')
     return typecolor
 
 def natureformatting(nl, s):
