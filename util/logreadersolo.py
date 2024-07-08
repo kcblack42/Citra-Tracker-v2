@@ -1,4 +1,4 @@
-import PySimpleGUI as sg
+import FreeSimpleGUI as sg
 import json
 import pathlib
 import pandas as pd
@@ -31,19 +31,19 @@ def logloader_solo(track_size):
     log.count('\n--')
     lsplit = log.split('\n--')
 
-    if (lsplit[-1].count('Pokemon X') >= 1) | (lsplit[-1].count('Pokemon Y') >= 1):
+    if (lsplit[-3].count('Pokemon X') >= 1) | (lsplit[-3].count('Pokemon Y') >= 1):
         game = 'XY'
-    elif (lsplit[-1].count('Pokemon Omega') >= 1) | (lsplit[-1].count('Pokemon Alpha') >= 1):
+    elif (lsplit[-3].count('Pokemon Omega') >= 1) | (lsplit[-3].count('Pokemon Alpha') >= 1):
         game = 'ORAS'
-    elif (lsplit[-1].count('Pokemon Sun') >= 1) | (lsplit[-1].count('Pokemon Moon') >= 1):
+    elif (lsplit[-3].count('Pokemon Sun') >= 1) | (lsplit[-3].count('Pokemon Moon') >= 1):
         game = 'SM'
-    elif (lsplit[-1].count('Pokemon Ultra') >= 1):
+    elif (lsplit[-3].count('Pokemon Ultra') >= 1):
         game = 'USUM'
     else:
         game = 'UNK'
 
     if game != 'UNK':
-        print(f'Log from pokemon {game}.')
+        print(f'Log from Pokemon {game}.')
     else:
         print('Error reading log.')
 

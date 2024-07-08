@@ -1,4 +1,4 @@
-import PySimpleGUI as sg
+import FreeSimpleGUI as sg
 from PIL import Image
 
 def defaultuisettings(font_sizes, logview):

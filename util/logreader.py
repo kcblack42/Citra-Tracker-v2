@@ -1,4 +1,4 @@
-import PySimpleGUI as sg
+import FreeSimpleGUI as sg
 import json
 import pathlib
 import pandas as pd
@@ -18,13 +18,13 @@ def log_parser(log):
     log.count('\n--')
     lsplit = log.split('\n--')
 
-    if (lsplit[-1].count('Pokemon X') >= 1) | (lsplit[-1].count('Pokemon Y') >= 1):
+    if (lsplit[-3].count('Pokemon X') >= 1) | (lsplit[-3].count('Pokemon Y') >= 1):
         game = 'X/Y'
-    elif (lsplit[-1].count('Pokemon Omega') >= 1) | (lsplit[-1].count('Pokemon Alpha') >= 1):
+    elif (lsplit[-3].count('Pokemon Omega') >= 1) | (lsplit[-3].count('Pokemon Alpha') >= 1):
         game = 'OmegaRuby/AlphaSapphire'
-    elif (lsplit[-1].count('Pokemon Sun') >= 1) | (lsplit[-1].count('Pokemon Moon') >= 1):
+    elif (lsplit[-3].count('Pokemon Sun') >= 1) | (lsplit[-3].count('Pokemon Moon') >= 1):
         game = 'Sun/Moon'
-    elif (lsplit[-1].count('Pokemon Ultra') >= 1):
+    elif (lsplit[-3].count('Pokemon Ultra') >= 1):
         game = 'UltraSun/UltraMoon'
     else:
         game = 'UNK'
@@ -520,11 +520,15 @@ def logviewer_layout(pokemonnum, pokemon, gen, logtms1, logabils, logmoves, loge
     # layout_search = [
     #     [sg.Column(navbar[7], key='-log-navbar4-', size=(340,35), justification='c')],
     # ]
+    # layout_ph = [
+    #     [sg.Text('', size=40)]
+    # ]
 
     layout_logview = [[
         sg.Column(layout_pkmn, key='-log-layout1-', visible=True), 
         sg.Column(layout_trainers, key='-log-layout2-', visible=False), 
         sg.Column(layout_pivots, key='-log-layout3-', visible=False), 
         sg.Column(layout_tms, key='-log-layout4-', visible=False), 
+        # sg.Column(layout_ph, key='-log-ph-', visible=True), 
     ]]
     return layout_logview

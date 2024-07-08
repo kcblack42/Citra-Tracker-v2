@@ -40,16 +40,23 @@ if run_ver < min_python_version:
     input("Press any key to exit...")
     exit()
 
-try: # check for PySimpleGUI and install if not present
-    import PySimpleGUI as sg
-    if sg.__version__ != '4.60.5':
-        print('Incorrect version of PSG package detected - installing PySimpleGUI v4.60.5.')
-        subprocess.check_call([sys.executable, "-m", "pip", "install", '--force-reinstall', '-v', 'PySimpleGUI==4.60.5'])
-        print('Update complete.')
-        import PySimpleGUI as sg
+# deprecating using "official" PSG due to paywall - will keep code around just in case other bullshit happens
+# try: # check for PySimpleGUI and install if not present
+#     import PySimpleGUI as sg
+#     if sg.__version__ != '4.60.5':
+#         print('Incorrect version of PSG package detected - installing PySimpleGUI v4.60.5.')
+#         subprocess.check_call([sys.executable, "-m", "pip", "install", '--force-reinstall', '-v', 'PySimpleGUI==4.60.5'])
+#         print('Update complete.')
+#         import PySimpleGUI as sg
+# except:
+#     install('PySimpleGUI==4.60.5') # pysimplegui apparently requires a license for v5.+, so i'm locking it to 4.60.5, which is what i'm developing on
+#     import PySimpleGUI as sg
+
+try: # check for FreeSimpleGUI and install if not present
+    import FreeSimpleGUI as sg
 except:
-    install('PySimpleGUI==4.60.5') # pysimplegui apparently requires a license for v5.+, so i'm locking it to 4.60.5, which is what i'm developing on
-    import PySimpleGUI as sg
+    install('FreeSimpleGUI==5.1.0')
+    import FreeSimpleGUI as sg
 
 try: # check for Pillow and install if not present
     from PIL import Image
