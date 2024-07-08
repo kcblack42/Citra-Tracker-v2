@@ -31,15 +31,6 @@ def install(package):
     subprocess.check_call([sys.executable, "-m", "pip", "install", package])
     print(f'Installed package [{package}].')
 
-# Check python version
-min_python_version = (3,12)
-run_ver = (sys.version_info[0], sys.version_info[1])
-if run_ver < min_python_version:
-    print(f"The installed python version is incompatible, you need to install python {'.'.join(map(str,min_python_version))}.0 or later to run this file.")
-    print(f"Installed version: {'.'.join(map(str,run_ver + (sys.version_info[2],)))}")
-    input("Press any key to exit...")
-    exit()
-
 # deprecating using "official" PSG due to paywall - will keep code around just in case other bullshit happens
 # try: # check for PySimpleGUI and install if not present
 #     import PySimpleGUI as sg
