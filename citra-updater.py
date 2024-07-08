@@ -1113,6 +1113,17 @@ def run():
                         from "pokemon.gamegroup" gg
                         where gamegroupname = '{game}'""").fetchone()
         print('Game loaded: {}'.format(game))
+
+        if game == 'X/Y':
+            gameabbr = 'XY'
+        elif game == 'OmegaRuby/AlphaSapphire':
+            gameabbr = 'ORAS'
+        elif game == 'Sun/Moon':
+            gameabbr = 'SM'
+        elif game == 'UltraSun/UltraMoon':
+            gameabbr = 'USUM'
+        else:
+            gameabbr = 'Error'
         
         ## will need a bunch of try/excepts for this but for now lets get something functionally in place
         try:
@@ -1674,7 +1685,7 @@ def run():
                                         """
                                     itemname,itemdesc = cursor.execute(query).fetchone()
                                     window['-ph1-'].update('', visible=False)
-                                    window['-slot-'].Update(f'Seed {seed}')
+                                    window['-slot-'].Update(f'Seed {seed} ({gameabbr})')
                                     try:
                                         window['-monimg-'].Update(resize('images/homemodels/{}.png'.format(pkmn.name), (120,120)), visible = True)
                                     except:
@@ -2143,7 +2154,7 @@ def run():
                                     """
                                 itemname,itemdesc = cursor.execute(query).fetchone()
                                 window['-ph1-'].update('', visible = False)
-                                window['-slot-'].Update(f'Seed {seed}')
+                                window['-slot-'].update(f'Seed {seed} ({gameabbr})')
                                 try:
                                     window['-monimg-'].Update(resize('images/homemodels/{}.png'.format(pkmn.name), (120,120)), visible = True)
                                 except:
