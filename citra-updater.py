@@ -246,6 +246,8 @@ class Pokemon:
                         query+= " and pokemonsuffix = 'trash'"
                     case 2:
                         query+= " and pokemonsuffix = 'plant'"
+            case 414: ### Mothim
+                query+= " and pokemonsuffix is null"
             case 421: ### Cherrim
                 query+= " and pokemonsuffix is null"
             case 422: ### Shellos
@@ -305,6 +307,10 @@ class Pokemon:
                 match form:
                     case 8 | 16:
                         query+= " and pokemonsuffix = 'ash'"
+            case 664: ### Scatterbug
+                query+= " and pokemonsuffix is null"
+            case 665: ### Spewpa
+                query+= " and pokemonsuffix is null"
             case 666: ### Vivillon
                 query+= " and pokemonsuffix is null"
             case 669: ### Flabébé
@@ -448,7 +454,7 @@ class Pokemon:
                                """).fetchall()
         self.types = [type for type in self.types]
         self.held_item_num=str(struct.unpack("<H", self.raw_data[0xA:0xC])[0])
-        self.held_item_name = items[self.held_item_num]['name'].replace("é","&#233;")
+        self.held_item_name = items[self.held_item_num]['name']
         self.ability_num = struct.unpack("B", self.raw_data[0x14:0x15])[0] # Ability
         query = f"""select
                         ab.abilityname
@@ -617,6 +623,16 @@ class Pokemon:
                 order by pokemonmovelevel
         """
         learnlist = cursor.execute(query).fetchall()
+        if learnlist==[]:
+            mainmonmovequery=int(cursor.execute(f"""SELECT pokemonid FROM "pokemon.pokemon" WHERE pokemonpokedexnumber = "{self.species_num()}" AND pokemonsuffix ISNULL """ ).fetchone()[0])
+            learnlist=cursor.execute(f"""select pokemonmovelevel
+                from "pokemon.pokemonmove" pm
+                    left join "pokemon.pokemonmovemethod" pmm on pm.pokemonmovemethodid = pmm.pokemonmovemethodid
+                    where gamegroupid <= {gamegroupid}
+                        and pokemonmovemethodname = 'Level up'
+                        and pokemonmovelevel > 1
+                        and pokemonid = {mainmonmovequery}
+                    order by pokemonmovelevel""").fetchall()
         nextmove = None
         totallearn = 0
         learnstr = ''
@@ -826,7 +842,7 @@ def analyze_statuses(self):
     # print('Toxic:', self.badlypoisoned())
     print('end statuses')
 
-def calcPower(pkmn,move,hp1,hp2):
+def calcPower(pkmn,move,hp1,hp2,pkmnwt,enwt):
     if move['name'] in ('Eruption','Water Spout'):
         return int(int(hp1)/int(hp2)*150)
     elif move['name']=='Return':
@@ -834,7 +850,38 @@ def calcPower(pkmn,move,hp1,hp2):
     elif move['name']=="Frustration":
         return round((255-pkmn.friendship)/2.5)
     elif move["name"] in ("Low Kick","Grass Knot"):
-        return "WT"
+        try:
+            weightnum=cursor.execute(enwt).fetchone()[0]
+            if weightnum>=200:
+                return 120
+            elif 100<=weightnum<200:
+                return 100
+            elif 50<=weightnum<100:
+                return 80
+            elif 25<=weightnum<50:
+                return 60
+            elif 10<=weightnum<25:
+                return 40
+            else:
+                return 20
+        except:
+            return "WT"
+    elif move["name"] in ("Heat Crash","Heavy Slam"):
+        try:
+            weightnum=cursor.execute(enwt).fetchone()[0]
+            weightratio=(pkmnwt/weightnum)
+            if weightratio>=5:
+                return 120
+            elif 4<=weightratio<5:
+                return 100
+            elif 3<=weightratio<4:
+                return 80
+            elif 2<=weightratio<3:
+                return 60
+            else:
+                return 40
+        except:
+            return "WT"
     elif move['name']=="Fling":
         return "ITEM"
     elif move['name'] in ("Crush Grip","Wring Out"):
@@ -992,7 +1039,7 @@ def typeformatting(typing):
     typecolordict = {'Normal':'#A8A878', 'Fire':'#F08030', 'Water':'#6890F0', 'Electric':'#F8D030', 'Grass':'#78C850', 
                   'Ice':'#98D8D8', 'Fighting':'#C03028', 'Poison':'#A040A0', 'Ground':'#E0C068', 'Flying':'#A890F0',
                   'Psychic':'#F85888', 'Bug':'#A8B820', 'Rock':'#B8A038', 'Ghost':'#705898', 'Dragon':'#7038F8', 
-                  'Dark':'#705848', 'Steel':'#B8B8D0', 'Fairy':'#ffb1ff', 'Unknown':'#FFFFFF'} #Fairy? EE99AC
+                  'Dark':'#705848', 'Steel':'#B8B8D0', 'Fairy':'#ffb1ff', 'Unknown':'#FFFFFF', None:"#FFFFFF"} #Fairy? EE99AC
     # typecolordict = {'Normal':'#999999', 'Fire':'#ff612c', 'Water':'#2892ff', 'Electric':'#ffdb00', 'Grass':'#42bf24', 
     #               'Ice':'#42bfff', 'Fighting':'#ffa202', 'Poison':'#994dcf', 'Ground':'#ab7939', 'Flying':'#95c9ff',
     #               'Psychic':'#ff637f', 'Bug':'#9fa523', 'Rock':'#bcb889', 'Ghost':'#6e4570', 'Dragon':'#7e44ed', 
@@ -1544,7 +1591,12 @@ def run():
                             party.remove(pkmn)
                         else:
                             pkmnindex=(pkmni)
-                            break
+                            if enctype!="p":
+                                pkmn.getAtts(gamegroupid,gen)
+                                if pkmn.suffix!="":
+                                    weightquery=f"""SELECT kg FROM "pokemon.weight" WHERE name = "{pkmn.name}" AND form = "{pkmn.suffix}" """ 
+                                else: weightquery=f"""SELECT kg FROM "pokemon.weight" WHERE name = "{pkmn.name}" """ 
+                                break
                     typelist=["Normal","Fighting","Flying","Poison","Ground","Rock","Bug","Ghost","Steel","Fire","Water","Grass","Electric","Psychic","Ice","Dragon","Dark","Fairy"]
                     enemytypes=[]
                     try:
@@ -1562,7 +1614,9 @@ def run():
                     for pkmn in party:
                         if pkmn.species_num() in range (1,808): ### Make sure the slot is valid & not an egg
                             pkmn.getAtts(gamegroupid,gen)
-                            if int(pkmn.cur_hp) > 5000: ### Make sure the memory dump hasn't happened (or whatever causes the invalid values)
+                            if int(pkmn.cur_hp) > 750: ### Make sure the memory dump hasn't happened (or whatever causes the invalid values)
+                                continue
+                            if int(pkmn.level)>100:
                                 continue
                             if pkmn in party2:
                                 if gen==6:
@@ -1673,10 +1727,6 @@ def run():
                                     ### MOVES ########
                                     totallearn,nextmove,learnedcount,learnstr = pkmn.getMoves(gamegroupid)
                                     nmove = (' - ' if not nextmove else nextmove)
-                                    if pkmn.held_item_name == pkmn.held_item_name:
-                                        frisk = 1
-                                    else:  
-                                        frisk = 0
                                     query=f"""select
                                             itemname
                                             ,itemdesc
@@ -1838,6 +1888,10 @@ def run():
                                                 modimage="X"
                                         # movepower = calcPower(pkmn,move,hpnum[0],hpnum[1])
                                         # acc = '-' if not move['acc'] else int(move['acc'])
+                                        if pkmn.suffix!="":
+                                            weightquery2=f"""SELECT kg FROM "pokemon.weight" WHERE name = "{pkmn.name}" AND form = "{pkmn.suffix}" """ 
+                                        else: weightquery2=f"""SELECT kg FROM "pokemon.weight" WHERE name = "{pkmn.name}" """ 
+                                        pkmnweight=cursor.execute(weightquery2).fetchone()[0]
                                         acc = calcAcc(move, slotlevel, enemylevel)
                                         contact = ('Y' if move['contact'] else 'N')
                                         window['-mv{}type-'.format(pkmn.moves.index(move) + 1)].update(resize('images/categories/{}.png'.format(move["category"]), (27,20)))
@@ -1846,9 +1900,9 @@ def run():
                                         window['-mv{}pp-'.format(pkmn.moves.index(move) + 1)].update('{}/{}'.format(int.from_bytes(c.read_memory(ppadd+(mongap*(pk-1))+(14*(pkmn.moves).index(move)),1)), int.from_bytes(c.read_memory(ppadd+(mongap*(pk-1))+1+(14*(pkmn.moves).index(move)),1))))
                                         window['-mv{}mod-'.format(pkmn.moves.index(move) + 1)].update('images/modifiers/modifier{}.png'.format(modimage))
                                         if stab == movetyp:
-                                            window['-mv{}bp-'.format(pkmn.moves.index(move) + 1)].update(calcPower(pkmn,move,hpnum[0],hpnum[1]), text_color=typeformatting(movetyp))
+                                            window['-mv{}bp-'.format(pkmn.moves.index(move) + 1)].update(calcPower(pkmn,move,hpnum[0],hpnum[1],pkmnweight,weightquery), text_color=typeformatting(movetyp))
                                         else:
-                                            window['-mv{}bp-'.format(pkmn.moves.index(move) + 1)].update(calcPower(pkmn,move,hpnum[0],hpnum[1]), text_color='white')
+                                            window['-mv{}bp-'.format(pkmn.moves.index(move) + 1)].update(calcPower(pkmn,move,hpnum[0],hpnum[1],pkmnweight,weightquery), text_color='white')
                                         window['-mv{}acc-'.format(pkmn.moves.index(move) + 1)].update(acc)
                                         window['-mv{}ctc-'.format(pkmn.moves.index(move) + 1)].update(contact)
                                 elif (pkmn in party2) & (((gen == 6) & (party.index(pkmn)+1 == 7)) | ((gen == 7) & (party.index(pkmn)+1 == 7))): # this works for singles in XY, needs testing for all other games; only access first mon stuff, may want to figure out a way to include double battle (may not work for multis)
@@ -2068,7 +2122,7 @@ def run():
                                             if move['type'] == type[0]:
                                                 stab = move['type']
                                                 continue
-                                        movepower = calcPower(pkmn,move,1,1)
+                                        movepower = calcPower(pkmn,move,1,1,0,0)
                                         # acc = '-' if not move['acc'] else int(move['acc'])
                                         acc = calcAcc(move, enemylevel, slotlevel)
                                         contact = ('Y' if move['contact'] else 'N')
@@ -2153,6 +2207,7 @@ def run():
                                     where itemname = '{pkmn.held_item_name}' and genid <= {gen}
                                     """
                                 itemname,itemdesc = cursor.execute(query).fetchone()
+                                itemname=itemname.encode("utf-8").decode("utf-8")
                                 window['-ph1-'].update('', visible = False)
                                 window['-slot-'].update(f'Seed {seed} ({gameabbr})')
                                 try:
@@ -2193,11 +2248,17 @@ def run():
                                 window[confusestat].set_tooltip('{} causes confusion'.format(confuseberry))
                                 window['-bstlabel-'].update(visible = True)
                                 window['-hp-'].update('{}/{}'.format(pkmn.cur_hp, pkmn.maxhp))
+                                window['-hp-'].set_tooltip('EV: ' + str(pkmn.evhp))
                                 window['-att-'].update(pkmn.attack, text_color=natureformatting(naturelist, 0))
+                                window['-att-'].set_tooltip('EV: ' + str(pkmn.evattack))
                                 window['-def-'].update(pkmn.defense, text_color=natureformatting(naturelist, 1))
+                                window['-def-'].set_tooltip('EV: ' + str(pkmn.evdefense))
                                 window['-spatt-'].update(pkmn.spatk, text_color=natureformatting(naturelist, 2))
+                                window['-spatt-'].set_tooltip('EV: ' + str(pkmn.evspatk))
                                 window['-spdef-'].update(pkmn.spdef, text_color=natureformatting(naturelist, 3))
+                                window['-spdef-'].set_tooltip('EV: ' + str(pkmn.evspdef))
                                 window['-speed-'].update(pkmn.speed, text_color=natureformatting(naturelist, 4))
+                                window['-speed-'].set_tooltip('EV: ' + str(pkmn.evspeed))
                                 window['-bst-'].update(pkmn.bst)
                                 window['-attmod-'].update('images/modifiers/modifier6.png')
                                 window['-defmod-'].update('images/modifiers/modifier6.png')
@@ -2229,7 +2290,7 @@ def run():
                                             stab = move['type']
                                             # print(stab)
                                             continue
-                                    movepower = calcPower(pkmn,move,pkmn.cur_hp,pkmn.maxhp)
+                                    movepower = calcPower(pkmn,move,pkmn.cur_hp,pkmn.maxhp,0,0)
                                     acc = '-' if not move['acc'] else int(move['acc'])
                                     contact = ('Y' if move['contact'] else 'N')
                                     window['-mv{}type-'.format(pkmn.moves.index(move) + 1)].update(resize('images/categories/{}.png'.format(move["category"]), (27,20)), visible = True)
@@ -2308,7 +2369,7 @@ STAT_DATA_SIZE = 22
 conn = sqlite3.connect("data/gen67.sqlite")
 cursor = conn.cursor()
 
-with open('data/item-data.json','r') as f:
+with open('data/item-data.json','r', encoding="utf-8") as f:
     items = json.loads(f.read())
 
 if __name__ == "__main__" :
