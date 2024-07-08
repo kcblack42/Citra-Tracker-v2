@@ -2,7 +2,9 @@
 
 1. Drop all of these files into the same location as citra.py. This is usually in appdata/local.
 2. Get a pokemon from the bag/lab/etc.
-3. Run the tracker (go to the folder you just dropped your stuff in and try to open the citra-updater.py file)! That's it!
+3. Run the tracker (go to the folder you just dropped your stuff in and use the launcher file)! That's it!
+
+See [here](https://gist.github.com/UTDZac/1db6bbadb9457802d848c4c592d069fd#tracker-setup) for a detailed guide to setting up the tracker from UTDZac.
 
 ### FOR SEED AUTO-ADVANCEMENT ###
 
