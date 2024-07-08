@@ -24,7 +24,7 @@ def gitpopup(gitlink):
 
 def gitcheck(v):
     import requests
-    import PySimpleGUI as sg
+    import FreeSimpleGUI as sg
     import webbrowser
     gitapi = 'https://api.github.com/repos/kcblack42/Citra-Tracker-v2/releases/latest'
     gitlink = 'https://github.com/kcblack42/Citra-Tracker-v2/releases/latest'
