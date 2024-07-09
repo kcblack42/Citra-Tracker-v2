@@ -16,7 +16,7 @@
       "hex": "0003"
     },
     "4": {
-      "name": "Poke Ball",
+      "name": "Poké Ball",
       "hex": "0004"
     },
     "5": {
@@ -277,7 +277,7 @@
       "hex": "003E"
     },
     "63": {
-      "name": "Poke Doll",
+      "name": "Poké Doll",
       "hex": "003F"
     },
     "64": {
@@ -509,7 +509,7 @@
       "hex": "0078"
     },
     "121": {
-      "name": "Pokemon Box",
+      "name": "Pokémon Box",
       "hex": "0079"
     },
     "122": {
@@ -1765,7 +1765,7 @@
       "hex": "01AE"
     },
     "431": {
-      "name": "Poke Radar",
+      "name": "Poké Radar",
       "hex": "01AF"
     },
     "432": {
@@ -1933,7 +1933,7 @@
       "hex": "01D8"
     },
     "473": {
-      "name": "Slowpoke Tail",
+      "name": "SlowPoké Tail",
       "hex": "01D9"
     },
     "474": {
@@ -2350,7 +2350,7 @@
       "hex": "0240"
     },
     "577": {
-      "name": "Poke Toy",
+      "name": "Poké Toy",
       "hex": "0241"
     },
     "578": {
@@ -2647,7 +2647,7 @@
       "hex": "028A"
     },
     "651": {
-      "name": "Poke Flute",
+      "name": "Poké Flute",
       "hex": "028B"
     },
     "652": {
@@ -2941,7 +2941,7 @@
       "hex": "02D3"
     },
     "724": {
-      "name": "Pokeblock Kit",
+      "name": "Pokéblock Kit",
       "hex": "02D4"
     },
     "725": {
@@ -3838,7 +3838,7 @@
       "hex": "03B3"
     },
     "948": {
-      "name": "Left Poke Ball",
+      "name": "Left Poké Ball",
       "hex": "03B4"
     },
     "949": {
