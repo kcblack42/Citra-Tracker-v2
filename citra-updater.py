@@ -1889,7 +1889,7 @@ def run():
                                             weightquery2=f"""SELECT kg FROM "pokemon.weight" WHERE name = "{pkmn.name}" """ 
                                         # print(weightquery2)
                                         pkmnweight=cursor.execute(weightquery2).fetchone()[0]
-                                        print(pkmnweight)
+                                        # print(pkmnweight)
                                         acc = calcAcc(move, slotlevel, enemylevel)
                                         contact = ('Y' if move['contact'] else 'N')
                                         window['-mv{}type-'.format(pkmn.moves.index(move) + 1)].update(resize('images/categories/{}.png'.format(move["category"]), (27,20)))
