@@ -1572,10 +1572,14 @@ def run():
                     enemynum=int.from_bytes(c.read_memory(curoppnum,2),"little")
                     pkmni=0
                     emon = ''
+                    abblist = []
                     for pkmn in party:
                         if pkmn in party1:
                             if pkmn.species_num()==0:
                                 party1.remove(pkmn)
+                            if pkmn.species_num()!=0:
+                                pkmn.getAtts(gamegroupid,gen)
+                                abblist.append(pkmn.ability['name'])
                     for pkmn in party2:
                         pkmni+=1
                         if pkmn.species_num()!=enemynum:
@@ -1879,10 +1883,13 @@ def run():
                                                 modimage="X"
                                         # movepower = calcPower(pkmn,move,hpnum[0],hpnum[1])
                                         # acc = '-' if not move['acc'] else int(move['acc'])
-                                        if pkmn.suffix!="":
+                                        if pkmn.suffix != "":
                                             weightquery2=f"""SELECT kg FROM "pokemon.weight" WHERE name = "{pkmn.name}" AND form = "{pkmn.suffix}" """ 
-                                        else: weightquery2=f"""SELECT kg FROM "pokemon.weight" WHERE name = "{pkmn.name}" """ 
+                                        else: 
+                                            weightquery2=f"""SELECT kg FROM "pokemon.weight" WHERE name = "{pkmn.name}" """ 
+                                        # print(weightquery2)
                                         pkmnweight=cursor.execute(weightquery2).fetchone()[0]
+                                        print(pkmnweight)
                                         acc = calcAcc(move, slotlevel, enemylevel)
                                         contact = ('Y' if move['contact'] else 'N')
                                         window['-mv{}type-'.format(pkmn.moves.index(move) + 1)].update(resize('images/categories/{}.png'.format(move["category"]), (27,20)))
@@ -1960,6 +1967,8 @@ def run():
                                         window['-status-e-'].Update(resize('images/statuses/{}.png'.format(pkmn.status), (75, 20)), visible = True)
                                     else:
                                         window['-status-e-'].Update(visible = False)
+
+                                    ### OLD ABILITY CODE ###
                                     query=f"""select
                                             ab.abilityname
                                             ,abilitydescription
@@ -1995,6 +2004,50 @@ def run():
                                         window['-ability-e-'].set_tooltip('')
                                     else:
                                         window['-ability-e-'].Update('Unknown Ability', text_color="#f0f080")
+                                    
+                                    ### NEW ABILITY CODE ###
+                                    # try:
+                                    #     abillookup = batabilnum
+                                    #     if getGame()=="X/Y":
+                                    #         abildatapoint=136334160-714472
+                                    #         abillookup = int.from_bytes(c.read_memory(abildatapoint,1))
+                                    #         # print(abillookup)
+                                    #     elif getGame()=="OmegaRuby/AlphaSapphire":
+                                    #         abildatapoint=135669536
+                                    #         # abillookup = int.from_bytes(c.read_memory(abildatapoint,1))
+                                    #     query=f"""select
+                                    #             ab.abilityname
+                                    #             ,abilitydescription
+                                    #         from "pokemon.generationability" ga
+                                    #             left join "pokemon.ability" ab on ga.abilityid = ab.abilityid
+                                    #             left join "pokemon.abilitylookup" al on ab.abilityname = al.abilityname
+                                    #             where al.abilityindex = {int.from_bytes(c.read_memory(abildatapoint,1))} and ga.generationid <= {gen}
+                                    #         order by ga.generationid desc
+                                    #         """
+                                    #     abilityname2,abilitydescription2 = cursor.execute(query).fetchone()
+                                    #     if abilityname2==pkmn.ability['name']:
+                                    #         if abilityname2 not in abblist:
+                                    #             print(int.from_bytes(c.read_memory(136334160-714472,1))) #xy oras:135669536
+                                    #             window['-ability-e-'].Update(str(pkmn.ability['name']), text_color="#f0f080")
+                                    #             window['-ability-e-'].set_tooltip(str(pkmn.ability['description']))
+                                    #             if pkmn.abilityname not in trackdata[pkmn.name]['abilities']:
+                                    #                 trackdata[pkmn.name]['abilities'].append(pkmn.abilityname)
+                                    #     elif change == 'abil':
+                                    #         window['-ability-e-'].set_tooltip('')
+                                    #     if gen == 7: # need the legacy code for gen 7
+                                    #         startupabils=["Air Lock","Cloud Nine","Delta Stream","Desolate Land","Download","Drizzle","Drought","Forewarn","Imposter","Intimidate","Mold Breaker","Pressure","Primordial Sea","Sand Stream","Slow Start","Snow Warning","Teravolt","Turboblaze","Trace","Unnerve","Aura Break","Fairy Aura","Dark Aura",'Psychic Surge','Electric Surge','Misty Surge','Grassy Surge','Comatose']
+                                    #         if abilityname in startupabils:
+                                    #             window['-ability-e-'].Update(str(pkmn.ability['name']), text_color="#f0f080")
+                                    #             window['-ability-e-'].set_tooltip(str(pkmn.ability['description']))
+                                    #             if pkmn.abilityname not in trackdata[pkmn.name]['abilities']:
+                                    #                 trackdata[pkmn.name]['abilities'].append(pkmn.abilityname)
+                                    #         elif change == 'abil':
+                                    #             window['-ability-e-'].set_tooltip('')
+                                    #         else:
+                                    #             window['-ability-e-'].Update('Unknown Ability', text_color="#f0f080")
+                                    # except:
+                                    #     window['-ability-e-'].Update('Unknown Ability', text_color="#f0f080")
+
                                     if pkmn.level not in trackdata[pkmn.name]['levels']:
                                         trackdata[pkmn.name]['levels'].append(pkmn.level)
                                     nmove = (' - ' if not nextmove else nextmove)
