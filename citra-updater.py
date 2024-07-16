@@ -608,8 +608,6 @@ class Pokemon:
             from "pokemon.pokemonmove" pm
                 left join "pokemon.pokemonmovemethod" pmm on pm.pokemonmovemethodid = pmm.pokemonmovemethodid
                 where gamegroupid = {gamegroupid}
-                    and pokemonmovemethodname = 'Level up'
-                    and pokemonmovelevel > 1
                     and pokemonid = {self.id}
                 order by pokemonmovelevel
         """
@@ -620,8 +618,6 @@ class Pokemon:
                 from "pokemon.pokemonmove" pm
                     left join "pokemon.pokemonmovemethod" pmm on pm.pokemonmovemethodid = pmm.pokemonmovemethodid
                     where gamegroupid <= {gamegroupid}
-                        and pokemonmovemethodname = 'Level up'
-                        and pokemonmovelevel > 1
                         and pokemonid = {mainmonmovequery}
                     order by pokemonmovelevel""").fetchall()
         nextmove = None
@@ -892,7 +888,7 @@ def calcPower(pkmn,move,hp1,hp2,pkmnwt,enwt):
             return 200
         else:
             return "ERR"
-    elif move['name'] == 'Psywave':
+    elif move['name'] in ('Psywave', 'Magnitude'):
         return 'VAR'
     elif move['name'] in ('Seismic Toss', 'Night Shade'):
         return 'LVL'
@@ -1589,8 +1585,8 @@ def run():
                             if enctype!="p":
                                 pkmn.getAtts(gamegroupid,gen)
                                 if pkmn.suffix!="":
-                                    weightquery=f"""SELECT kg FROM "pokemon.weight" WHERE name = "{pkmn.name}" AND form = "{pkmn.suffix}" """ 
-                                else: weightquery=f"""SELECT kg FROM "pokemon.weight" WHERE name = "{pkmn.name}" """ 
+                                    weightquery=f"""SELECT kg FROM "pokemon.weight" WHERE name = "{pkmn.species}" AND form = "{pkmn.suffix}" """ 
+                                else: weightquery=f"""SELECT kg FROM "pokemon.weight" WHERE name = "{pkmn.species}" """ 
                                 break
                     typelist=["Normal","Fighting","Flying","Poison","Ground","Rock","Bug","Ghost","Steel","Fire","Water","Grass","Electric","Psychic","Ice","Dragon","Dark","Fairy"]
                     enemytypes=[]
@@ -1609,10 +1605,6 @@ def run():
                     for pkmn in party:
                         if pkmn.species_num() in range (1,808): ### Make sure the slot is valid & not an egg
                             pkmn.getAtts(gamegroupid,gen)
-                            if int(pkmn.cur_hp) > 750: ### Make sure the memory dump hasn't happened (or whatever causes the invalid values)
-                                continue
-                            if int(pkmn.level)>100:
-                                continue
                             if pkmn in party2:
                                 if gen==6:
                                     pk=pkmnindex+len(party1)
@@ -1649,6 +1641,10 @@ def run():
                                 # analyze_statuses(pkmn)
                                 #### Begin Pokemon div
                                 if (pkmn in party1) and (pkmn.name == slotchoice): 
+                                    if int(pkmn.cur_hp) > 750: ### Make sure the memory dump hasn't happened (or whatever causes the invalid values)
+                                        continue
+                                    if int(pkmn.level)>100:
+                                        continue
                                     currmon = pkmn
                                     for type in pkmn.types:
                                         window['-typeimg{}-'.format(pkmn.types.index(type) + 1)].Update(resize('images/types/{}.png'.format(type[0]), (27, 24)), visible = True)
@@ -1884,9 +1880,9 @@ def run():
                                         # movepower = calcPower(pkmn,move,hpnum[0],hpnum[1])
                                         # acc = '-' if not move['acc'] else int(move['acc'])
                                         if pkmn.suffix != "":
-                                            weightquery2=f"""SELECT kg FROM "pokemon.weight" WHERE name = "{pkmn.name}" AND form = "{pkmn.suffix}" """ 
+                                            weightquery2=f"""SELECT kg FROM "pokemon.weight" WHERE name = "{pkmn.species}" AND form = "{pkmn.suffix}" """ 
                                         else: 
-                                            weightquery2=f"""SELECT kg FROM "pokemon.weight" WHERE name = "{pkmn.name}" """ 
+                                            weightquery2=f"""SELECT kg FROM "pokemon.weight" WHERE name = "{pkmn.species}" """ 
                                         # print(weightquery2)
                                         pkmnweight=cursor.execute(weightquery2).fetchone()[0]
                                         # print(pkmnweight)
@@ -1906,6 +1902,10 @@ def run():
                                 elif (pkmn in party2) & (((gen == 6) & (party.index(pkmn)+1 == 7)) | ((gen == 7) & (party.index(pkmn)+1 == 7))): # this works for singles in XY, needs testing for all other games; only access first mon stuff, may want to figure out a way to include double battle (may not work for multis)
                                 # elif ((pkmn in party2) & (party.index(pkmn)+1 == 7)) | ((enctype == 't') & (party.index(pkmn)+1 == 1)): # this works for singles in XY, needs testing for all other games; only access first mon stuff, may want to figure out a way to include double battle (may not work for multis)
                                     # print(pkmn.name, ';;;', pkmn.species, ';;;', party.index(pkmn)+1)
+                                    if int(pkmn.cur_hp) > 750: ### Make sure the memory dump hasn't happened (or whatever causes the invalid values)
+                                        continue
+                                    if int(pkmn.level)>100:
+                                        continue
                                     if (emon != pkmn) & (emon == emon): # washing the data on mon change
                                         ct = 0
                                         antici = 0
@@ -2197,6 +2197,10 @@ def run():
                                     emon = pkmn
                                 pkmntypes=[]
                             elif (enctype=='p') and (pkmn.name == slotchoice):
+                                if int(pkmn.cur_hp) > 750: ### Make sure the memory dump hasn't happened (or whatever causes the invalid values)
+                                    continue
+                                if int(pkmn.level)>100:
+                                    continue
                                 ##### TYPES, STATS, ABIILITIES, ETC.
                                 for type in pkmn.types:
                                     window['-typeimg{}-'.format(pkmn.types.index(type) + 1)].Update(resize('images/types/{}.png'.format(type[0]), (27, 24)), visible = True)
