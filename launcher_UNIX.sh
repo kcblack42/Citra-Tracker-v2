@@ -2,7 +2,7 @@
 # UNIX launcher for the citra tracker
 
 # Run the version check script to test if 3.12 is installed
-python util/python-version-check.py 2> /dev/null
+python util/python-version-check.py
 
 # ERROR LEVELS: 0 - Success, 127 - Fail (python not found), 2 - Fail (incorrect python version)
 case $? in
