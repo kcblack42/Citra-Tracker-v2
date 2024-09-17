@@ -167,7 +167,11 @@ class Pokemon:
     def getAtts(self,gamegroupid,gen):
         dex = self.species_num()
         form = struct.unpack("B",self.raw_data[0x1D:0x1E])[0]
-        query = f"""select pokemonid from "pokemon.pokemon" where pokemonpokedexnumber = {dex}"""
+        query = f"""
+            select pokemonid from "pokemon.pokemon" 
+                where pokemonpokedexnumber = {dex} 
+                    and pokemonsuffix is not 'galar'
+                    and pokemonsuffix is not 'paldea'"""
         # print("form",form,"dex",dex)
         match dex:
             #bit 0: fateful encounter flag
@@ -183,12 +187,24 @@ class Pokemon:
                         query+= " and pokemonsuffix = 'mega-x'"
                     case 16 | 18:
                         query+= " and pokemonsuffix = 'mega-y'"
+            case 20: # (Alolan) Raticate
+                match form:
+                    case 0 | 2:
+                        query+= " and pokemonsuffix is null"
+                    case _: # accounts for totems
+                        query+= " and pokemonsuffix is 'alola'"
             case 25: # Pikachu partner forms
                 match form:
                     case 0 | 2:
                         query+= " and pokemonsuffix is null"
                     case _: # no idea how many partner forms there are, but they're all here apparently
                         query+= " and pokemonsuffix is partner"
+            case 105: # (Alolan) Marowak
+                match form:
+                    case 0 | 2:
+                        query+= " and pokemonsuffix is null"
+                    case _:
+                        query+= " and pokemonsuffix is 'alola'"
             case 150: ### Mewtwo
                 match form:
                     case 4:
@@ -328,6 +344,8 @@ class Pokemon:
                         query+= " and pokemonsuffix = 'shield'"
                     case 8 | 10:
                         query+= " and pokemonsuffix = 'blade'"
+            case 684: ### Swirlix (not sure if this is useful but testing)
+                query+= " and pokemonsuffix is null"
             case 710: ### Pumpkaboo
                 match form:
                     case 8 | 10:
@@ -382,14 +400,14 @@ class Pokemon:
                         query+= " and pokemonsuffix = 'midnight'"
             case 746: ### Wishiwashi
                 match form:
-                    case 8 | 10:
+                    case 0 | 2:
+                        query+= " and pokemonsuffix is null"
+                    case _: # accounts for totem form
                         query+= " and pokemonsuffix = 'school'"
             case 774: ### Minior 4 12 20 28 36 44 52 60
                 match form:
                     case 12 | 20 | 28 | 36 | 44 | 52 | 60: #60 is red
                         query+= " and pokemonsuffix = 'core'"
-            case 778: ### Mimikyu
-                query+= " and pokemonsuffix is null"
             case 800: ### Necrozma
                 match form:
                     case 4:
@@ -402,11 +420,15 @@ class Pokemon:
                         query+= " and pokemonsuffix = 'ultra'"
             case 801: ### Magearna
                 query+= " and pokemonsuffix is null"
-            case 19 | 20 | 26 | 27 | 28 | 37 | 38 | 50 | 51 | 52 | 53 | 74 | 75 | 76 | 88 | 89 | 103 | 105: ###alolan forms-none have separate forms so just case them for if their form > 0
+            case 19 | 20 | 26 | 27 | 28 | 37 | 38 | 50 | 51 | 52 | 53 | 74 | 75 | 76 | 88 | 89 | 103: ###alolan forms-none have separate forms so just case them for if their form > 0
                 match form:
                     case 8 | 10 | 12: # honestly not sure if any are genderless but sure
                         query+= " and pokemonsuffix is 'alola'"
                     case _:
+                        query+= " and pokemonsuffix is null"
+            case 735 | 738 | 743 | 752 | 754 | 758 | 777 | 778 | 784: # totem mons that aren't already accounted for elsewhere (totem-sized mons are likely a different form)
+                match form:
+                    case _: 
                         query+= " and pokemonsuffix is null"
             # case 81 | 82 | 100 | 101 | 120 | 121 | 137 | 233 | 292 | 337 | 338 | 343 | 344 | 374 | 375 | 376 | 436 | 437 | 462 | 474 | 489 | 490 | 599 | 600 | 601 | 615 | 622 | 623 | 703 | 774 | 781 | 854 | 855 | 770 | 132 | 144 | 145 | 146 | 201 | 243 | 244 | 245 | 249 | 250 | 251 | 377 | 378 | 379 | 382 | 383 | 384 | 385 | 386 | 480 | 481 | 482 | 483 | 484 | 486 | 491 | 493 | 494 | 638 | 639 | 640 | 643 | 644 | 646 | 647 | 649 | 716 | 717 | 718 | 719 | 721: ### Genderless exceptions
             #     query+= " and pokemonsuffix is null"
@@ -619,13 +641,15 @@ class Pokemon:
                     left join "pokemon.pokemonmovemethod" pmm on pm.pokemonmovemethodid = pmm.pokemonmovemethodid
                     where gamegroupid <= {gamegroupid}
                         and pokemonid = {mainmonmovequery}
-                    order by pokemonmovelevel""").fetchall()
+                        and pm.pokemonmovelevel > 1
+                    order by pm.pokemonmovelevel""").fetchall()
         nextmove = None
         totallearn = 0
+        # print(learnlist)
         learnstr = ''
         for learn in learnlist:
-            learnstr+=str(learn[0])+', '
             if int(learn[0]) > 1:
+                learnstr+=str(learn[0])+', '
                 totallearn+=1
         for learn in learnlist:
             if not int(learn[0]) <= int(self.level):
@@ -1487,8 +1511,8 @@ def run():
                                 window[f'-log-fulltm{i}-'].update(text_color='#339ec4')
                             i += 1
                         window['-log-tmpkmn-'].update(f'{log_pkmn.iloc[p,1]} ({sum(log_pkmn.iloc[p,3:9])} BST)')
-                    elif event in ('-logpivot-loc0-', '-logpivot-loc1-', '-logpivot-loc2-', '-logpivot-loc3-', '-logpivot-loc4-'):
-                        n = int(event[-2:].replace('-',''))
+                    elif event in ('-logpivot-loc0-', '-logpivot-loc1-', '-logpivot-loc2-', '-logpivot-loc3-', '-logpivot-loc4-', '-logpivot-loc5-', '-logpivot-loc6-', '-logpivot-loc7-', '-logpivot-loc8-', '-logpivot-loc9-', '-logpivot-loc10-', '-logpivot-loc11-', '-logpivot-loc12-', '-logpivot-loc13-', '-logpivot-loc14-', '-logpivot-loc15-', '-logpivot-loc16-', '-logpivot-loc17-', '-logpivot-loc18-', '-logpivot-loc19-', '-logpivot-loc20-', '-logpivot-loc21-', '-logpivot-loc22-', '-logpivot-loc23-', '-logpivot-loc24-', '-logpivot-loc25-', '-logpivot-loc26-', '-logpivot-loc27-', '-logpivot-loc28-'):
+                        n = int(event[-3:].replace('-','').replace('c',''))
                         for i in range(0, len(logpivotlocs)-1): # turn off all different colors, then turn on for current
                             window[f'-logpivot-loc{i}-'].update(text_color='white')
                         window[event].update(text_color='#f0f080')
@@ -2242,6 +2266,7 @@ def run():
                                     window['-status-'].Update(visible = False)
                                 ### MOVES ########
                                 totallearn,nextmove,learnedcount,learnstr = pkmn.getMoves(gamegroupid)
+                                # print(learnstr)
                                 nmove = (' - ' if not nextmove else nextmove)
                                 ### UPDATING TRACKER INFO ###
                                 # print(slot)

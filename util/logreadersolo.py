@@ -284,18 +284,25 @@ def logloader_solo(track_size):
         return logtms1, logtms4, logtmsfull, gymtmlist, tmdict, tmdictfull, tmtext, tmtextfull
 
     def pivotlist(game):
-        logpivotlocs, logpivotbase1, logpivotbase2 = [], [], []
+        logpivotlocs, logpivotbase1, logpivotbase2, sorter = [], [], [], []
         pivottext = {}
+        # print(game)
         if game == 'XY':
-            sets = ['Set #22', 'Set #138', 'Set #23', 'Set #132']
-            locs = ['Route 2', 'Santalune Forest', 'Route 3', 'Route 22']   
+            sets = ['Set #22', 'Set #138', 'Set #23', 'Set #132', 'Set #36', 'Set #37', 'Set #38', 'Set #223', 'Set #42', 'Set #43', 'Set #45', 'Set #6', 'Set #52']
+            locs = ['Route 2', 'Santalune Forest', 'Route 3', 'Route 22', 'Route 7 (Grass)', 'Route 7 (Yellow)', 'Route 7 (Purple)', 'Connecting Cave', 'Route 8 (Grass)', 'Route 8 (Yellow)', 'Route 8 (Rock)', 'Ambrette Town (Rock)', 'Route 9']
         elif game == 'ORAS':
-            sets = ['Set #34', 'Set #39', 'Set #48', 'Set #57', 'Set #346']
-            locs = ['Route 101', 'Route 102', 'Route 103', 'Route 104', 'Petalburg Woods']
+            sets = ['Set #34', 'Set #39', 'Set #48', 'Set #66', 'Set #346', 'Set #57', 'Set #42', 'Set #51', 'Set #69', 'Set #60', 'Set #147', 'Set #2', 'Set #10']
+            locs = ['Route 101', 'Route 102', 'Route 103', 'Route 104 (South)', 'Petalburg Woods', 'Route 104 (North)', 'Route 102 (Old Rod)', 'Route 103 (OR)', 'Route 104 (South, OR)', 'Route 104 (North, OR)', 'Route 115 (OR)', 'Dewford Town (OR)', 'Petalburg City (OR)']
         elif gen == 7:
             sets = ['Set #1', 'Set #2', 'Set #12', 'Set #13', 'Set #14', 'Set #3', 'Set #10', 'Set #80', 'Set #81', 'Set #82', 'Set #83', 'Set #29', 'Set #31', 'Set #28', 'Set #30', 'Set #49', 'Set #53', 'Set #52', 'Set #54', 'Set #56', 'Set #57', 'Set #68', 'Set #69', 'Set #34', 'Set #43', 'Set #47', 'Set #70', 'Set #71']
             locs = ['Route 1 Grass #1', 'Route 1 Grass #2', 'Route 1 Grass #3', 'Route 1 Grass #4', 'Route 1 Grass #5', "Professor's House #1", "Professor's House #2", 'Trainers School #1', 'Trainers School #2', 'Trainers School #3', 'Trainers School #4', 'Hauoli Grass Area #1', 'Hauoli Grass Area #2', 'Hauoli Grass Area #3', 'Hauoli Grass Area #4', 'Route 2 Grass #1', 'Route 2 Grass #2', 'Route 2 Grass #3', 'Route 2 Grass #4', 'Route 2 Grass #5', 'Route 2 Grass #6', 'Hauoli Cemetary #1', 'Hauoli Cemetary #2', 'Route 3 Grass #1', 'Route 3 Grass #2', 'Route 3 Grass #3', 'Melemele Meadow', 'Seaward Cave']
-        pivotlocs = pd.merge(wilds_df, pd.DataFrame(sets, locs).reset_index(), how = 'inner', left_on='set', right_on=0).rename(columns={'index':'locname'})
+        for i in range(0, len(sets)):
+            sorter.append(i)
+        # pivotlocs = pd.merge(wilds_df, pd.DataFrame(sets, locs).reset_index(), how = 'inner', left_on='set', right_on=0).rename(columns={'index':'locname'})
+        pivotdf = pd.DataFrame([sets, locs, sorter]).transpose()
+        pivotlocs = pd.merge(wilds_df, pivotdf, how = 'inner', left_on='set', right_on=0).rename(columns={1:'locname'})
+        pivotlocs = pivotlocs.infer_objects(copy=False).fillna('')
+        pivotlocs = pivotlocs.sort_values(2).reset_index()
 
         f1 = ('Franklin Gothic Medium', 12)
         f2 = ('Franklin Gothic Medium', 10)
@@ -327,7 +334,7 @@ def logloader_solo(track_size):
         tfont = ('Franklin Gothic Medium', 12)
         tfont2 = ('Franklin Gothic Medium', 10)
         if game == 'XY':
-            name = ['Viola', 'Grant', 'Korrina', 'Ramos', 'Clemont', 'Valarie', 'Olympia', 'Wulfric', 'E4 Wikstrom', 'E4 Malva', 'E4 Drasna', 'E4 Siebold', 'Diantha', 'Lysandre #1', 'Lysandre #2', 'Lysandre #3']
+            name = ['Viola', 'Grant', 'Korrina', 'Ramos', 'Clemont', 'Valerie', 'Olympia', 'Wulfric', 'E4 Wikstrom', 'E4 Malva', 'E4 Drasna', 'E4 Siebold', 'Diantha', 'Lysandre #1', 'Lysandre #2', 'Lysandre #3']
             idx = [5, 75, 20, 21, 22, 23, 24, 25, 186, 268, 269, 270, 275, 302, 524, 525]
             titles = ['Rivals', 'Gym Leaders', 'Elite Four', 'Team Flare']
             t_dict = {titles[0]:'', 
@@ -665,8 +672,8 @@ def logloader_solo(track_size):
                     window[f'-log-fulltm{i}-'].update(text_color='#339ec4')
                 i += 1
             window['-log-tmpkmn-'].update(f'{pokemon.iloc[p,1]} ({sum(pokemon.iloc[p,3:9])} BST)')
-        elif event in ('-logpivot-loc0-', '-logpivot-loc1-', '-logpivot-loc2-', '-logpivot-loc3-', '-logpivot-loc4-'):
-            n = int(event[-2:].replace('-',''))
+        elif event in ('-logpivot-loc0-', '-logpivot-loc1-', '-logpivot-loc2-', '-logpivot-loc3-', '-logpivot-loc4-', '-logpivot-loc5-', '-logpivot-loc6-', '-logpivot-loc7-', '-logpivot-loc8-', '-logpivot-loc9-', '-logpivot-loc10-', '-logpivot-loc11-', '-logpivot-loc12-', '-logpivot-loc13-', '-logpivot-loc14-', '-logpivot-loc15-', '-logpivot-loc16-', '-logpivot-loc17-', '-logpivot-loc18-', '-logpivot-loc19-', '-logpivot-loc20-', '-logpivot-loc21-', '-logpivot-loc22-', '-logpivot-loc23-', '-logpivot-loc24-', '-logpivot-loc25-', '-logpivot-loc26-', '-logpivot-loc27-', '-logpivot-loc28-'):
+            n = int(event[-3:].replace('-','').replace('c',''))
             for i in range(0, len(logpivotlocs)-1): # turn off all different colors, then turn on for current
                 window[f'-logpivot-loc{i}-'].update(text_color='white')
             window[event].update(text_color='#f0f080')
