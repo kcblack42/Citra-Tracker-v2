@@ -7,8 +7,8 @@
 2. Navigate to citra-linux-appimage-xxxxxxx-xxxxxxx/scripting.
 3. Setup a virtual python environment.
    ```bash
-   python3 -m venv .venv
-   source .venv/bin/activate
+   python3 -m venv .ironmon
+   source .ironmon/bin/activate
    ```
 4. Make the launcher executable and run it.
    ```bash
