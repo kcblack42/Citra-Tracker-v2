@@ -1,5 +1,22 @@
 ### INSTALLATION INSTRUCTIONS ###
 
+<details>
+  <summary>ADDITIONAL STEPS ON LINUX</summary>
+
+1. Install `python3`,`python3-pip` and `tk`.
+2. Navigate to citra-linux-appimage-xxxxxxx-xxxxxxx/scripting.
+3. Setup a virtual python environment.
+   ```bash
+   python3 -m venv .venv
+   source .venv/bin/activate
+   ```
+4. Make the launcher executable and run it.
+   ```bash
+   chmod +x launcher-UNIX.sh
+   ./launcher-UNUX.sh
+   ```
+</details>
+
 1. Drop all of these files into the same location as citra.py. This is usually in appdata/local.
 2. Get a pokemon from the bag/lab/etc.
 3. Run the tracker (go to the folder you just dropped your stuff in and use the launcher file)! That's it!
