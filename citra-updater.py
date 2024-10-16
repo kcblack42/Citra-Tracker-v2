@@ -45,26 +45,34 @@ def install(package):
 
 try: # check for FreeSimpleGUI and install if not present
     import FreeSimpleGUI as sg
+    if sg.__version__ != '5.1.0':
+        1/0
 except:
     install('FreeSimpleGUI==5.1.0')
     import FreeSimpleGUI as sg
 
 try: # check for Pillow and install if not present
     from PIL import Image
+    if Image.__version__ != '10.4.0':
+        1/0
 except:
-    install('Pillow==10.1.0')
+    install('Pillow==10.4.0')
     from PIL import Image
 
 try: # check for requests and install if not present
     import requests
+    if requests.__version__ != '2.31.0':
+        1/0
 except:
     install('requests==2.31.0')
     import requests
 
 try: # check for requests and install if not present
     import pandas as pd
+    if pd.__version__ != '2.2.3':
+        1/0
 except:
-    install('pandas==2.2.1')
+    install('pandas==2.2.3')
     import pandas as pd
 
 from util.gitcheck import gitcheck
