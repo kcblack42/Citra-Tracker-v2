@@ -77,13 +77,33 @@ def defaultuisettings(font_sizes, logview):
     if logview == [[]]:
         botcol7 = [
             [
+                sg.Image(key='-badge1-', visible=False), 
+                sg.Image(key='-badge2-', visible=False), 
+                sg.Image(key='-badge3-', visible=False), 
+                sg.Image(key='-badge4-', visible=False), 
+                sg.Image(key='-badge5-', visible=False), 
+                sg.Image(key='-badge6-', visible=False), 
+                sg.Image(key='-badge7-', visible=False), 
+                sg.Image(key='-badge8-', visible=False), 
+            ],
+            [
                 sg.Button('Clear Data', key='-clearnotes-solo-', font=('Franklin Gothic Medium', font_sizes[2]), pad=(2,2,2,2), auto_size_button=True, visible=False), 
                 sg.Button('Batch Settings', key='-settings-', font=('Franklin Gothic Medium', font_sizes[2]), pad=(2,2,2,2), auto_size_button=True, visible=False),
                 sg.Button('Load Log', key='-load-log-', font=('Franklin Gothic Medium', font_sizes[2]), pad=(2,2,2,2), auto_size_button=True, visible=False),
-        ],
+            ],
         ]
     else:
         botcol7 = [
+            [
+                sg.Image(key='-badge1-', visible=False), 
+                sg.Image(key='-badge2-', visible=False), 
+                sg.Image(key='-badge3-', visible=False), 
+                sg.Image(key='-badge4-', visible=False), 
+                sg.Image(key='-badge5-', visible=False), 
+                sg.Image(key='-badge6-', visible=False), 
+                sg.Image(key='-badge7-', visible=False), 
+                sg.Image(key='-badge8-', visible=False), 
+            ],
             [
                 sg.Button('Next Seed', key='-clearnotes-', font=('Franklin Gothic Medium', font_sizes[2]), pad=(2,2,2,2), auto_size_button=True, visible=False), 
                 sg.Button('Batch Settings', key='-settings-', font=('Franklin Gothic Medium', font_sizes[2]), pad=(2,2,2,2), auto_size_button=True, visible=False),
@@ -206,8 +226,8 @@ def defaultuisettings(font_sizes, logview):
     logviewerleft = logview
 
     layout_main = [[
-        sg.Column(trackerleft, size=(380, 580), key='-lc-'),
-        sg.Column(logviewerleft, size=(380, 580), key='-logviewer-', visible=False),
+        sg.Column(trackerleft, size=(380, 590), key='-lc-'),
+        sg.Column(logviewerleft, size=(380, 590), key='-logviewer-', visible=False),
         # sg.VerticalSeparator(key='-vs-'),
         sg.Column([[
             sg.Column(topcol1a, size=(200, 350), key='-tc1a-e-', visible = False), 
@@ -230,6 +250,6 @@ def defaultuisettings(font_sizes, logview):
         ], 
         [
             sg.Column(botcol7a, key='-bc7a-e-', visible = False), 
-        ]], size=(380, 580), key='-rc-')
+        ]], size=(380, 590), key='-rc-')
     ]]
     return layout_main

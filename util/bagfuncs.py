@@ -1,4 +1,4 @@
-def bagitems(c, game, pkmn, items):
+def bagitems(c, game, pkmn, items, badgeaddress):
     try:
         #stored as items, key items, tms, medicine, berries
         hphl={"total":0,"percent":0}
@@ -9,9 +9,9 @@ def bagitems(c, game, pkmn, items):
         elif game=="OmegaRuby/AlphaSapphire":
             itmdl=[147250640,9952,10208,10640,11024,12624] #reverse-berries,meds,tms,keys,items
         elif game=='Sun/Moon': # don't have bag info for gen 7 yet
-            return 0, 0, 0
+            return 0, 0, 0, 0
         elif game=='UltraSun/UltraMoon':
-            return 0, 0, 0
+            return 0, 0, 0, 0
         #print(int.from_bytes(c.read_memory(itmdl[0]-itmdl[5],2),"little")) #items
         #print(int.from_bytes(c.read_memory(itmdl[0]-itmdl[4],2),"little")) #key items
         #print(str(c.read_memory(147236508-0x67E892C,100),"utf-8")) #0x71A500 oras
@@ -19,6 +19,7 @@ def bagitems(c, game, pkmn, items):
         for item in range(0,100):   #heals, up to 100 also covers first 36 berries
             memread_itemid = int.from_bytes(c.read_memory(itmdl[0]-itmdl[2]+(item*4),2),"little")
             memread_itemct = int.from_bytes(c.read_memory(itmdl[0]-itmdl[2]+2+(item*4),2),"little")
+            memread_badgect = int.from_bytes(c.read_memory(badgeaddress,2),"little")
             # print(memread_itemid, ';;;', items[str(memread_itemid)]["name"], ';;;', memread_itemct)
             if memread_itemid!=0:
                 if "heal" not in items[str(memread_itemid)].keys():
@@ -41,8 +42,9 @@ def bagitems(c, game, pkmn, items):
                         hphl['percent']=str(round(int(hphl['percent'])+(int(items[str(memread_itemid)]["heal"]["value"])*memread_itemct*100/pkmn.maxhp)))
                     else:
                         hphl['percent']=str(int(hphl['percent'])+100*memread_itemct)
+            badgect = memread_badgect
         # print(hphl,statushl,pphl)
-        return hphl, statushl, pphl
+        return hphl, statushl, pphl, badgect
     except:
         if game in ('X/Y', 'OmegaRuby/AlphaSapphire'):
             print("Bag not read")

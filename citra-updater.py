@@ -90,6 +90,7 @@ track_size = (600, 600)
 font_sizes = [14, 11, 9, 15, 12]
 sg.set_options(font=('Franklin Gothic Medium', font_sizes[0]), text_color='white', background_color='black', element_background_color='black', text_element_background_color='black', tooltip_font=('Franklin Gothic Medium', font_sizes[1]), tooltip_time=100, scaling=scale, element_padding=(2,2,2,2), suppress_error_popups=True)
 refresh_rate = 4000
+badgesize = 40
 
 curr_version = open('version.txt', 'r').read()
 gitcheck(curr_version)
@@ -780,6 +781,7 @@ def getaddresses(c):
         trainerppadd=136338160
         multippadd=136331232+20784
         mongap=580
+        badgeaddress = 0x8C6A6A0
     elif getGam=='OmegaRuby/AlphaSapphire':
         partyaddress=0x8CF727C
         battlewildpartyadd=0x8CF727C-6000000+812440
@@ -791,6 +793,7 @@ def getaddresses(c):
         trainerppadd=0x8CF727C-0xAF2F5C-20+6928
         multippadd=0x8CF727C-0xAF2F5C-20+6928+20784
         mongap=580 #Gen 6 has a gap between each mon's data, and goes directly from your mons to the opponent's...
+        badgeaddress = 0x8C6DDD4
     elif getGam=='Sun/Moon':
         partyaddress=0x34195E10
         battlewildpartyadd=0x34195E10-30000000+5705168
@@ -802,6 +805,7 @@ def getaddresses(c):
         trainerppadd=0x34195E10-68732064-34
         multippadd=wildppadd
         mongap=816 #while Gen 7 spaces them out, so its 6 slots for your mon, 6 slots for teammates, then 6 slots for enemies.
+        badgeaddress = 0
     elif getGam=='UltraSun/UltraMoon':
         partyaddress=0x33F7FA44
         battlewildpartyadd=0x33F7FA44-30000000+7008668
@@ -813,17 +817,18 @@ def getaddresses(c):
         trainerppadd=0x33F7FA44-0x3f760d4-34
         multippadd=wildppadd
         mongap=816
+        badgeaddress = 0
     else:
-        return -1,-1,-1,-1,-1,-1
+        return -1,-1,-1,-1,-1,-1,-1
     
     if read_party(c,battlewildoppadd)[0].species_num() in range(1,808) and int.from_bytes(c.read_memory(wildppadd,1))<65:
-        return battlewildpartyadd,battlewildoppadd,wildppadd,curoppadd,'w',mongap
+        return battlewildpartyadd,battlewildoppadd,wildppadd,curoppadd,'w',mongap,badgeaddress
     elif read_party(c,battletraineroppadd)[0].species_num() in range(1,808) and int.from_bytes(c.read_memory(trainerppadd,1))<65:
-        return battletrainerpartyadd,battletraineroppadd,trainerppadd,curoppadd,'t',mongap
+        return battletrainerpartyadd,battletraineroppadd,trainerppadd,curoppadd,'t',mongap,badgeaddress
     # elif read_party(c,battletraineroppadd)[0].species_num() in range(1,808) and int.from_bytes(c.read_memory(multippadd,1)) in range(1,65):
-    #     return battletrainerpartyadd,battletraineroppadd,multippadd,curoppadd,'m',mongap
+    #     return battletrainerpartyadd,battletraineroppadd,multippadd,curoppadd,'m',mongap,badgeaddress
     else:
-        return partyaddress,0,0,0,'p',mongap
+        return partyaddress,0,0,0,'p',mongap,badgeaddress
 def cls():
     os.system('cls' if os.name=='nt' else 'clear')
 
@@ -1582,7 +1587,7 @@ def run():
                                 window[f'-log-train-pkmnlvl-{i}-'].update(t_dict[t][t_names[n]][1][j+1])
                     elif event in ('-load-log-'):
                         logloader_solo((380, 580))
-                    partyadd,enemyadd,ppadd,curoppnum,enctype,mongap=getaddresses(c)
+                    partyadd,enemyadd,ppadd,curoppnum,enctype,mongap,badgeaddress=getaddresses(c)
                     # print("loops" + str(loops))
                     loops+=1
 
@@ -1656,8 +1661,9 @@ def run():
                                     # print(pkmn.species_num())
                             window['-slotdrop-'].Update(values=slot, value=slotchoice, visible=True)
                             # print(c, ';;;', getGame(c), ';;;', pkmn, ';;;', items)
-                            hphl, statushl, pphl = bagitems(c, getGame(c), pkmn, items)
+                            hphl, statushl, pphl, badgect = bagitems(c, getGame(c), pkmn, items, badgeaddress)
                             # print(enctype, ';;;', pkmn.name, ';;;', party.index(pkmn)+1, ';;;', pkmnindex+12)
+                            # print(badgect)
                             if enctype!='p':
                                 #grabs in battle types
                                 pkmntypes=[]
@@ -1842,6 +1848,12 @@ def run():
                                         window['-clearnotes-solo-'].update(visible=True)
                                     window['-load-log-'].update(visible=True)
                                     window['-settings-'].update(visible=True)
+                                    for i in range(1,9):
+                                        # print(i, ';;;', f'images/badges{gameabbr}/{i}u.png')
+                                        if i > badgect:
+                                            window[f'-badge{i}-'].Update(resize(f'images/badges{gameabbr}/{i}u.png', (badgesize,badgesize)), visible = True)
+                                        else:
+                                            window[f'-badge{i}-'].Update(resize(f'images/badges{gameabbr}/{i}o.png', (badgesize,badgesize)), visible = True)
                                     for move in pkmn.moves:
                                         stab = ''
                                         movetyp=movetype(pkmn,move,pkmn.held_item_num)
@@ -2151,6 +2163,8 @@ def run():
                                     for move in pkmn.moves:
                                         if int.from_bytes(c.read_memory(ppadd+(mongap*(pk-1))+(14*(pkmn.moves).index(move)),1))==int.from_bytes(c.read_memory(ppadd+1+(mongap*(pk-1))+(14*(pkmn.moves).index(move)),1)): 
                                             continue
+                                        if int.from_bytes(c.read_memory(ppadd+(mongap*(pk-1))+(14*(pkmn.moves).index(move)),1)) > move["maxpp"]:
+                                            continue #checks if pp looks like 59/15, could possibly fix a bunch of the buggy connection issues since nothing else we've tried has worked
                                         # typetable={
                                         #     "Normal":[1,1,1,1,1,.5,1,0,.5,1,1,1,1,1,1,1,1,1,1],
                                         #     "Fighting":[2,1,.5,.5,1,2,.5,0,2,1,1,1,1,.5,2,1,2,.5,1],
@@ -2363,7 +2377,15 @@ def run():
                                     window['-clearnotes-solo-'].update(visible=True)
                                 window['-load-log-'].update(visible=True)
                                 window['-settings-'].update(visible=True)                                
+                                for i in range(1,9):
+                                    # print(i, ';;;', f'images/badges{gameabbr}/{i}u.png')
+                                    if i > badgect:
+                                        window[f'-badge{i}-'].Update(resize(f'images/badges{gameabbr}/{i}u.png', (badgesize,badgesize)), visible = True)
+                                    else:
+                                        window[f'-badge{i}-'].Update(resize(f'images/badges{gameabbr}/{i}o.png', (badgesize,badgesize)), visible = True)
                                 for move in pkmn.moves:
+                                    if move["maxpp"] == 0:
+                                        continue
                                     stab = ''
                                     movetyp=movetype(pkmn,move,pkmn.held_item_num)
                                     for type in pkmn.types:
