@@ -230,7 +230,7 @@ def defaultuisettings(font_sizes, logview):
         sg.Column(logviewerleft, size=(380, 590), key='-logviewer-', visible=False),
         # sg.VerticalSeparator(key='-vs-'),
         sg.Column([[
-            sg.Column(topcol1a, size=(200, 350), key='-tc1a-e-', visible = False), 
+            sg.Column(topcol1a, size=(200, 362), key='-tc1a-e-', visible = False), 
             sg.Column([[
                 sg.Column(topcol2a, element_justification='right', key='-tc2a-e-', size=(50, 200)), 
                 sg.Column(topcol3a, element_justification='right', key='-tc3a-e-', size=(60, 200))
