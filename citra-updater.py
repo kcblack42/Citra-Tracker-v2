@@ -101,6 +101,9 @@ trackadd=r"trackerdata.json"
 # settingsfile=r"settings.json"
 settingsfile=settings_load()
 
+with open("./constants/strings.json", "r") as file:
+    strings_consts = json.load(file) 
+
 def crypt(data, seed, i):
     value = data[i]
     shifted_seed = seed >> 16
@@ -194,39 +197,39 @@ class Pokemon:
             case 6: #Charizard
                 match form:
                     case 8 | 10:
-                        query+= " and pokemonsuffix = 'mega-x'"
+                        query+= strings_consts["SUFFIX"]["PKMN_SUFFIX_MEGA_X"]
                     case 16 | 18:
-                        query+= " and pokemonsuffix = 'mega-y'"
+                        query+= strings_consts["SUFFIX"]["PKMN_SUFFIX_MEGA_Y"]
             case 20: # (Alolan) Raticate
                 match form:
                     case 0 | 2:
-                        query+= " and pokemonsuffix is null"
+                        query+= strings_consts["SUFFIX"]["PKMN_SUFFIX_NULL"]
                     case _: # accounts for totems
-                        query+= " and pokemonsuffix is 'alola'"
+                        query+= strings_consts["SUFFIX"]["PKMN_SUFFIX_ALOLA"]
             case 25: # Pikachu partner forms
                 match form:
                     case 0 | 2:
-                        query+= " and pokemonsuffix is null"
+                        query+= strings_consts["SUFFIX"]["PKMN_SUFFIX_NULL"]
                     case _: # no idea how many partner forms there are, but they're all here apparently
                         query+= " and pokemonsuffix is partner"
             case 105: # (Alolan) Marowak
                 match form:
                     case 0 | 2:
-                        query+= " and pokemonsuffix is null"
+                        query+= strings_consts["SUFFIX"]["PKMN_SUFFIX_NULL"]
                     case _:
-                        query+= " and pokemonsuffix is 'alola'"
+                        query+= strings_consts["SUFFIX"]["PKMN_SUFFIX_ALOLA"]
             case 150: ### Mewtwo
                 match form:
                     case 4:
-                        query+= " and pokemonsuffix is null"
+                        query+= strings_consts["SUFFIX"]["PKMN_SUFFIX_NULL"]
                     case 12:
-                        query+= " and pokemonsuffix = 'mega-x'"
+                        query+= strings_consts["SUFFIX"]["PKMN_SUFFIX_MEGA_X"]
                     case 20: ### Mewtwo Y
-                        query+= " and pokemonsuffix = 'mega-y'"
+                        query+= strings_consts["SUFFIX"]["PKMN_SUFFIX_MEGA_Y"]
             case 151: ### Mew, not honestly sure why this one is weird
-                query+= " and pokemonsuffix is null"
+                query+= strings_consts["SUFFIX"]["PKMN_SUFFIX_NULL"]
             case 201: ### Unown
-                query+= " and pokemonsuffix is null"
+                query+= strings_consts["SUFFIX"]["PKMN_SUFFIX_NULL"]
             case 351: ### Castform
                 match form:
                     case 8 | 10:
@@ -246,7 +249,7 @@ class Pokemon:
             case 386: ### Deoxys
                 match form:
                     case 4:
-                        query+= " and pokemonsuffix is null"
+                        query+= strings_consts["SUFFIX"]["PKMN_SUFFIX_NULL"]
                     case 12:
                         query+= " and pokemonsuffix = 'attack'"
                     case 20:
@@ -254,7 +257,7 @@ class Pokemon:
                     case 28:
                         query+= " and pokemonsuffix = 'speed'"
             case 412: ### Burmy
-                query+= " and pokemonsuffix is null"
+                query+= strings_consts["SUFFIX"]["PKMN_SUFFIX_NULL"]
             case 413: ### Wormadam
                 match form:
                     case 10:
@@ -264,13 +267,13 @@ class Pokemon:
                     case 2:
                         query+= " and pokemonsuffix = 'plant'"
             case 414: ### Mothim
-                query+= " and pokemonsuffix is null"
+                query+= strings_consts["SUFFIX"]["PKMN_SUFFIX_NULL"]
             case 421: ### Cherrim
-                query+= " and pokemonsuffix is null"
+                query+= strings_consts["SUFFIX"]["PKMN_SUFFIX_NULL"]
             case 422: ### Shellos
-                query+= " and pokemonsuffix is null"
+                query+= strings_consts["SUFFIX"]["PKMN_SUFFIX_NULL"]
             case 423: ### Gastrodon
-                query+= " and pokemonsuffix is null"
+                query+= strings_consts["SUFFIX"]["PKMN_SUFFIX_NULL"]
             case 479: ### Rotom
                 match form:
                     case 12:
@@ -292,17 +295,17 @@ class Pokemon:
                     case 12:
                         query+= " and pokemonsuffix = 'sky'"
             case 550: ### Basculin
-                query+= " and pokemonsuffix is null"
+                query+= strings_consts["SUFFIX"]["PKMN_SUFFIX_NULL"]
             case 555: ### Darmanitan
                 match form:
                     case 0 | 2:
-                        query+= " and pokemonsuffix is null"
+                        query+= strings_consts["SUFFIX"]["PKMN_SUFFIX_NULL"]
                     case 8 | 10:
                         query+= " and pokemonsuffix = 'zen'"
             case 585: ### Deerling
-                query+= " and pokemonsuffix is null"
+                query+= strings_consts["SUFFIX"]["PKMN_SUFFIX_NULL"]
             case 586: ### Sawsbuck
-                query+= " and pokemonsuffix is null"
+                query+= strings_consts["SUFFIX"]["PKMN_SUFFIX_NULL"]
             case 646: ### Kyurem
                 match form:
                     case 12:
@@ -311,7 +314,7 @@ class Pokemon:
                     case 20:
                         query+= " and pokemonsuffix = 'black'"
             case 647: ### Keldeo
-                query+= " and pokemonsuffix is null"
+                query+= strings_consts["SUFFIX"]["PKMN_SUFFIX_NULL"]
             case 648: ### Meloetta
                 match form:
                     case 12:
@@ -319,27 +322,27 @@ class Pokemon:
                     case 4: #base form lmao
                         query+= " and pokemonsuffix = 'aria'"
             case 649: ### Genesect
-                query+= " and pokemonsuffix is null"
+                query+= strings_consts["SUFFIX"]["PKMN_SUFFIX_NULL"]
             case 658: ### Greninja
                 match form:
                     case 8 | 16:
                         query+= " and pokemonsuffix = 'ash'"
             case 664 | 665 | 666 | 669: ### Scatterbug, Spewda, Vivillon, Flabébé
-                query+= " and pokemonsuffix is null"
+                query+= strings_consts["SUFFIX"]["PKMN_SUFFIX_NULL"]
             case 670: ### Floette
                 match form:
                     case 42: #0 8 16 24 32 40
                         query+= " and pokemonsuffix = 'eternal'"
                     case _:
-                        query+= " and pokemonsuffix is null"
+                        query+= strings_consts["SUFFIX"]["PKMN_SUFFIX_NULL"]
             case 671: ### Florges
-                query+= " and pokemonsuffix is null"
+                query+= strings_consts["SUFFIX"]["PKMN_SUFFIX_NULL"]
             case 676: ### Furfrou
-                query+= " and pokemonsuffix is null"
+                query+= strings_consts["SUFFIX"]["PKMN_SUFFIX_NULL"]
             case 678: ### Meowstic
                 match form:
                     case 0 | 8:
-                        query+= " and pokemonsuffix is null"
+                        query+= strings_consts["SUFFIX"]["PKMN_SUFFIX_NULL"]
                     case 10:
                         query+= " and pokemonsuffix = 'f'"
             case 681: ### Aegislash
@@ -349,7 +352,7 @@ class Pokemon:
                     case 8 | 10:
                         query+= " and pokemonsuffix = 'blade'"
             case 684: ### Swirlix (not sure if this is useful but testing)
-                query+= " and pokemonsuffix is null"
+                query+= strings_consts["SUFFIX"]["PKMN_SUFFIX_NULL"]
             case 710: ### Pumpkaboo
                 match form:
                     case 8 | 10:
@@ -359,7 +362,7 @@ class Pokemon:
                     case 24 | 26:
                         query+= " and pokemonsuffix = 'super'"
                     case _:
-                        query+= " and pokemonsuffix is null"
+                        query+= strings_consts["SUFFIX"]["PKMN_SUFFIX_NULL"]
             case 711: ### Gourgeist
                 match form:
                     case 8 | 10:
@@ -369,13 +372,13 @@ class Pokemon:
                     case 24 | 26:
                         query+= " and pokemonsuffix = 'super'"
                     case _:
-                        query+= " and pokemonsuffix is null"
+                        query+= strings_consts["SUFFIX"]["PKMN_SUFFIX_NULL"]
             case 716: ### Xerneas
-                query+= " and pokemonsuffix is null"
+                query+= strings_consts["SUFFIX"]["PKMN_SUFFIX_NULL"]
             case 718: ### Zygarde only needed for gen 7
                 match form:
                     case 4:
-                        query+= " and pokemonsuffix is null"
+                        query+= strings_consts["SUFFIX"]["PKMN_SUFFIX_NULL"]
                     case 12:
                         query+= " and pokemonsuffix = '10'"
                     case 20 | 36:
@@ -383,7 +386,7 @@ class Pokemon:
             case 720: ### Hoopa
                 match form:
                     case 4:
-                        query+= " and pokemonsuffix is null"
+                        query+= strings_consts["SUFFIX"]["PKMN_SUFFIX_NULL"]
                     case 12:
                         query+= " and pokemonsuffix = 'unbound'"
             case 741: ### Oricorio
@@ -405,7 +408,7 @@ class Pokemon:
             case 746: ### Wishiwashi
                 match form:
                     case 0 | 2:
-                        query+= " and pokemonsuffix is null"
+                        query+= strings_consts["SUFFIX"]["PKMN_SUFFIX_NULL"]
                     case _: # accounts for totem form
                         query+= " and pokemonsuffix = 'school'"
             case 774: ### Minior 4 12 20 28 36 44 52 60
@@ -415,7 +418,7 @@ class Pokemon:
             case 800: ### Necrozma
                 match form:
                     case 4:
-                        query+= " and pokemonsuffix is null"
+                        query+= strings_consts["SUFFIX"]["PKMN_SUFFIX_NULL"]
                     case 12:
                         query+= " and pokemonsuffix = 'dusk'"
                     case 20:
@@ -423,24 +426,24 @@ class Pokemon:
                     case 28:
                         query+= " and pokemonsuffix = 'ultra'"
             case 801: ### Magearna
-                query+= " and pokemonsuffix is null"
+                query+= strings_consts["SUFFIX"]["PKMN_SUFFIX_NULL"]
             case 19 | 20 | 26 | 27 | 28 | 37 | 38 | 50 | 51 | 52 | 53 | 74 | 75 | 76 | 88 | 89 | 103: ###alolan forms-none have separate forms so just case them for if their form > 0
                 match form:
                     case 8 | 10 | 12: # honestly not sure if any are genderless but sure
-                        query+= " and pokemonsuffix is 'alola'"
+                        query+= strings_consts["SUFFIX"]["PKMN_SUFFIX_ALOLA"]
                     case _:
-                        query+= " and pokemonsuffix is null"
+                        query+= strings_consts["SUFFIX"]["PKMN_SUFFIX_NULL"]
             case 735 | 738 | 743 | 752 | 754 | 758 | 777 | 778 | 784: # totem mons that aren't already accounted for elsewhere (totem-sized mons are likely a different form)
                 match form:
                     case _: 
-                        query+= " and pokemonsuffix is null"
+                        query+= strings_consts["SUFFIX"]["PKMN_SUFFIX_NULL"]
             # case 81 | 82 | 100 | 101 | 120 | 121 | 137 | 233 | 292 | 337 | 338 | 343 | 344 | 374 | 375 | 376 | 436 | 437 | 462 | 474 | 489 | 490 | 599 | 600 | 601 | 615 | 622 | 623 | 703 | 774 | 781 | 854 | 855 | 770 | 132 | 144 | 145 | 146 | 201 | 243 | 244 | 245 | 249 | 250 | 251 | 377 | 378 | 379 | 382 | 383 | 384 | 385 | 386 | 480 | 481 | 482 | 483 | 484 | 486 | 491 | 493 | 494 | 638 | 639 | 640 | 643 | 644 | 646 | 647 | 649 | 716 | 717 | 718 | 719 | 721: ### Genderless exceptions
-            #     query+= " and pokemonsuffix is null"
+            #     query+= strings_consts["SUFFIX"]["PKMN_SUFFIX_NULL"]
             case _:
                 if form > 0 and form != 2 and form != 4:
-                    query+= " and pokemonsuffix ='mega'"
+                    query+= strings_consts["SUFFIX"]["PKMN_SUFFIX_MEGA"]
                 else:
-                    query+= " and pokemonsuffix is null"
+                    query+= strings_consts["SUFFIX"]["PKMN_SUFFIX_NULL"]
         # print(query)
         self.id = cursor.execute(query).fetchone()[0]
         self.species,self.suffix,self.name = cursor.execute(f"""select pokemonspeciesname,pokemonsuffix,pokemonname from "pokemon.pokemon" where pokemonid = {self.id}""").fetchone()
@@ -592,15 +595,15 @@ class Pokemon:
         self.statusbyte = struct.unpack("<B",self.raw_data[0xE8:0xE9])[0] ### Status byte
         match self.statusbyte:
             case 1:
-                self.status = 'Paralyzed'
+                self.status = strings_consts["STATUS"]["PARALYZED"]
             case 2:
-                self.status = 'Asleep'
+                self.status = strings_consts["STATUS"]["ASLEEP"]
             case 3:
-                self.status = 'Frozen'
+                self.status = strings_consts["STATUS"]["FROZEN"]
             case 4:
-                self.status = 'Burned'
+                self.status = strings_consts["STATUS"]["BURNED"]
             case 5:
-                self.status = 'Poisoned'
+                self.status = strings_consts["STATUS"]["POISONED"]
             case _:
                 self.status = ''
         
@@ -1682,18 +1685,8 @@ def run():
                                         evolevel = ''
                                         evostring = ''
                                         evoloc = ''
-                                        if pkmn.name == 'Eevee':
-                                            evoitem = 'Any stone'
-                                        elif pkmn.name == 'Gloom':
-                                            evoitem = 'Leaf Stone/Sun Stone'
-                                        elif pkmn.name == 'Poliwhirl':
-                                            evoitem = 'Water Stone/Kings Rock'
-                                        elif pkmn.name == 'Clamperl':
-                                            evoitem = 'Deep Sea Tooth/Deep Sea Scale'
-                                        elif pkmn.name == 'Slowpoke':
-                                            evoitem = 'Kings Rock/Level 37'
-                                        elif pkmn.name == 'Kirlia':
-                                            evoitem = 'Lvl 30/Dawn Stone (M)'
+                                        if strings_const["EVO_ITEM"][pkmn.name]:
+                                            evoitem = strings_const["EVO_ITEM"][pkmn.name]
                                         # need to check snorunt
                                         else:
                                             evoitem = ('' if not pkmn.evoitem else 'w/'+pkmn.evoitem)
@@ -1960,18 +1953,8 @@ def run():
                                         evolevel = ''
                                         evostring = ''
                                         evoloc = ''
-                                        if pkmn.name == 'Eevee':
-                                            evoitem = 'Any stone'
-                                        elif pkmn.name == 'Gloom':
-                                            evoitem = 'Leaf Stone/Sun Stone'
-                                        elif pkmn.name == 'Poliwhirl':
-                                            evoitem = 'Water Stone/Kings Rock'
-                                        elif pkmn.name == 'Clamperl':
-                                            evoitem = 'Deep Sea Tooth/Deep Sea Scale'
-                                        elif pkmn.name == 'Slowpoke':
-                                            evoitem = 'Kings Rock/Level 37'
-                                        elif pkmn.name == 'Kirlia':
-                                            evoitem = 'Lvl 30/Dawn Stone (M)'
+                                        if strings_const["EVO_ITEM"][pkmn.name]:
+                                            evoitem = strings_const["EVO_ITEM"][pkmn.name]
                                         # need to check snorunt
                                         else:
                                             evoitem = ('' if not pkmn.evoitem else 'w/'+pkmn.evoitem)
@@ -2244,18 +2227,8 @@ def run():
                                     evolevel = ''
                                     evostring = ''
                                     evoloc = ''
-                                    if pkmn.name == 'Eevee':
-                                        evoitem = 'Any stone'
-                                    elif pkmn.name == 'Gloom':
-                                        evoitem = 'Leaf Stone/Sun Stone'
-                                    elif pkmn.name == 'Poliwhirl':
-                                        evoitem = 'Water Stone/Kings Rock'
-                                    elif pkmn.name == 'Clamperl':
-                                        evoitem = 'Deep Sea Tooth/Deep Sea Scale'
-                                    elif pkmn.name == 'Slowpoke':
-                                        evoitem = 'Kings Rock/Level 37'
-                                    elif pkmn.name == 'Kirlia':
-                                        evoitem = 'Lvl 30/Dawn Stone (M)'
+                                    if strings_const["EVO_ITEM"][pkmn.name]:
+                                        evoitem = strings_const["EVO_ITEM"][pkmn.name]
                                     # need to check snorunt
                                     else:
                                         evoitem = ('' if not pkmn.evoitem else 'w/'+pkmn.evoitem)
