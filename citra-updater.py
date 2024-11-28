@@ -110,6 +110,27 @@ EVO_ITEMS = strings_consts["EVO_ITEMS"]
 
 IMG_MODIFIER_STR = 'images/modifiers/modifier{}.png'
 
+def pkmnEvo(pkmn, key, window):
+    if pkmn.evo:
+        evofriend = ''
+        evolevel = ''
+        evostring = ''
+        evoloc = ''
+        if hasattr(EVO_ITEMS, pkmn.name):
+            evoitem = EVO_ITEMS[pkmn.name]
+        # need to check snorunt
+        else:
+            evoitem = ('' if not pkmn.evoitem else 'w/'+pkmn.evoitem)
+            evofriend = ('' if pkmn.evotype != 'Friendship' else 'w/ high friendship')
+            evolevel = ('' if not pkmn.evolevel else '@ level '+str(int(pkmn.evolevel)))
+            evostring = ('' if not pkmn.evostring else pkmn.evostring)
+            evoloc = ('' if not pkmn.evolocation else 'in '+pkmn.evolocation)
+        window[key].update('>', visible = True)
+        window[key].set_tooltip('Evolves {}{}{}{}{}'.format(evoitem, evofriend, evolevel, evostring, evoloc))
+    else:
+        window[key].update(visible = False)
+    
+
 def crypt(data, seed, i):
     value = data[i]
     shifted_seed = seed >> 16
@@ -1686,24 +1707,9 @@ def run():
                                         elif len(pkmn.types) < 3:
                                             window['-typeimg3-'].Update(visible = False)
                                             window['-typename3-'].Update(visible = False)
-                                    if pkmn.evo:
-                                        evofriend = ''
-                                        evolevel = ''
-                                        evostring = ''
-                                        evoloc = ''
-                                        if hasattr(EVO_ITEMS, pkmn.name):
-                                            evoitem = EVO_ITEMS[pkmn.name]
-                                        # need to check snorunt
-                                        else:
-                                            evoitem = ('' if not pkmn.evoitem else 'w/'+pkmn.evoitem)
-                                            evofriend = ('' if pkmn.evotype != 'Friendship' else 'w/ high friendship')
-                                            evolevel = ('' if not pkmn.evolevel else '@ level '+str(int(pkmn.evolevel)))
-                                            evostring = ('' if not pkmn.evostring else pkmn.evostring)
-                                            evoloc = ('' if not pkmn.evolocation else 'in '+pkmn.evolocation)
-                                        window['-evo-'].update('>', visible = True)
-                                        window['-evo-'].set_tooltip('Evolves {}{}{}{}{}'.format(evoitem, evofriend, evolevel, evostring, evoloc))
-                                    else:
-                                        window['-evo-'].update(visible = False)
+                                    
+                                    pkmnEvo(pkmn, '-evo-', window)
+
                                     if gen==6:
                                         levelnum=int.from_bytes(c.read_memory(ppadd+(mongap*(pk-1))-256,1))
                                         batabilnum=int.from_bytes(c.read_memory((ppadd+(mongap*(pk-1))+6-264),1))
@@ -1954,24 +1960,9 @@ def run():
                                         if len(pkmn.types) == 1:
                                             window['-typeimg2-e-'].Update(visible = False)
                                             window['-typename2-e-'].Update(visible = False)
-                                    if pkmn.evo:
-                                        evofriend = ''
-                                        evolevel = ''
-                                        evostring = ''
-                                        evoloc = ''
-                                        if hasattr(EVO_ITEMS, pkmn.name):
-                                            evoitem = EVO_ITEMS[pkmn.name]
-                                        # need to check snorunt
-                                        else:
-                                            evoitem = ('' if not pkmn.evoitem else 'w/'+pkmn.evoitem)
-                                            evofriend = ('' if pkmn.evotype != 'Friendship' else 'w/ high friendship')
-                                            evolevel = ('' if not pkmn.evolevel else '@ level '+str(int(pkmn.evolevel)))
-                                            evostring = ('' if not pkmn.evostring else pkmn.evostring)
-                                            evoloc = ('' if not pkmn.evolocation else 'in '+pkmn.evolocation)
-                                        window['-evo-e-'].update('>', visible = True)
-                                        window['-evo-e-'].set_tooltip('Evolves {}{}{}{}{}'.format(evoitem, evofriend, evolevel, evostring, evoloc))
-                                    else:
-                                        window['-evo-e-'].update(visible = False)
+                                    
+                                    pkmnEvo(pkmn, '-evo-e-', window)
+
                                     if gen==6:
                                         levelnum=int.from_bytes(c.read_memory(ppadd+(mongap*(pk-1))-256,1))
                                         batabilnum=int.from_bytes(c.read_memory((ppadd+(mongap*(pk-1))+6-264),1))
@@ -2228,24 +2219,9 @@ def run():
                                     if len(pkmn.types) == 1:
                                         window['-typeimg2-'].Update(visible = False)
                                         window['-typename2-'].Update(visible = False)
-                                if pkmn.evo:
-                                    evofriend = ''
-                                    evolevel = ''
-                                    evostring = ''
-                                    evoloc = ''
-                                    if hasattr(EVO_ITEMS, pkmn.name):
-                                        evoitem = EVO_ITEMS[pkmn.name]
-                                    # need to check snorunt
-                                    else:
-                                        evoitem = ('' if not pkmn.evoitem else 'w/'+pkmn.evoitem)
-                                        evofriend = ('' if pkmn.evotype != 'Friendship' else 'w/ high friendship')
-                                        evolevel = ('' if not pkmn.evolevel else '@ level '+str(int(pkmn.evolevel)))
-                                        evostring = ('' if not pkmn.evostring else pkmn.evostring)
-                                        evoloc = ('' if not pkmn.evolocation else 'in '+pkmn.evolocation)
-                                    window['-evo-'].update('>', visible = True)
-                                    window['-evo-'].set_tooltip('Evolves {}{}{}{}{}'.format(evoitem, evofriend, evolevel, evostring, evoloc))
-                                else:
-                                    window['-evo-'].update(visible = False)
+                                
+                                pkmnEvo(pkmn, '-evo-', window)
+
                                 if pkmn.status != '':
                                     window['-status-'].Update(resize('images/statuses/{}.png'.format(pkmn.status), (75, 20)), visible = True)
                                 else:
