@@ -324,13 +324,7 @@ class Pokemon:
                 match form:
                     case 8 | 16:
                         query+= " and pokemonsuffix = 'ash'"
-            case 664: ### Scatterbug
-                query+= " and pokemonsuffix is null"
-            case 665: ### Spewpa
-                query+= " and pokemonsuffix is null"
-            case 666: ### Vivillon
-                query+= " and pokemonsuffix is null"
-            case 669: ### Flabébé
+            case 664 | 665 | 666 | 669: ### Scatterbug, Spewda, Vivillon, Flabébé
                 query+= " and pokemonsuffix is null"
             case 670: ### Floette
                 match form:
@@ -443,11 +437,7 @@ class Pokemon:
             # case 81 | 82 | 100 | 101 | 120 | 121 | 137 | 233 | 292 | 337 | 338 | 343 | 344 | 374 | 375 | 376 | 436 | 437 | 462 | 474 | 489 | 490 | 599 | 600 | 601 | 615 | 622 | 623 | 703 | 774 | 781 | 854 | 855 | 770 | 132 | 144 | 145 | 146 | 201 | 243 | 244 | 245 | 249 | 250 | 251 | 377 | 378 | 379 | 382 | 383 | 384 | 385 | 386 | 480 | 481 | 482 | 483 | 484 | 486 | 491 | 493 | 494 | 638 | 639 | 640 | 643 | 644 | 646 | 647 | 649 | 716 | 717 | 718 | 719 | 721: ### Genderless exceptions
             #     query+= " and pokemonsuffix is null"
             case _:
-                if form == 2: ### female
-                    query+= " and pokemonsuffix is null"
-                elif form == 4: ### genderless
-                    query+= " and pokemonsuffix is null"
-                elif form > 0:
+                if form > 0 and form != 2 and form != 4:
                     query+= " and pokemonsuffix ='mega'"
                 else:
                     query+= " and pokemonsuffix is null"
@@ -753,10 +743,6 @@ class Pokemon6(Pokemon):
     def __init__(self, data):
         Pokemon.__init__(self, data)
 
-class Pokemon7(Pokemon):
-    def __init__(self, data):
-        Pokemon.__init__(self, data)
-
 def getGame(c):
     partylist=[0x8CE1CE8,0x8CF727C,0x34195E10,0x33F7FA44]
     try:
@@ -1047,10 +1033,9 @@ def movetype(pkmn,move,item):
 def getURLAbbr(game):
     if game == 15:
         return 'x-y'
-    elif game == 16:
+    if game == 16:
         return 'omega-ruby-alpha-sapphire/dex' ## ORAS sprites end in /dex
-    else:
-        return 'home'
+    return 'home'
     
 def resize(image_file, new_size, encode_format='PNG'):
     im = Image.open(image_file)
@@ -1074,12 +1059,9 @@ def typeformatting(typing):
 
 def natureformatting(nl, s):
     naturedict = {'raised':'#80f080', 'lowered':'#f08080', 'neutral':'#ffffff'}
-    if nl[s] == 'raised':
-        return naturedict['raised']
-    elif nl[s] == 'lowered':
-        return naturedict['lowered']
-    else:
-        return naturedict['neutral']
+    if nl[s] == 'raised' or nl[s] == 'lowered':
+        return naturedict[nl[s]]
+    return naturedict['neutral']
     
 def natureberries(nl):
     dislikedflavor = {'spicy':'Figy Berry', 'dry':'Wiki Berry', 'sweet':'Mago Berry', 'bitter':'Aguav Berry', 'sour':'Iapapa Berry', 'neutral':'No berry'}
@@ -1129,12 +1111,9 @@ def abil_popup(l):
     while True:
         event, values = window.read()
 
-        if (event == sg.WINDOW_CLOSED) or (event == 'Cancel'):
+        if (event == sg.WINDOW_CLOSED) or (event == 'Cancel') or (event == '-rem-'):
             break
-        elif event == '-rem-':
-            break
-        else:
-            print('OVER')
+        print('OVER')
 
     window.close()
 
@@ -1853,7 +1832,7 @@ def run():
                                     window['-settings-'].update(visible=True)
                                     for i in range(1,9):
                                         # print(i, ';;;', f'images/badges{gameabbr}/{i}u.png')
-                                        b = math.sqrt(badgect+1)
+                                        b = math.log(badgect+1)/math.log(2)
                                         if i > b:
                                             # window[f'-badge{i}-'].Update(resize(f'images/badges{gameabbr}/{i}u.png', (badgesize,badgesize)), visible = True)
                                             window[f'-badge{i}-'].Update(f'images/badges{gameabbr}/{i}u.png', visible = True)
@@ -2387,7 +2366,7 @@ def run():
                                 for i in range(1,9):
                                     # print(badgect, ';;;', f'images/badges{gameabbr}/{i}u.png')
                                     # badge counts: viola = 1, grant = 3 (?), korrina = 7
-                                    b = math.sqrt(badgect+1)
+                                    b = math.log(badgect+1)/math.log(2)
                                     if i > b:
                                         # window[f'-badge{i}-'].Update(resize(f'images/badges{gameabbr}/{i}u.png', (badgesize,badgesize)), visible = True)
                                         window[f'-badge{i}-'].Update(f'images/badges{gameabbr}/{i}u.png', visible = True)
