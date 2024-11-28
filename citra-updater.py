@@ -6,6 +6,7 @@ import sys
 import json
 import sqlite3
 import traceback
+import math
 # from configparser import ConfigParser
 from datetime import datetime
 import logging
@@ -1330,6 +1331,8 @@ def run():
                             window['-bc5a-e-'].update(visible = False)
                             window['-bc6a-e-'].update(visible = False)
                             window['-bc7a-e-'].update(visible = False)
+                            for i in range(1,9):
+                                window[f'-badge{i}-'].Update(resize(f'images/badges{gameabbr}/{i}u.png', (badgesize,badgesize)), visible = True)
                             ct = 0
                             while ct < 4:
                                 ct += 1
@@ -1850,10 +1853,13 @@ def run():
                                     window['-settings-'].update(visible=True)
                                     for i in range(1,9):
                                         # print(i, ';;;', f'images/badges{gameabbr}/{i}u.png')
-                                        if i > badgect:
-                                            window[f'-badge{i}-'].Update(resize(f'images/badges{gameabbr}/{i}u.png', (badgesize,badgesize)), visible = True)
+                                        b = math.sqrt(badgect+1)
+                                        if i > b:
+                                            # window[f'-badge{i}-'].Update(resize(f'images/badges{gameabbr}/{i}u.png', (badgesize,badgesize)), visible = True)
+                                            window[f'-badge{i}-'].Update(f'images/badges{gameabbr}/{i}u.png', visible = True)
                                         else:
-                                            window[f'-badge{i}-'].Update(resize(f'images/badges{gameabbr}/{i}o.png', (badgesize,badgesize)), visible = True)
+                                            # window[f'-badge{i}-'].Update(resize(f'images/badges{gameabbr}/{i}o.png', (badgesize,badgesize)), visible = True)
+                                            window[f'-badge{i}-'].Update(f'images/badges{gameabbr}/{i}o.png', visible = True)
                                     for move in pkmn.moves:
                                         stab = ''
                                         movetyp=movetype(pkmn,move,pkmn.held_item_num)
@@ -2376,13 +2382,18 @@ def run():
                                 else: 
                                     window['-clearnotes-solo-'].update(visible=True)
                                 window['-load-log-'].update(visible=True)
-                                window['-settings-'].update(visible=True)                                
+                                window['-settings-'].update(visible=True)    
+                                print('"badge count"=', badgect)                            
                                 for i in range(1,9):
-                                    # print(i, ';;;', f'images/badges{gameabbr}/{i}u.png')
-                                    if i > badgect:
-                                        window[f'-badge{i}-'].Update(resize(f'images/badges{gameabbr}/{i}u.png', (badgesize,badgesize)), visible = True)
+                                    # print(badgect, ';;;', f'images/badges{gameabbr}/{i}u.png')
+                                    # badge counts: viola = 1, grant = 3 (?), korrina = 7
+                                    b = math.sqrt(badgect+1)
+                                    if i > b:
+                                        # window[f'-badge{i}-'].Update(resize(f'images/badges{gameabbr}/{i}u.png', (badgesize,badgesize)), visible = True)
+                                        window[f'-badge{i}-'].Update(f'images/badges{gameabbr}/{i}u.png', visible = True)
                                     else:
-                                        window[f'-badge{i}-'].Update(resize(f'images/badges{gameabbr}/{i}o.png', (badgesize,badgesize)), visible = True)
+                                        # window[f'-badge{i}-'].Update(resize(f'images/badges{gameabbr}/{i}o.png', (badgesize,badgesize)), visible = True)
+                                        window[f'-badge{i}-'].Update(f'images/badges{gameabbr}/{i}o.png', visible = True)
                                 for move in pkmn.moves:
                                     if move["maxpp"] == 0:
                                         continue
