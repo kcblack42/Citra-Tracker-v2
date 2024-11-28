@@ -1,19 +1,19 @@
 {
-    "SUFFIX": {
+    "SUFFIXES": {
         "PKMN_SUFFIX_NULL": " and pokemonsuffix is null",
         "PKMN_SUFFIX_MEGA_X": " and pokemonsuffix = 'mega-x'",
         "PKMN_SUFFIX_MEGA_Y": " and pokemonsuffix = 'mega-y'",
         "PKMN_SUFFIX_ALOLA": " and pokemonsuffix is 'alola'",
         "PKMN_SUFFIX_MEGA": " and pokemonsuffix ='mega'"
     },
-    "STATUS": {
+    "STATUSES": {
         "PARALYZED": "Paralyzed",
         "ASLEEP": "Asleep",
         "FROZEN": "Frozen",
         "BURNED": "Burned",
         "POISONED": "Poisoned"
     },
-    "EVO_ITEM": {
+    "EVO_ITEMS": {
         "Eevee": "Any Stone",
         "Gloom": "Leaf Stone/Sun Stone",
         "Poliwhirl": "Water Stone/Kings Rock",
@@ -21,5 +21,4 @@
         "Slowpoke": "Kings Rock/Level 37",
         "Kirlia": "Lvl 30/Dawn Stone (M)"
     }
-    
 }
