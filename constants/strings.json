@@ -12,13 +12,5 @@
         "FROZEN": "Frozen",
         "BURNED": "Burned",
         "POISONED": "Poisoned"
-    },
-    "EVO_ITEMS": {
-        "Eevee": "Any Stone",
-        "Gloom": "Leaf Stone/Sun Stone",
-        "Poliwhirl": "Water Stone/Kings Rock",
-        "Clamperl": "Deep Sea Tooth/Deep Sea Scale",
-        "Slowpoke": "Kings Rock/Level 37",
-        "Kirlia": "Lvl 30/Dawn Stone (M)"
     }
 }

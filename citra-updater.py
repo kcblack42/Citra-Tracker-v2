@@ -80,6 +80,7 @@ from util.gitcheck import gitcheck
 from util.notesclear import notesclear, notesclear_solo
 from util.settings import autoload_settings, settings_load
 from util.bagfuncs import bagitems
+from util.pkmnEvo import pkmnEvo
 from util.uisettings import defaultuisettings
 import util.logreader as lr
 from util.logreadersolo import logloader_solo
@@ -106,30 +107,8 @@ with open("./constants/strings.json", "r") as file:
 
 STATUSES = strings_consts["STATUSES"]
 SUFFIXES = strings_consts["SUFFIXES"]
-EVO_ITEMS = strings_consts["EVO_ITEMS"]
 
 IMG_MODIFIER_STR = 'images/modifiers/modifier{}.png'
-
-def pkmnEvo(pkmn, key, window):
-    if pkmn.evo:
-        evofriend = ''
-        evolevel = ''
-        evostring = ''
-        evoloc = ''
-        if hasattr(EVO_ITEMS, pkmn.name):
-            evoitem = EVO_ITEMS[pkmn.name]
-        # need to check snorunt
-        else:
-            evoitem = ('' if not pkmn.evoitem else 'w/'+pkmn.evoitem)
-            evofriend = ('' if pkmn.evotype != 'Friendship' else 'w/ high friendship')
-            evolevel = ('' if not pkmn.evolevel else '@ level '+str(int(pkmn.evolevel)))
-            evostring = ('' if not pkmn.evostring else pkmn.evostring)
-            evoloc = ('' if not pkmn.evolocation else 'in '+pkmn.evolocation)
-        window[key].update('>', visible = True)
-        window[key].set_tooltip('Evolves {}{}{}{}{}'.format(evoitem, evofriend, evolevel, evostring, evoloc))
-    else:
-        window[key].update(visible = False)
-    
 
 def crypt(data, seed, i):
     value = data[i]
@@ -886,179 +865,173 @@ def analyze_statuses(self):
 def calcPower(pkmn,move,hp1,hp2,pkmnwt,enwt):
     if move['name'] in ('Eruption','Water Spout'):
         return int(int(hp1)/int(hp2)*150)
-    elif move['name']=='Return':
+    if move['name']=='Return':
         return round(pkmn.friendship/2.5)
-    elif move['name']=="Frustration":
+    if move['name']=="Frustration":
         return round((255-pkmn.friendship)/2.5)
-    elif move["name"] in ("Low Kick","Grass Knot"):
+    if move["name"] in ("Low Kick","Grass Knot"):
         try:
             weightnum=cursor.execute(enwt).fetchone()[0]
             if weightnum>=200:
                 return 120
-            elif 100<=weightnum<200:
+            if 100<=weightnum<200:
                 return 100
-            elif 50<=weightnum<100:
+            if 50<=weightnum<100:
                 return 80
-            elif 25<=weightnum<50:
+            if 25<=weightnum<50:
                 return 60
-            elif 10<=weightnum<25:
+            if 10<=weightnum<25:
                 return 40
             else:
                 return 20
         except:
             return "WT"
-    elif move["name"] in ("Heat Crash","Heavy Slam"):
+    if move["name"] in ("Heat Crash","Heavy Slam"):
         try:
             weightnum=cursor.execute(enwt).fetchone()[0]
             weightratio=(pkmnwt/weightnum)
             if weightratio>=5:
                 return 120
-            elif 4<=weightratio<5:
+            if 4<=weightratio<5:
                 return 100
-            elif 3<=weightratio<4:
+            if 3<=weightratio<4:
                 return 80
-            elif 2<=weightratio<3:
+            if 2<=weightratio<3:
                 return 60
             else:
                 return 40
         except:
             return "WT"
-    elif move['name']=="Fling":
+    if move['name']=="Fling":
         return "ITEM"
-    elif move['name'] in ("Crush Grip","Wring Out"):
+    if move['name'] in ("Crush Grip","Wring Out"):
         return ">HP"
-    elif move['name'] in ("Flail","Reversal"):
+    if move['name'] in ("Flail","Reversal"):
         if int(hp1)/int(hp2)>=.6875:
             return 20
-        elif int(hp1)/int(hp2)>=.3542:
+        if int(hp1)/int(hp2)>=.3542:
             return 40
-        elif int(hp1)/int(hp2)>=.2083:
+        if int(hp1)/int(hp2)>=.2083:
             return 80
-        elif int(hp1)/int(hp2)>=.1042:
+        if int(hp1)/int(hp2)>=.1042:
             return 100
-        elif int(hp1)/int(hp2)>=.0417:
+        if int(hp1)/int(hp2)>=.0417:
             return 150
-        elif int(hp1)/int(hp2)<.0417:
+        if int(hp1)/int(hp2)<.0417:
             return 200
-        else:
-            return "ERR"
-    elif move['name'] in ('Psywave', 'Magnitude'):
+        return "ERR"
+
+    if move['name'] in ('Psywave', 'Magnitude'):
         return 'VAR'
-    elif move['name'] in ('Seismic Toss', 'Night Shade'):
+    if move['name'] in ('Seismic Toss', 'Night Shade'):
         return 'LVL'
-    elif move['name'] in ('Electro Ball', 'Gyro Ball'):
+    if move['name'] in ('Electro Ball', 'Gyro Ball'):
         return 'SPD'
-    elif move['name'] == 'Punishment':
+    if move['name'] == 'Punishment':
         return '60+'
-    else:
-        return ('-' if not move['power'] else int(move['power']))
+    return ('-' if not move['power'] else int(move['power']))
     
 def calcAcc(move, pkmn1lvl, pkmn2lvl):
     if move['name'] in ('Horn Drill', 'Sheer Cold', 'Guillotine', 'Fissure'):
         if pkmn1lvl >= pkmn2lvl:
             a = 30 + pkmn1lvl - pkmn2lvl
             return a
-        else:
-            return 'X'
-    elif not move['acc']:
+        return 'X'
+    if not move['acc']:
         return '-'
-    else: 
-        return int(move['acc'])
+    return int(move['acc'])
 
 def movetype(pkmn,move,item):
     if move=="Revelation Dance":
         return (pkmn.types)[0]
-    elif move=="Hidden Power":
+    if move=="Hidden Power":
         return "Null"
-    elif move=="Natural Gift":
+    if move=="Natural Gift":
         return "Normal"
-    elif move=="Judgement":
+    if move=="Judgement":
         if item=="298":
             return "Fire"
-        elif item=="299":
+        if item=="299":
             return "Water"
-        elif item=="300":
+        if item=="300":
             return "Electric"
-        elif item=="301":
+        if item=="301":
             return "Grass"
-        elif item=="302":
+        if item=="302":
             return "Ice"
-        elif item=="303":
+        if item=="303":
             return "Fighting"
-        elif item=="304":
+        if item=="304":
             return "Poison"
-        elif item=="305":
+        if item=="305":
             return "Ground"
-        elif item=="306":
+        if item=="306":
             return "Flying"
-        elif item=="307":
+        if item=="307":
             return "Psychic"
-        elif item=="308":
+        if item=="308":
             return "Bug"
-        elif item=="309":
+        if item=="309":
             return "Rock"
-        elif item=="310":
+        if item=="310":
             return "Ghost"
-        elif item=="311":
+        if item=="311":
             return "Dragon"
-        elif item=="312":
+        if item=="312":
             return "Dark"
-        elif item=="313":
+        if item=="313":
             return "Steel"
-        elif item=="644":
+        if item=="644":
             return "Fairy"
-        else:
-            return "Normal"
-    elif move=="Techno Blast":
+        return "Normal"
+    if move=="Techno Blast":
         if item=="116":
             return "Water"
-        elif item=="117":
+        if item=="117":
             return "Electric"
-        elif item=="118":
+        if item=="118":
             return "Fire"
-        elif item=="119":
+        if item=="119":
             return "Ice"
-        else:
-            return "Normal"
-    elif move=="Multi-Attack":
+        return "Normal"
+    if move=="Multi-Attack":
         if item=="912":
             return "Fire"
-        elif item=="913":
+        if item=="913":
             return "Water"
-        elif item=="915":
+        if item=="915":
             return "Electric"
-        elif item=="914":
+        if item=="914":
             return "Grass"
-        elif item=="917":
+        if item=="917":
             return "Ice"
-        elif item=="904":
+        if item=="904":
             return "Fighting"
-        elif item=="906":
+        if item=="906":
             return "Poison"
-        elif item=="907":
+        if item=="907":
             return "Ground"
-        elif item=="905":
+        if item=="905":
             return "Flying"
-        elif item=="916":
+        if item=="916":
             return "Psychic"
-        elif item=="909":
+        if item=="909":
             return "Bug"
-        elif item=="908":
+        if item=="908":
             return "Rock"
-        elif item=="910":
+        if item=="910":
             return "Ghost"
-        elif item=="918":
+        if item=="918":
             return "Dragon"
-        elif item=="919":
+        if item=="919":
             return "Dark"
-        elif item=="911":
+        if item=="911":
             return "Steel"
-        elif item=="920":
+        if item=="920":
             return "Fairy"
-        else:
-            return "Normal"
-    else:
-        return move['type']
+        return "Normal"
+    
+    return move['type']
     
 def getURLAbbr(game):
     if game == 15:
@@ -1098,21 +1071,21 @@ def natureberries(nl):
     if nl[0] == 'lowered':
         s = '-attlabel-'
         return dislikedflavor['spicy'], s
-    elif nl[1] == 'lowered':
+    if nl[1] == 'lowered':
         s = '-deflabel-'
         return dislikedflavor['sour'], s
-    elif nl[2] == 'lowered':
+    if nl[2] == 'lowered':
         s = '-spattlabel-'
         return dislikedflavor['dry'], s
-    elif nl[3] == 'lowered':
+    if nl[3] == 'lowered':
         s = '-spdeflabel-'
         return dislikedflavor['bitter'], s
-    elif nl[4] == 'lowered':
+    if nl[4] == 'lowered':
         s = '-speedlabel-'
         return dislikedflavor['sweet'], s
-    else:
-        s = '-bstlabel-'
-        return dislikedflavor['neutral'], s
+
+    s = '-bstlabel-'
+    return dislikedflavor['neutral'], s
 
 def statnotes(s, pos):
     nt = s['stats'][pos]
