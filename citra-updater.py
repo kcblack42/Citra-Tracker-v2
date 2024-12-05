@@ -7,6 +7,7 @@ import json
 import sqlite3
 import traceback
 import math
+import shutil
 # from configparser import ConfigParser
 from datetime import datetime
 import logging
@@ -95,9 +96,19 @@ refresh_rate = 4000
 badgesize = 40
 
 curr_version = open('version.txt', 'r').read()
-gitcheck(curr_version)
+try: #should keep you from getting kicked out of the tracker for either not having interwebz or being randomly rate limited by git
+    gitcheck(curr_version)
+except Exception as e: 
+    print(e)
+    
+if os.path.exists('trackerdata.json'):
+    trackadd=r"trackerdata.json"
+else:
+    print('Trackerdata not found - creating file.')
+    nf = open('trackerdata.json', 'w+')
+    shutil.copy('util/trackerdata-blank.json', 'trackerdata.json')
+    trackadd=r"trackerdata.json"
 
-trackadd=r"trackerdata.json"
 # will also need to try/except some of this as well
 # settingsfile=r"settings.json"
 settingsfile=settings_load()
@@ -2290,7 +2301,7 @@ def run():
                                     window['-clearnotes-solo-'].update(visible=True)
                                 window['-load-log-'].update(visible=True)
                                 window['-settings-'].update(visible=True)    
-                                print('"badge count"=', badgect)                            
+                                # print('"badge count"=', badgect)                            
                                 for i in range(1,9):
                                     # print(badgect, ';;;', f'images/badges{gameabbr}/{i}u.png')
                                     # badge counts: viola = 1, grant = 3 (?), korrina = 7
