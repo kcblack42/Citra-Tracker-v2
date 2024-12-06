@@ -7,6 +7,7 @@ import json
 import sqlite3
 import traceback
 import math
+import shutil
 # from configparser import ConfigParser
 from datetime import datetime
 import logging
@@ -80,6 +81,7 @@ from util.gitcheck import gitcheck
 from util.notesclear import notesclear, notesclear_solo
 from util.settings import autoload_settings, settings_load
 from util.bagfuncs import bagitems
+from util.pkmnEvo import pkmnEvo
 from util.uisettings import defaultuisettings
 import util.logreader as lr
 from util.logreadersolo import logloader_solo
@@ -94,12 +96,30 @@ refresh_rate = 4000
 badgesize = 40
 
 curr_version = open('version.txt', 'r').read()
-gitcheck(curr_version)
+try: #should keep you from getting kicked out of the tracker for either not having interwebz or being randomly rate limited by git
+    gitcheck(curr_version)
+except Exception as e: 
+    print(e)
+    
+if os.path.exists('trackerdata.json'):
+    trackadd=r"trackerdata.json"
+else:
+    print('Trackerdata not found - creating file.')
+    nf = open('trackerdata.json', 'w+')
+    shutil.copy('util/trackerdata-blank.json', 'trackerdata.json')
+    trackadd=r"trackerdata.json"
 
-trackadd=r"trackerdata.json"
 # will also need to try/except some of this as well
 # settingsfile=r"settings.json"
 settingsfile=settings_load()
+
+with open("./constants/strings.json", "r") as file:
+    strings_consts = json.load(file)
+
+STATUSES = strings_consts["STATUSES"]
+SUFFIXES = strings_consts["SUFFIXES"]
+
+IMG_MODIFIER_STR = 'images/modifiers/modifier{}.png'
 
 def crypt(data, seed, i):
     value = data[i]
@@ -194,39 +214,39 @@ class Pokemon:
             case 6: #Charizard
                 match form:
                     case 8 | 10:
-                        query+= " and pokemonsuffix = 'mega-x'"
+                        query+= SUFFIXES["PKMN_SUFFIX_MEGA_X"]
                     case 16 | 18:
-                        query+= " and pokemonsuffix = 'mega-y'"
+                        query+= SUFFIXES["PKMN_SUFFIX_MEGA_Y"]
             case 20: # (Alolan) Raticate
                 match form:
                     case 0 | 2:
-                        query+= " and pokemonsuffix is null"
+                        query+= SUFFIXES["PKMN_SUFFIX_NULL"]
                     case _: # accounts for totems
-                        query+= " and pokemonsuffix is 'alola'"
+                        query+= SUFFIXES["PKMN_SUFFIX_ALOLA"]
             case 25: # Pikachu partner forms
                 match form:
                     case 0 | 2:
-                        query+= " and pokemonsuffix is null"
+                        query+= SUFFIXES["PKMN_SUFFIX_NULL"]
                     case _: # no idea how many partner forms there are, but they're all here apparently
                         query+= " and pokemonsuffix is partner"
             case 105: # (Alolan) Marowak
                 match form:
                     case 0 | 2:
-                        query+= " and pokemonsuffix is null"
+                        query+= SUFFIXES["PKMN_SUFFIX_NULL"]
                     case _:
-                        query+= " and pokemonsuffix is 'alola'"
+                        query+= SUFFIXES["PKMN_SUFFIX_ALOLA"]
             case 150: ### Mewtwo
                 match form:
                     case 4:
-                        query+= " and pokemonsuffix is null"
+                        query+= SUFFIXES["PKMN_SUFFIX_NULL"]
                     case 12:
-                        query+= " and pokemonsuffix = 'mega-x'"
+                        query+= SUFFIXES["PKMN_SUFFIX_MEGA_X"]
                     case 20: ### Mewtwo Y
-                        query+= " and pokemonsuffix = 'mega-y'"
+                        query+= SUFFIXES["PKMN_SUFFIX_MEGA_Y"]
             case 151: ### Mew, not honestly sure why this one is weird
-                query+= " and pokemonsuffix is null"
+                query+= SUFFIXES["PKMN_SUFFIX_NULL"]
             case 201: ### Unown
-                query+= " and pokemonsuffix is null"
+                query+= SUFFIXES["PKMN_SUFFIX_NULL"]
             case 351: ### Castform
                 match form:
                     case 8 | 10:
@@ -246,7 +266,7 @@ class Pokemon:
             case 386: ### Deoxys
                 match form:
                     case 4:
-                        query+= " and pokemonsuffix is null"
+                        query+= SUFFIXES["PKMN_SUFFIX_NULL"]
                     case 12:
                         query+= " and pokemonsuffix = 'attack'"
                     case 20:
@@ -254,7 +274,7 @@ class Pokemon:
                     case 28:
                         query+= " and pokemonsuffix = 'speed'"
             case 412: ### Burmy
-                query+= " and pokemonsuffix is null"
+                query+= SUFFIXES["PKMN_SUFFIX_NULL"]
             case 413: ### Wormadam
                 match form:
                     case 10:
@@ -264,13 +284,13 @@ class Pokemon:
                     case 2:
                         query+= " and pokemonsuffix = 'plant'"
             case 414: ### Mothim
-                query+= " and pokemonsuffix is null"
+                query+= SUFFIXES["PKMN_SUFFIX_NULL"]
             case 421: ### Cherrim
-                query+= " and pokemonsuffix is null"
+                query+= SUFFIXES["PKMN_SUFFIX_NULL"]
             case 422: ### Shellos
-                query+= " and pokemonsuffix is null"
+                query+= SUFFIXES["PKMN_SUFFIX_NULL"]
             case 423: ### Gastrodon
-                query+= " and pokemonsuffix is null"
+                query+= SUFFIXES["PKMN_SUFFIX_NULL"]
             case 479: ### Rotom
                 match form:
                     case 12:
@@ -292,17 +312,17 @@ class Pokemon:
                     case 12:
                         query+= " and pokemonsuffix = 'sky'"
             case 550: ### Basculin
-                query+= " and pokemonsuffix is null"
+                query+= SUFFIXES["PKMN_SUFFIX_NULL"]
             case 555: ### Darmanitan
                 match form:
                     case 0 | 2:
-                        query+= " and pokemonsuffix is null"
+                        query+= SUFFIXES["PKMN_SUFFIX_NULL"]
                     case 8 | 10:
                         query+= " and pokemonsuffix = 'zen'"
             case 585: ### Deerling
-                query+= " and pokemonsuffix is null"
+                query+= SUFFIXES["PKMN_SUFFIX_NULL"]
             case 586: ### Sawsbuck
-                query+= " and pokemonsuffix is null"
+                query+= SUFFIXES["PKMN_SUFFIX_NULL"]
             case 646: ### Kyurem
                 match form:
                     case 12:
@@ -311,7 +331,7 @@ class Pokemon:
                     case 20:
                         query+= " and pokemonsuffix = 'black'"
             case 647: ### Keldeo
-                query+= " and pokemonsuffix is null"
+                query+= SUFFIXES["PKMN_SUFFIX_NULL"]
             case 648: ### Meloetta
                 match form:
                     case 12:
@@ -319,33 +339,27 @@ class Pokemon:
                     case 4: #base form lmao
                         query+= " and pokemonsuffix = 'aria'"
             case 649: ### Genesect
-                query+= " and pokemonsuffix is null"
+                query+= SUFFIXES["PKMN_SUFFIX_NULL"]
             case 658: ### Greninja
                 match form:
                     case 8 | 16:
                         query+= " and pokemonsuffix = 'ash'"
-            case 664: ### Scatterbug
-                query+= " and pokemonsuffix is null"
-            case 665: ### Spewpa
-                query+= " and pokemonsuffix is null"
-            case 666: ### Vivillon
-                query+= " and pokemonsuffix is null"
-            case 669: ### Flabébé
-                query+= " and pokemonsuffix is null"
+            case 664 | 665 | 666 | 669: ### Scatterbug, Spewda, Vivillon, Flabébé
+                query+= SUFFIXES["PKMN_SUFFIX_NULL"]
             case 670: ### Floette
                 match form:
                     case 42: #0 8 16 24 32 40
                         query+= " and pokemonsuffix = 'eternal'"
                     case _:
-                        query+= " and pokemonsuffix is null"
+                        query+= SUFFIXES["PKMN_SUFFIX_NULL"]
             case 671: ### Florges
-                query+= " and pokemonsuffix is null"
+                query+= SUFFIXES["PKMN_SUFFIX_NULL"]
             case 676: ### Furfrou
-                query+= " and pokemonsuffix is null"
+                query+= SUFFIXES["PKMN_SUFFIX_NULL"]
             case 678: ### Meowstic
                 match form:
                     case 0 | 8:
-                        query+= " and pokemonsuffix is null"
+                        query+= SUFFIXES["PKMN_SUFFIX_NULL"]
                     case 10:
                         query+= " and pokemonsuffix = 'f'"
             case 681: ### Aegislash
@@ -355,7 +369,7 @@ class Pokemon:
                     case 8 | 10:
                         query+= " and pokemonsuffix = 'blade'"
             case 684: ### Swirlix (not sure if this is useful but testing)
-                query+= " and pokemonsuffix is null"
+                query+= SUFFIXES["PKMN_SUFFIX_NULL"]
             case 710: ### Pumpkaboo
                 match form:
                     case 8 | 10:
@@ -365,7 +379,7 @@ class Pokemon:
                     case 24 | 26:
                         query+= " and pokemonsuffix = 'super'"
                     case _:
-                        query+= " and pokemonsuffix is null"
+                        query+= SUFFIXES["PKMN_SUFFIX_NULL"]
             case 711: ### Gourgeist
                 match form:
                     case 8 | 10:
@@ -375,13 +389,13 @@ class Pokemon:
                     case 24 | 26:
                         query+= " and pokemonsuffix = 'super'"
                     case _:
-                        query+= " and pokemonsuffix is null"
+                        query+= SUFFIXES["PKMN_SUFFIX_NULL"]
             case 716: ### Xerneas
-                query+= " and pokemonsuffix is null"
+                query+= SUFFIXES["PKMN_SUFFIX_NULL"]
             case 718: ### Zygarde only needed for gen 7
                 match form:
                     case 4:
-                        query+= " and pokemonsuffix is null"
+                        query+= SUFFIXES["PKMN_SUFFIX_NULL"]
                     case 12:
                         query+= " and pokemonsuffix = '10'"
                     case 20 | 36:
@@ -389,7 +403,7 @@ class Pokemon:
             case 720: ### Hoopa
                 match form:
                     case 4:
-                        query+= " and pokemonsuffix is null"
+                        query+= SUFFIXES["PKMN_SUFFIX_NULL"]
                     case 12:
                         query+= " and pokemonsuffix = 'unbound'"
             case 741: ### Oricorio
@@ -411,7 +425,7 @@ class Pokemon:
             case 746: ### Wishiwashi
                 match form:
                     case 0 | 2:
-                        query+= " and pokemonsuffix is null"
+                        query+= SUFFIXES["PKMN_SUFFIX_NULL"]
                     case _: # accounts for totem form
                         query+= " and pokemonsuffix = 'school'"
             case 774: ### Minior 4 12 20 28 36 44 52 60
@@ -421,7 +435,7 @@ class Pokemon:
             case 800: ### Necrozma
                 match form:
                     case 4:
-                        query+= " and pokemonsuffix is null"
+                        query+= SUFFIXES["PKMN_SUFFIX_NULL"]
                     case 12:
                         query+= " and pokemonsuffix = 'dusk'"
                     case 20:
@@ -429,28 +443,24 @@ class Pokemon:
                     case 28:
                         query+= " and pokemonsuffix = 'ultra'"
             case 801: ### Magearna
-                query+= " and pokemonsuffix is null"
+                query+= SUFFIXES["PKMN_SUFFIX_NULL"]
             case 19 | 20 | 26 | 27 | 28 | 37 | 38 | 50 | 51 | 52 | 53 | 74 | 75 | 76 | 88 | 89 | 103: ###alolan forms-none have separate forms so just case them for if their form > 0
                 match form:
                     case 8 | 10 | 12: # honestly not sure if any are genderless but sure
-                        query+= " and pokemonsuffix is 'alola'"
+                        query+= SUFFIXES["PKMN_SUFFIX_ALOLA"]
                     case _:
-                        query+= " and pokemonsuffix is null"
+                        query+= SUFFIXES["PKMN_SUFFIX_NULL"]
             case 735 | 738 | 743 | 752 | 754 | 758 | 777 | 778 | 784: # totem mons that aren't already accounted for elsewhere (totem-sized mons are likely a different form)
                 match form:
                     case _: 
-                        query+= " and pokemonsuffix is null"
+                        query+= SUFFIXES["PKMN_SUFFIX_NULL"]
             # case 81 | 82 | 100 | 101 | 120 | 121 | 137 | 233 | 292 | 337 | 338 | 343 | 344 | 374 | 375 | 376 | 436 | 437 | 462 | 474 | 489 | 490 | 599 | 600 | 601 | 615 | 622 | 623 | 703 | 774 | 781 | 854 | 855 | 770 | 132 | 144 | 145 | 146 | 201 | 243 | 244 | 245 | 249 | 250 | 251 | 377 | 378 | 379 | 382 | 383 | 384 | 385 | 386 | 480 | 481 | 482 | 483 | 484 | 486 | 491 | 493 | 494 | 638 | 639 | 640 | 643 | 644 | 646 | 647 | 649 | 716 | 717 | 718 | 719 | 721: ### Genderless exceptions
-            #     query+= " and pokemonsuffix is null"
+            #     query+= SUFFIXES["PKMN_SUFFIX_NULL"]
             case _:
-                if form == 2: ### female
-                    query+= " and pokemonsuffix is null"
-                elif form == 4: ### genderless
-                    query+= " and pokemonsuffix is null"
-                elif form > 0:
-                    query+= " and pokemonsuffix ='mega'"
+                if form > 0 and form != 2 and form != 4:
+                    query+= SUFFIXES["PKMN_SUFFIX_MEGA"]
                 else:
-                    query+= " and pokemonsuffix is null"
+                    query+= SUFFIXES["PKMN_SUFFIX_NULL"]
         # print(query)
         self.id = cursor.execute(query).fetchone()[0]
         self.species,self.suffix,self.name = cursor.execute(f"""select pokemonspeciesname,pokemonsuffix,pokemonname from "pokemon.pokemon" where pokemonid = {self.id}""").fetchone()
@@ -602,15 +612,15 @@ class Pokemon:
         self.statusbyte = struct.unpack("<B",self.raw_data[0xE8:0xE9])[0] ### Status byte
         match self.statusbyte:
             case 1:
-                self.status = 'Paralyzed'
+                self.status = STATUSES["PARALYZED"]
             case 2:
-                self.status = 'Asleep'
+                self.status = STATUSES["ASLEEP"]
             case 3:
-                self.status = 'Frozen'
+                self.status = STATUSES["FROZEN"]
             case 4:
-                self.status = 'Burned'
+                self.status = STATUSES["BURNED"]
             case 5:
-                self.status = 'Poisoned'
+                self.status = STATUSES["POISONED"]
             case _:
                 self.status = ''
         
@@ -753,10 +763,6 @@ class Pokemon6(Pokemon):
     def __init__(self, data):
         Pokemon.__init__(self, data)
 
-class Pokemon7(Pokemon):
-    def __init__(self, data):
-        Pokemon.__init__(self, data)
-
 def getGame(c):
     partylist=[0x8CE1CE8,0x8CF727C,0x34195E10,0x33F7FA44]
     try:
@@ -870,187 +876,180 @@ def analyze_statuses(self):
 def calcPower(pkmn,move,hp1,hp2,pkmnwt,enwt):
     if move['name'] in ('Eruption','Water Spout'):
         return int(int(hp1)/int(hp2)*150)
-    elif move['name']=='Return':
+    if move['name']=='Return':
         return round(pkmn.friendship/2.5)
-    elif move['name']=="Frustration":
+    if move['name']=="Frustration":
         return round((255-pkmn.friendship)/2.5)
-    elif move["name"] in ("Low Kick","Grass Knot"):
+    if move["name"] in ("Low Kick","Grass Knot"):
         try:
             weightnum=cursor.execute(enwt).fetchone()[0]
             if weightnum>=200:
                 return 120
-            elif 100<=weightnum<200:
+            if 100<=weightnum<200:
                 return 100
-            elif 50<=weightnum<100:
+            if 50<=weightnum<100:
                 return 80
-            elif 25<=weightnum<50:
+            if 25<=weightnum<50:
                 return 60
-            elif 10<=weightnum<25:
+            if 10<=weightnum<25:
                 return 40
             else:
                 return 20
         except:
             return "WT"
-    elif move["name"] in ("Heat Crash","Heavy Slam"):
+    if move["name"] in ("Heat Crash","Heavy Slam"):
         try:
             weightnum=cursor.execute(enwt).fetchone()[0]
             weightratio=(pkmnwt/weightnum)
             if weightratio>=5:
                 return 120
-            elif 4<=weightratio<5:
+            if 4<=weightratio<5:
                 return 100
-            elif 3<=weightratio<4:
+            if 3<=weightratio<4:
                 return 80
-            elif 2<=weightratio<3:
+            if 2<=weightratio<3:
                 return 60
             else:
                 return 40
         except:
             return "WT"
-    elif move['name']=="Fling":
+    if move['name']=="Fling":
         return "ITEM"
-    elif move['name'] in ("Crush Grip","Wring Out"):
+    if move['name'] in ("Crush Grip","Wring Out"):
         return ">HP"
-    elif move['name'] in ("Flail","Reversal"):
+    if move['name'] in ("Flail","Reversal"):
         if int(hp1)/int(hp2)>=.6875:
             return 20
-        elif int(hp1)/int(hp2)>=.3542:
+        if int(hp1)/int(hp2)>=.3542:
             return 40
-        elif int(hp1)/int(hp2)>=.2083:
+        if int(hp1)/int(hp2)>=.2083:
             return 80
-        elif int(hp1)/int(hp2)>=.1042:
+        if int(hp1)/int(hp2)>=.1042:
             return 100
-        elif int(hp1)/int(hp2)>=.0417:
+        if int(hp1)/int(hp2)>=.0417:
             return 150
-        elif int(hp1)/int(hp2)<.0417:
+        if int(hp1)/int(hp2)<.0417:
             return 200
-        else:
-            return "ERR"
-    elif move['name'] in ('Psywave', 'Magnitude'):
+        return "ERR"
+
+    if move['name'] in ('Psywave', 'Magnitude'):
         return 'VAR'
-    elif move['name'] in ('Seismic Toss', 'Night Shade'):
+    if move['name'] in ('Seismic Toss', 'Night Shade'):
         return 'LVL'
-    elif move['name'] in ('Electro Ball', 'Gyro Ball'):
+    if move['name'] in ('Electro Ball', 'Gyro Ball'):
         return 'SPD'
-    elif move['name'] == 'Punishment':
+    if move['name'] == 'Punishment':
         return '60+'
-    else:
-        return ('-' if not move['power'] else int(move['power']))
+    return ('-' if not move['power'] else int(move['power']))
     
 def calcAcc(move, pkmn1lvl, pkmn2lvl):
     if move['name'] in ('Horn Drill', 'Sheer Cold', 'Guillotine', 'Fissure'):
         if pkmn1lvl >= pkmn2lvl:
             a = 30 + pkmn1lvl - pkmn2lvl
             return a
-        else:
-            return 'X'
-    elif not move['acc']:
+        return 'X'
+    if not move['acc']:
         return '-'
-    else: 
-        return int(move['acc'])
+    return int(move['acc'])
 
 def movetype(pkmn,move,item):
     if move=="Revelation Dance":
         return (pkmn.types)[0]
-    elif move=="Hidden Power":
+    if move=="Hidden Power":
         return "Null"
-    elif move=="Natural Gift":
+    if move=="Natural Gift":
         return "Normal"
-    elif move=="Judgement":
+    if move=="Judgement":
         if item=="298":
             return "Fire"
-        elif item=="299":
+        if item=="299":
             return "Water"
-        elif item=="300":
+        if item=="300":
             return "Electric"
-        elif item=="301":
+        if item=="301":
             return "Grass"
-        elif item=="302":
+        if item=="302":
             return "Ice"
-        elif item=="303":
+        if item=="303":
             return "Fighting"
-        elif item=="304":
+        if item=="304":
             return "Poison"
-        elif item=="305":
+        if item=="305":
             return "Ground"
-        elif item=="306":
+        if item=="306":
             return "Flying"
-        elif item=="307":
+        if item=="307":
             return "Psychic"
-        elif item=="308":
+        if item=="308":
             return "Bug"
-        elif item=="309":
+        if item=="309":
             return "Rock"
-        elif item=="310":
+        if item=="310":
             return "Ghost"
-        elif item=="311":
+        if item=="311":
             return "Dragon"
-        elif item=="312":
+        if item=="312":
             return "Dark"
-        elif item=="313":
+        if item=="313":
             return "Steel"
-        elif item=="644":
+        if item=="644":
             return "Fairy"
-        else:
-            return "Normal"
-    elif move=="Techno Blast":
+        return "Normal"
+    if move=="Techno Blast":
         if item=="116":
             return "Water"
-        elif item=="117":
+        if item=="117":
             return "Electric"
-        elif item=="118":
+        if item=="118":
             return "Fire"
-        elif item=="119":
+        if item=="119":
             return "Ice"
-        else:
-            return "Normal"
-    elif move=="Multi-Attack":
+        return "Normal"
+    if move=="Multi-Attack":
         if item=="912":
             return "Fire"
-        elif item=="913":
+        if item=="913":
             return "Water"
-        elif item=="915":
+        if item=="915":
             return "Electric"
-        elif item=="914":
+        if item=="914":
             return "Grass"
-        elif item=="917":
+        if item=="917":
             return "Ice"
-        elif item=="904":
+        if item=="904":
             return "Fighting"
-        elif item=="906":
+        if item=="906":
             return "Poison"
-        elif item=="907":
+        if item=="907":
             return "Ground"
-        elif item=="905":
+        if item=="905":
             return "Flying"
-        elif item=="916":
+        if item=="916":
             return "Psychic"
-        elif item=="909":
+        if item=="909":
             return "Bug"
-        elif item=="908":
+        if item=="908":
             return "Rock"
-        elif item=="910":
+        if item=="910":
             return "Ghost"
-        elif item=="918":
+        if item=="918":
             return "Dragon"
-        elif item=="919":
+        if item=="919":
             return "Dark"
-        elif item=="911":
+        if item=="911":
             return "Steel"
-        elif item=="920":
+        if item=="920":
             return "Fairy"
-        else:
-            return "Normal"
-    else:
-        return move['type']
+        return "Normal"
+    
+    return move['type']
     
 def getURLAbbr(game):
     if game == 15:
         return 'x-y'
-    elif game == 16:
+    if game == 16:
         return 'omega-ruby-alpha-sapphire/dex' ## ORAS sprites end in /dex
-    else:
-        return 'home'
+    return 'home'
     
 def resize(image_file, new_size, encode_format='PNG'):
     im = Image.open(image_file)
@@ -1074,33 +1073,30 @@ def typeformatting(typing):
 
 def natureformatting(nl, s):
     naturedict = {'raised':'#80f080', 'lowered':'#f08080', 'neutral':'#ffffff'}
-    if nl[s] == 'raised':
-        return naturedict['raised']
-    elif nl[s] == 'lowered':
-        return naturedict['lowered']
-    else:
-        return naturedict['neutral']
+    if nl[s] == 'raised' or nl[s] == 'lowered':
+        return naturedict[nl[s]]
+    return naturedict['neutral']
     
 def natureberries(nl):
     dislikedflavor = {'spicy':'Figy Berry', 'dry':'Wiki Berry', 'sweet':'Mago Berry', 'bitter':'Aguav Berry', 'sour':'Iapapa Berry', 'neutral':'No berry'}
     if nl[0] == 'lowered':
         s = '-attlabel-'
         return dislikedflavor['spicy'], s
-    elif nl[1] == 'lowered':
+    if nl[1] == 'lowered':
         s = '-deflabel-'
         return dislikedflavor['sour'], s
-    elif nl[2] == 'lowered':
+    if nl[2] == 'lowered':
         s = '-spattlabel-'
         return dislikedflavor['dry'], s
-    elif nl[3] == 'lowered':
+    if nl[3] == 'lowered':
         s = '-spdeflabel-'
         return dislikedflavor['bitter'], s
-    elif nl[4] == 'lowered':
+    if nl[4] == 'lowered':
         s = '-speedlabel-'
         return dislikedflavor['sweet'], s
-    else:
-        s = '-bstlabel-'
-        return dislikedflavor['neutral'], s
+
+    s = '-bstlabel-'
+    return dislikedflavor['neutral'], s
 
 def statnotes(s, pos):
     nt = s['stats'][pos]
@@ -1129,12 +1125,9 @@ def abil_popup(l):
     while True:
         event, values = window.read()
 
-        if (event == sg.WINDOW_CLOSED) or (event == 'Cancel'):
+        if (event == sg.WINDOW_CLOSED) or (event == 'Cancel') or (event == '-rem-'):
             break
-        elif event == '-rem-':
-            break
-        else:
-            print('OVER')
+        print('OVER')
 
     window.close()
 
@@ -1698,34 +1691,9 @@ def run():
                                         elif len(pkmn.types) < 3:
                                             window['-typeimg3-'].Update(visible = False)
                                             window['-typename3-'].Update(visible = False)
-                                    if pkmn.evo:
-                                        evofriend = ''
-                                        evolevel = ''
-                                        evostring = ''
-                                        evoloc = ''
-                                        if pkmn.name == 'Eevee':
-                                            evoitem = 'Any stone'
-                                        elif pkmn.name == 'Gloom':
-                                            evoitem = 'Leaf Stone/Sun Stone'
-                                        elif pkmn.name == 'Poliwhirl':
-                                            evoitem = 'Water Stone/Kings Rock'
-                                        elif pkmn.name == 'Clamperl':
-                                            evoitem = 'Deep Sea Tooth/Deep Sea Scale'
-                                        elif pkmn.name == 'Slowpoke':
-                                            evoitem = 'Kings Rock/Level 37'
-                                        elif pkmn.name == 'Kirlia':
-                                            evoitem = 'Lvl 30/Dawn Stone (M)'
-                                        # need to check snorunt
-                                        else:
-                                            evoitem = ('' if not pkmn.evoitem else 'w/'+pkmn.evoitem)
-                                            evofriend = ('' if pkmn.evotype != 'Friendship' else 'w/ high friendship')
-                                            evolevel = ('' if not pkmn.evolevel else '@ level '+str(int(pkmn.evolevel)))
-                                            evostring = ('' if not pkmn.evostring else pkmn.evostring)
-                                            evoloc = ('' if not pkmn.evolocation else 'in '+pkmn.evolocation)
-                                        window['-evo-'].update('>', visible = True)
-                                        window['-evo-'].set_tooltip('Evolves {}{}{}{}{}'.format(evoitem, evofriend, evolevel, evostring, evoloc))
-                                    else:
-                                        window['-evo-'].update(visible = False)
+                                    
+                                    pkmnEvo(pkmn, '-evo-', window)
+
                                     if gen==6:
                                         levelnum=int.from_bytes(c.read_memory(ppadd+(mongap*(pk-1))-256,1))
                                         batabilnum=int.from_bytes(c.read_memory((ppadd+(mongap*(pk-1))+6-264),1))
@@ -1787,7 +1755,7 @@ def run():
                                     # window['-level-'].set_tooltip('Seen at {}'.format(trackdata[pkmn.name]["levels"]))
                                     window['-ability-'].Update(str(pkmn.ability['name']), text_color="#f0f080")
                                     window['-ability-'].set_tooltip(str(pkmn.ability['description']))
-                                    window['-item-'].Update(pkmn.held_item_name)
+                                    window['-item-'].Update('Held: {}'.format(pkmn.held_item_name))
                                     window['-item-'].set_tooltip(itemdesc)
                                     if gen == 6:
                                         window['-hpheals-'].update("Heals: "+str(hphl["percent"])+"% ("+str(hphl["total"])+")", visible = True, text_color="#f0f080")
@@ -1815,27 +1783,27 @@ def run():
                                     # Update stat stage modifiers, and only apply if within proper range
                                     modatt = int.from_bytes(c.read_memory((ppadd+(mongap*(pk-1))-20),1))
                                     if 0 <= modatt <= 12:
-                                        window['-attmod-'].Update('images/modifiers/modifier{}.png'.format(modatt), visible = True)
+                                        window['-attmod-'].Update(IMG_MODIFIER_STR.format(modatt), visible = True)
                                     moddef = int.from_bytes(c.read_memory((ppadd+(mongap*(pk-1))-19),1))
                                     if 0 <= moddef <= 12:
-                                        window['-defmod-'].Update('images/modifiers/modifier{}.png'.format(moddef), visible = True)
+                                        window['-defmod-'].Update(IMG_MODIFIER_STR.format(moddef), visible = True)
                                     modspatt = int.from_bytes(c.read_memory((ppadd+(mongap*(pk-1))-18),1))
                                     if 0 <= modspatt <= 12:
-                                        window['-spattmod-'].Update('images/modifiers/modifier{}.png'.format(modspatt), visible = True)
+                                        window['-spattmod-'].Update(IMG_MODIFIER_STR.format(modspatt), visible = True)
                                     modspdef = int.from_bytes(c.read_memory((ppadd+(mongap*(pk-1))-17),1))
                                     if 0 <= modspdef <= 12:
-                                        window['-spdefmod-'].Update('images/modifiers/modifier{}.png'.format(modspdef), visible = True)
+                                        window['-spdefmod-'].Update(IMG_MODIFIER_STR.format(modspdef), visible = True)
                                     modspeed = int.from_bytes(c.read_memory((ppadd+(mongap*(pk-1))-16),1))
                                     if 0 <= modspeed <= 12:
-                                        window['-speedmod-'].Update('images/modifiers/modifier{}.png'.format(modspeed), visible = True)
+                                        window['-speedmod-'].Update(IMG_MODIFIER_STR.format(modspeed), visible = True)
                                     window['-accevalabel-'].update(visible = True, text_color='white')
                                     modacc = int.from_bytes(c.read_memory((ppadd+(mongap*(pk-1))-15),1))
                                     if 0 <= modacc <= 12:
-                                        window['-accmod-'].Update('images/modifiers/modifier{}.png'.format(modacc), visible = True)
+                                        window['-accmod-'].Update(IMG_MODIFIER_STR.format(modacc), visible = True)
                                     window['-accevaph-'].update(visible = True)
                                     modeva = int.from_bytes(c.read_memory((ppadd+(mongap*(pk-1))-14),1))
                                     if 0 <= modeva <= 12:
-                                        window['-evamod-'].Update('images/modifiers/modifier{}.png'.format(modeva), visible = True)
+                                        window['-evamod-'].Update(IMG_MODIFIER_STR.format(modeva), visible = True)
 
                                     window['-bst-'].Update(pkmn.bst)
                                     window['-movehdr-'].update(f'Moves {learnedcount}/{totallearn} ({nmove})')
@@ -1853,7 +1821,7 @@ def run():
                                     window['-settings-'].update(visible=True)
                                     for i in range(1,9):
                                         # print(i, ';;;', f'images/badges{gameabbr}/{i}u.png')
-                                        b = math.sqrt(badgect+1)
+                                        b = math.log(badgect+1)/math.log(2)
                                         if i > b:
                                             # window[f'-badge{i}-'].Update(resize(f'images/badges{gameabbr}/{i}u.png', (badgesize,badgesize)), visible = True)
                                             window[f'-badge{i}-'].Update(f'images/badges{gameabbr}/{i}u.png', visible = True)
@@ -1942,7 +1910,7 @@ def run():
                                         window['-mv{}text-'.format(pkmn.moves.index(move) + 1)].update(move["name"], text_color=typeformatting(movetyp))
                                         window['-mv{}text-'.format(pkmn.moves.index(move) + 1)].set_tooltip(move["description"])
                                         window['-mv{}pp-'.format(pkmn.moves.index(move) + 1)].update('{}/{}'.format(int.from_bytes(c.read_memory(ppadd+(mongap*(pk-1))+(14*(pkmn.moves).index(move)),1)), int.from_bytes(c.read_memory(ppadd+(mongap*(pk-1))+1+(14*(pkmn.moves).index(move)),1))))
-                                        window['-mv{}mod-'.format(pkmn.moves.index(move) + 1)].update('images/modifiers/modifier{}.png'.format(modimage))
+                                        window['-mv{}mod-'.format(pkmn.moves.index(move) + 1)].update(IMG_MODIFIER_STR.format(modimage))
                                         if stab == movetyp:
                                             window['-mv{}bp-'.format(pkmn.moves.index(move) + 1)].update(calcPower(pkmn,move,hpnum[0],hpnum[1],pkmnweight,weightquery), text_color=typeformatting(movetyp))
                                         else:
@@ -1976,34 +1944,9 @@ def run():
                                         if len(pkmn.types) == 1:
                                             window['-typeimg2-e-'].Update(visible = False)
                                             window['-typename2-e-'].Update(visible = False)
-                                    if pkmn.evo:
-                                        evofriend = ''
-                                        evolevel = ''
-                                        evostring = ''
-                                        evoloc = ''
-                                        if pkmn.name == 'Eevee':
-                                            evoitem = 'Any stone'
-                                        elif pkmn.name == 'Gloom':
-                                            evoitem = 'Leaf Stone/Sun Stone'
-                                        elif pkmn.name == 'Poliwhirl':
-                                            evoitem = 'Water Stone/Kings Rock'
-                                        elif pkmn.name == 'Clamperl':
-                                            evoitem = 'Deep Sea Tooth/Deep Sea Scale'
-                                        elif pkmn.name == 'Slowpoke':
-                                            evoitem = 'Kings Rock/Level 37'
-                                        elif pkmn.name == 'Kirlia':
-                                            evoitem = 'Lvl 30/Dawn Stone (M)'
-                                        # need to check snorunt
-                                        else:
-                                            evoitem = ('' if not pkmn.evoitem else 'w/'+pkmn.evoitem)
-                                            evofriend = ('' if pkmn.evotype != 'Friendship' else 'w/ high friendship')
-                                            evolevel = ('' if not pkmn.evolevel else '@ level '+str(int(pkmn.evolevel)))
-                                            evostring = ('' if not pkmn.evostring else pkmn.evostring)
-                                            evoloc = ('' if not pkmn.evolocation else 'in '+pkmn.evolocation)
-                                        window['-evo-e-'].update('>', visible = True)
-                                        window['-evo-e-'].set_tooltip('Evolves {}{}{}{}{}'.format(evoitem, evofriend, evolevel, evostring, evoloc))
-                                    else:
-                                        window['-evo-e-'].update(visible = False)
+                                    
+                                    pkmnEvo(pkmn, '-evo-e-', window)
+
                                     if gen==6:
                                         levelnum=int.from_bytes(c.read_memory(ppadd+(mongap*(pk-1))-256,1))
                                         batabilnum=int.from_bytes(c.read_memory((ppadd+(mongap*(pk-1))+6-264),1))
@@ -2136,19 +2079,19 @@ def run():
                                     window['-bst-e-'].Update(pkmn.bst)
 
                                     if 0 <= int.from_bytes(c.read_memory((ppadd+(mongap*(pk-1))-20),1)) <= 12:
-                                        window['-attmod-e-'].Update('images/modifiers/modifier{}.png'.format(int.from_bytes(c.read_memory((ppadd+(mongap*(pk-1))-20),1))), visible = True)
+                                        window['-attmod-e-'].Update(IMG_MODIFIER_STR.format(int.from_bytes(c.read_memory((ppadd+(mongap*(pk-1))-20),1))), visible = True)
                                     if 0 <= int.from_bytes(c.read_memory((ppadd+(mongap*(pk-1))-19),1)) <= 12:
-                                        window['-defmod-e-'].Update('images/modifiers/modifier{}.png'.format(int.from_bytes(c.read_memory((ppadd+(mongap*(pk-1))-19),1))), visible = True)
+                                        window['-defmod-e-'].Update(IMG_MODIFIER_STR.format(int.from_bytes(c.read_memory((ppadd+(mongap*(pk-1))-19),1))), visible = True)
                                     if 0 <= int.from_bytes(c.read_memory((ppadd+(mongap*(pk-1))-18),1)) <= 12:
-                                        window['-spattmod-e-'].Update('images/modifiers/modifier{}.png'.format(int.from_bytes(c.read_memory((ppadd+(mongap*(pk-1))-18),1))), visible = True)
+                                        window['-spattmod-e-'].Update(IMG_MODIFIER_STR.format(int.from_bytes(c.read_memory((ppadd+(mongap*(pk-1))-18),1))), visible = True)
                                     if 0 <= int.from_bytes(c.read_memory((ppadd+(mongap*(pk-1))-17),1)) <= 12:
-                                        window['-spdefmod-e-'].Update('images/modifiers/modifier{}.png'.format(int.from_bytes(c.read_memory((ppadd+(mongap*(pk-1))-17),1))), visible = True)
+                                        window['-spdefmod-e-'].Update(IMG_MODIFIER_STR.format(int.from_bytes(c.read_memory((ppadd+(mongap*(pk-1))-17),1))), visible = True)
                                     if 0 <= int.from_bytes(c.read_memory((ppadd+(mongap*(pk-1))-16),1)) <= 12:
-                                        window['-speedmod-e-'].Update('images/modifiers/modifier{}.png'.format(int.from_bytes(c.read_memory((ppadd+(mongap*(pk-1))-16),1))), visible = True)
+                                        window['-speedmod-e-'].Update(IMG_MODIFIER_STR.format(int.from_bytes(c.read_memory((ppadd+(mongap*(pk-1))-16),1))), visible = True)
                                     if 0 <= int.from_bytes(c.read_memory((ppadd+(mongap*(pk-1))-15),1)) <= 12:
-                                        window['-accmod-e-'].Update('images/modifiers/modifier{}.png'.format(int.from_bytes(c.read_memory((ppadd+(mongap*(pk-1))-15),1))), visible = True)
+                                        window['-accmod-e-'].Update(IMG_MODIFIER_STR.format(int.from_bytes(c.read_memory((ppadd+(mongap*(pk-1))-15),1))), visible = True)
                                     if 0 <= int.from_bytes(c.read_memory((ppadd+(mongap*(pk-1))-14),1)) <= 12:
-                                        window['-evamod-e-'].Update('images/modifiers/modifier{}.png'.format(int.from_bytes(c.read_memory((ppadd+(mongap*(pk-1))-14),1))), visible = True)
+                                        window['-evamod-e-'].Update(IMG_MODIFIER_STR.format(int.from_bytes(c.read_memory((ppadd+(mongap*(pk-1))-14),1))), visible = True)
                                     
                                     window['-movehdr-e-'].update(f'Moves {learnedcount}/{totallearn} ({nmove})')
                                     window['-movehdr-e-'].set_tooltip(learnstr)
@@ -2239,7 +2182,7 @@ def run():
                                         window['-mv{}text-e-'.format(movect)].update(move["name"], text_color=typeformatting(move['type']), visible = True)
                                         window['-mv{}text-e-'.format(movect)].set_tooltip(move["description"])
                                         window['-mv{}pp-e-'.format(movect)].update('{}/{}'.format(int.from_bytes(c.read_memory(ppadd+(mongap*(pk-1))+(14*(pkmn.moves).index(move)),1)), move["maxpp"]), visible = True)
-                                        # window['-mv{}mod-e-'.format(movect)].update('images/modifiers/modifier{}.png'.format(modimage), visible = True)
+                                        # window['-mv{}mod-e-'.format(movect)].update(IMG_MODIFIER_STR.format(modimage), visible = True)
                                         if stab == move['type']:
                                             window['-mv{}bp-e-'.format(movect)].update(movepower, text_color=typeformatting(move['type']), visible = True)
                                         else:
@@ -2260,34 +2203,9 @@ def run():
                                     if len(pkmn.types) == 1:
                                         window['-typeimg2-'].Update(visible = False)
                                         window['-typename2-'].Update(visible = False)
-                                if pkmn.evo:
-                                    evofriend = ''
-                                    evolevel = ''
-                                    evostring = ''
-                                    evoloc = ''
-                                    if pkmn.name == 'Eevee':
-                                        evoitem = 'Any stone'
-                                    elif pkmn.name == 'Gloom':
-                                        evoitem = 'Leaf Stone/Sun Stone'
-                                    elif pkmn.name == 'Poliwhirl':
-                                        evoitem = 'Water Stone/Kings Rock'
-                                    elif pkmn.name == 'Clamperl':
-                                        evoitem = 'Deep Sea Tooth/Deep Sea Scale'
-                                    elif pkmn.name == 'Slowpoke':
-                                        evoitem = 'Kings Rock/Level 37'
-                                    elif pkmn.name == 'Kirlia':
-                                        evoitem = 'Lvl 30/Dawn Stone (M)'
-                                    # need to check snorunt
-                                    else:
-                                        evoitem = ('' if not pkmn.evoitem else 'w/'+pkmn.evoitem)
-                                        evofriend = ('' if pkmn.evotype != 'Friendship' else 'w/ high friendship')
-                                        evolevel = ('' if not pkmn.evolevel else '@ level '+str(int(pkmn.evolevel)))
-                                        evostring = ('' if not pkmn.evostring else pkmn.evostring)
-                                        evoloc = ('' if not pkmn.evolocation else 'in '+pkmn.evolocation)
-                                    window['-evo-'].update('>', visible = True)
-                                    window['-evo-'].set_tooltip('Evolves {}{}{}{}{}'.format(evoitem, evofriend, evolevel, evostring, evoloc))
-                                else:
-                                    window['-evo-'].update(visible = False)
+                                
+                                pkmnEvo(pkmn, '-evo-', window)
+
                                 if pkmn.status != '':
                                     window['-status-'].Update(resize('images/statuses/{}.png'.format(pkmn.status), (75, 20)), visible = True)
                                 else:
@@ -2330,7 +2248,7 @@ def run():
                                 window['-bc6-'].update(visible = True)
                                 window['-ability-'].update(str(pkmn.ability['name']), text_color="#f0f080")
                                 window['-ability-'].set_tooltip(str(pkmn.ability['description']))
-                                window['-item-'].update(pkmn.held_item_name)
+                                window['-item-'].update('Held: {}'.format(pkmn.held_item_name))
                                 window['-item-'].set_tooltip(itemdesc)
                                 if gen == 6:
                                     window['-hpheals-'].update("Heals: "+str(hphl["percent"])+"% ("+str(hphl["total"])+")", visible = True, text_color="#f0f080")
@@ -2383,11 +2301,11 @@ def run():
                                     window['-clearnotes-solo-'].update(visible=True)
                                 window['-load-log-'].update(visible=True)
                                 window['-settings-'].update(visible=True)    
-                                print('"badge count"=', badgect)                            
+                                # print('"badge count"=', badgect)                            
                                 for i in range(1,9):
                                     # print(badgect, ';;;', f'images/badges{gameabbr}/{i}u.png')
                                     # badge counts: viola = 1, grant = 3 (?), korrina = 7
-                                    b = math.sqrt(badgect+1)
+                                    b = math.log(badgect+1)/math.log(2)
                                     if i > b:
                                         # window[f'-badge{i}-'].Update(resize(f'images/badges{gameabbr}/{i}u.png', (badgesize,badgesize)), visible = True)
                                         window[f'-badge{i}-'].Update(f'images/badges{gameabbr}/{i}u.png', visible = True)
