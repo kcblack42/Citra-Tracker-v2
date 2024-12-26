@@ -1,6 +1,10 @@
 @echo OFF
 @REM Windows launcher for the citra tracker
 
+@REM Change directory to the launcher file directory
+pushd "%~dp0"
+cd /d "%~dp0"
+
 @REM Run the version check script to test if 3.12 is installed
 call python util\python-version-check.py
 
