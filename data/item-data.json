@@ -286,23 +286,28 @@
     },
     "65": {
       "name": "Blue Flute",
-      "hex": "0041"
+      "hex": "0041",
+      "misc": "flute"
     },
     "66": {
       "name": "Yellow Flute",
-      "hex": "0042"
+      "hex": "0042",
+      "misc": "flute"
     },
     "67": {
       "name": "Red Flute",
-      "hex": "0043"
+      "hex": "0043",
+      "misc": "flute"
     },
     "68": {
       "name": "Black Flute",
-      "hex": "0044"
+      "hex": "0044",
+      "misc": "flute"
     },
     "69": {
       "name": "White Flute",
-      "hex": "0045"
+      "hex": "0045",
+      "misc": "flute"
     },
     "70": {
       "name": "Shoal Salt",
@@ -314,19 +319,23 @@
     },
     "72": {
       "name": "Red Shard",
-      "hex": "0048"
+      "hex": "0048",
+      "misc": "shard"
     },
     "73": {
       "name": "Blue Shard",
-      "hex": "0049"
+      "hex": "0049",
+      "misc": "shard"
     },
     "74": {
       "name": "Yellow Shard",
-      "hex": "004A"
+      "hex": "004A",
+      "misc": "shard"
     },
     "75": {
       "name": "Green Shard",
-      "hex": "004B"
+      "hex": "004B",
+      "misc": "shard"
     },
     "76": {
       "name": "Super Repel",
@@ -398,7 +407,8 @@
     },
     "93": {
       "name": "Heart Scale",
-      "hex": "005D"
+      "hex": "005D",
+      "misc": "scale"
     },
     "94": {
       "name": "Honey",
@@ -422,31 +432,38 @@
     },
     "99": {
       "name": "Root Fossil",
-      "hex": "0063"
+      "hex": "0063",
+      "misc": "fossil"
     },
     "100": {
       "name": "Claw Fossil",
-      "hex": "0064"
+      "hex": "0064",
+      "misc": "fossil"
     },
     "101": {
       "name": "Helix Fossil",
-      "hex": "0065"
+      "hex": "0065",
+      "misc": "fossil"
     },
     "102": {
       "name": "Dome Fossil",
-      "hex": "0066"
+      "hex": "0066",
+      "misc": "fossil"
     },
     "103": {
       "name": "Old Amber",
-      "hex": "0067"
+      "hex": "0067",
+      "misc": "fossil"
     },
     "104": {
       "name": "Armor Fossil",
-      "hex": "0068"
+      "hex": "0068",
+      "misc": "fossil"
     },
     "105": {
       "name": "Skull Fossil",
-      "hex": "0069"
+      "hex": "0069",
+      "misc": "fossil"
     },
     "106": {
       "name": "Rare Bone",
@@ -2327,15 +2344,18 @@
     },
     "571": {
       "name": "Pretty Wing",
-      "hex": "023B"
+      "hex": "023B",
+      "misc": "misc"
     },
     "572": {
       "name": "Cover Fossil",
-      "hex": "023C"
+      "hex": "023C",
+      "misc": "fossil"
     },
     "573": {
       "name": "Plume Fossil",
-      "hex": "023D"
+      "hex": "023D",
+      "misc": "fossil"
     },
     "574": {
       "name": "Liberty Pass",
@@ -2668,123 +2688,153 @@
     },
     "656": {
       "name": "Gengarite",
-      "hex": "0290"
+      "hex": "0290",
+      "misc": "mega"
     },
     "657": {
       "name": "Gardevoirite",
-      "hex": "0291"
+      "hex": "0291",
+      "misc": "mega"
     },
     "658": {
       "name": "Ampharosite",
-      "hex": "0292"
+      "hex": "0292",
+      "misc": "mega"
     },
     "659": {
       "name": "Venusaurite",
-      "hex": "0293"
+      "hex": "0293",
+      "misc": "mega"
     },
     "660": {
       "name": "Charizardite X",
-      "hex": "0294"
+      "hex": "0294",
+      "misc": "mega"
     },
     "661": {
       "name": "Blastoisinite",
-      "hex": "0295"
+      "hex": "0295",
+      "misc": "mega"
     },
     "662": {
       "name": "Mewtwonite X",
-      "hex": "0296"
+      "hex": "0296",
+      "misc": "mega"
     },
     "663": {
       "name": "Mewtwonite Y",
-      "hex": "0297"
+      "hex": "0297",
+      "misc": "mega"
     },
     "664": {
       "name": "Blazikenite",
-      "hex": "0298"
+      "hex": "0298",
+      "misc": "mega"
     },
     "665": {
       "name": "Medichamite",
-      "hex": "0299"
+      "hex": "0299",
+      "misc": "mega"
     },
     "666": {
       "name": "Houndoominite",
-      "hex": "029A"
+      "hex": "029A",
+      "misc": "mega"
     },
     "667": {
       "name": "Aggronite",
-      "hex": "029B"
+      "hex": "029B",
+      "misc": "mega"
     },
     "668": {
       "name": "Banettite",
-      "hex": "029C"
+      "hex": "029C",
+      "misc": "mega"
     },
     "669": {
       "name": "Tyranitarite",
-      "hex": "029D"
+      "hex": "029D",
+      "misc": "mega"
     },
     "670": {
       "name": "Scizorite",
-      "hex": "029E"
+      "hex": "029E",
+      "misc": "mega"
     },
     "671": {
       "name": "Pinsirite",
-      "hex": "029F"
+      "hex": "029F",
+      "misc": "mega"
     },
     "672": {
       "name": "Aerodactylite",
-      "hex": "02A0"
+      "hex": "02A0",
+      "misc": "mega"
     },
     "673": {
       "name": "Lucarionite",
-      "hex": "02A1"
+      "hex": "02A1",
+      "misc": "mega"
     },
     "674": {
       "name": "Abomasite",
-      "hex": "02A2"
+      "hex": "02A2",
+      "misc": "mega"
     },
     "675": {
       "name": "Kangaskhanite",
-      "hex": "02A3"
+      "hex": "02A3",
+      "misc": "mega"
     },
     "676": {
       "name": "Gyaradosite",
-      "hex": "02A4"
+      "hex": "02A4",
+      "misc": "mega"
     },
     "677": {
       "name": "Absolite",
-      "hex": "02A5"
+      "hex": "02A5",
+      "misc": "mega"
     },
     "678": {
       "name": "Charizardite Y",
-      "hex": "02A6"
+      "hex": "02A6",
+      "misc": "mega"
     },
     "679": {
       "name": "Alakazite",
-      "hex": "02A7"
+      "hex": "02A7",
+      "misc": "mega"
     },
     "680": {
       "name": "Heracronite",
-      "hex": "02A8"
+      "hex": "02A8",
+      "misc": "mega"
     },
     "681": {
       "name": "Mawilite",
-      "hex": "02A9"
+      "hex": "02A9",
+      "misc": "mega"
     },
     "682": {
       "name": "Manectite",
-      "hex": "02AA"
+      "hex": "02AA",
+      "misc": "mega"
     },
     "683": {
       "name": "Garchompite",
-      "hex": "02AB"
+      "hex": "02AB",
+      "misc": "mega"
     },
     "684": {
       "name": "Latiasite",
-      "hex": "02AC"
+      "hex": "02AC",
+      "misc": "mega"
     },
     "685": {
       "name": "Latiosite",
-      "hex": "02AD"
+      "hex": "02AD",
+      "misc": "mega"
     },
     "686": {
       "name": "Roseli Berry",
@@ -2886,11 +2936,13 @@
     },
     "710": {
       "name": "Jaw Fossil",
-      "hex": "02C6"
+      "hex": "02C6",
+      "misc": "fossil"
     },
     "711": {
       "name": "Sail Fossil",
-      "hex": "02C7"
+      "hex": "02C7",
+      "misc": "fossil"
     },
     "712": {
       "name": "Looker Ticket",
@@ -3054,55 +3106,68 @@
     },
     "752": {
       "name": "Swampertite",
-      "hex": "02F0"
+      "hex": "02F0",
+      "misc": "mega"
     },
     "753": {
       "name": "Sceptilite",
-      "hex": "02F1"
+      "hex": "02F1",
+      "misc": "mega"
     },
     "754": {
       "name": "Sablenite",
-      "hex": "02F2"
+      "hex": "02F2",
+      "misc": "mega"
     },
     "755": {
       "name": "Altarianite",
-      "hex": "02F3"
+      "hex": "02F3",
+      "misc": "mega"
     },
     "756": {
       "name": "Galladite",
-      "hex": "02F4"
+      "hex": "02F4",
+      "misc": "mega"
     },
     "757": {
       "name": "Audinite",
-      "hex": "02F5"
+      "hex": "02F5",
+      "misc": "mega"
     },
     "758": {
       "name": "Metagrossite",
-      "hex": "02F6"
+      "hex": "02F6",
+      "misc": "mega"
     },
     "759": {
       "name": "Sharpedonite",
-      "hex": "02F7"
+      "hex": "02F7",
+      "misc": "mega"
     },
     "760": {
       "name": "Slowbronite",
-      "hex": "02F8"
+      "hex": "02F8",
+      "misc": "mega"
     },
     "761": {
       "name": "Steelixite",
-      "hex": "02F9"
+      "hex": "02F9",
+      "misc": "mega"
     },
     "762": {
       "name": "Pidgeotite",
-      "hex": "02FA"
+      "hex": "02FA",
+      "misc": "mega"
     },
     "763": {
       "name": "Glalitite",
-      "hex": "02FB"
+      "hex": "02FB",
+      "misc": "mega"
     },
     "764": {
       "name": "Diancite",
-      "hex": "02FC"
+      "hex": "02FC",
+      "misc": "mega"
     },
     "765": {
       "name": "Prison Bottle",
@@ -3114,19 +3179,23 @@
     },
     "767": {
       "name": "Cameruptite",
-      "hex": "02FF"
+      "hex": "02FF",
+      "misc": "mega"
     },
     "768": {
       "name": "Lopunnite",
-      "hex": "0300"
+      "hex": "0300",
+      "misc": "mega"
     },
     "769": {
       "name": "Salamencite",
-      "hex": "0301"
+      "hex": "0301",
+      "misc": "mega"
     },
     "770": {
       "name": "Beedrillite",
-      "hex": "0302"
+      "hex": "0302",
+      "misc": "mega"
     },
     "771": {
       "name": "Meteorite",

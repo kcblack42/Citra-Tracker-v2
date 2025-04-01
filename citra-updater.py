@@ -313,6 +313,12 @@ class Pokemon:
                         query+= " and pokemonsuffix = 'sky'"
             case 550: ### Basculin
                 query+= SUFFIXES["PKMN_SUFFIX_NULL"]
+                # match form:
+                #     case 0 | 2:
+                #         # query+= " and pokemonsuffix = 'red-striped'"
+                #         query+= SUFFIXES["PKMN_SUFFIX_NULL"]
+                #     case 8 | 10:
+                #         query+= " and pokemonsuffix = 'blue-striped'"
             case 555: ### Darmanitan
                 match form:
                     case 0 | 2:
@@ -403,7 +409,7 @@ class Pokemon:
             case 720: ### Hoopa
                 match form:
                     case 4:
-                        query+= SUFFIXES["PKMN_SUFFIX_NULL"]
+                        query+= " and pokemonsuffix = 'confined'"
                     case 12:
                         query+= " and pokemonsuffix = 'unbound'"
             case 741: ### Oricorio
@@ -1216,6 +1222,7 @@ def run():
             with open('errorlog.txt','a+') as f: #print to log, but don't print the error to console
                 errorLog = str(datetime.now())+": "+str(e)+'\n'
                 f.write(errorLog)
+            print((batch_folder / f'{prefix}{str(seed)}.log'))
             print('Log not found - if using LayeredFS and tracker seed advancement, check your batch gen.')
             print('Log viewer will be disabled.')
             time.sleep(5)
@@ -1287,7 +1294,8 @@ def run():
                         h1 = f'HP Heals:\n{str(h).replace("'", '').replace('{', '').replace('}', '').title()}'
                         h2 = f'Status Heals:\n{str(statushl).replace("'", '').replace('{', '').replace('}', '').title()}'
                         h3 = f'PP Heals:\n{str(pphl).replace("'", '').replace('{', '').replace('}', '').title()}'
-                        sg.popup_ok(h1, h2, h3, title='Healing Items')
+                        h4 = f'\n-----\n\nMisc Items:\n{str(miscitems).replace("'", '').replace('{', '').replace('}', '').title()}\n'
+                        sg.popup_ok(h1, h2, h3, h4, title='Items')
                     elif event == '-settings-':
                         autoload_settings()
                     elif event == '-clearnotes-solo-':
@@ -1657,7 +1665,7 @@ def run():
                                     # print(pkmn.species_num())
                             window['-slotdrop-'].Update(values=slot, value=slotchoice, visible=True)
                             # print(c, ';;;', getGame(c), ';;;', pkmn, ';;;', items)
-                            hphl, statushl, pphl, badgect = bagitems(c, getGame(c), pkmn, items, badgeaddress)
+                            hphl, statushl, pphl, badgect, miscitems = bagitems(c, getGame(c), pkmn, items, badgeaddress)
                             # print(enctype, ';;;', pkmn.name, ';;;', party.index(pkmn)+1, ';;;', pkmnindex+12)
                             # print(badgect)
                             if enctype!='p':
@@ -1755,7 +1763,10 @@ def run():
                                     # window['-level-'].set_tooltip('Seen at {}'.format(trackdata[pkmn.name]["levels"]))
                                     window['-ability-'].Update(str(pkmn.ability['name']), text_color="#f0f080")
                                     window['-ability-'].set_tooltip(str(pkmn.ability['description']))
-                                    window['-item-'].Update('Held: {}'.format(pkmn.held_item_name))
+                                    if pkmn.held_item_name != 'None':
+                                        window['-item-'].Update('{}'.format(pkmn.held_item_name))
+                                    else:
+                                        window['-item-'].Update('--')
                                     window['-item-'].set_tooltip(itemdesc)
                                     if gen == 6:
                                         window['-hpheals-'].update("Heals: "+str(hphl["percent"])+"% ("+str(hphl["total"])+")", visible = True, text_color="#f0f080")
@@ -2248,7 +2259,10 @@ def run():
                                 window['-bc6-'].update(visible = True)
                                 window['-ability-'].update(str(pkmn.ability['name']), text_color="#f0f080")
                                 window['-ability-'].set_tooltip(str(pkmn.ability['description']))
-                                window['-item-'].update('Held: {}'.format(pkmn.held_item_name))
+                                if pkmn.held_item_name != 'None':
+                                    window['-item-'].Update('{}'.format(pkmn.held_item_name))
+                                else:
+                                    window['-item-'].Update('--')
                                 window['-item-'].set_tooltip(itemdesc)
                                 if gen == 6:
                                     window['-hpheals-'].update("Heals: "+str(hphl["percent"])+"% ("+str(hphl["total"])+")", visible = True, text_color="#f0f080")
