@@ -959,20 +959,21 @@ def calcAcc(move, pkmn1lvl, pkmn2lvl):
     return int(move['acc'])
 
 def movetype(pkmn,move,item):
-    if move=="Revelation Dance":
+    # print(move['name'], ';;', item)
+    if move['name']=="Revelation Dance":
         return (pkmn.types)[0]
-    if move=="Hidden Power":
+    if move['name']=="Hidden Power":
         return "Null"
-    if move=="Natural Gift":
+    if move['name']=="Natural Gift":
         return "Normal"
-    if move=="Judgement":
+    if move['name']=="Judgment":
         if item=="298":
             return "Fire"
         if item=="299":
             return "Water"
         if item=="300":
             return "Electric"
-        if item=="301":
+        if item=='301':
             return "Grass"
         if item=="302":
             return "Ice"
@@ -1001,7 +1002,7 @@ def movetype(pkmn,move,item):
         if item=="644":
             return "Fairy"
         return "Normal"
-    if move=="Techno Blast":
+    if move['name']=="Techno Blast":
         if item=="116":
             return "Water"
         if item=="117":
@@ -1011,7 +1012,7 @@ def movetype(pkmn,move,item):
         if item=="119":
             return "Ice"
         return "Normal"
-    if move=="Multi-Attack":
+    if move['name']=="Multi-Attack":
         if item=="912":
             return "Fire"
         if item=="913":
@@ -1839,9 +1840,11 @@ def run():
                                         else:
                                             # window[f'-badge{i}-'].Update(resize(f'images/badges{gameabbr}/{i}o.png', (badgesize,badgesize)), visible = True)
                                             window[f'-badge{i}-'].Update(f'images/badges{gameabbr}/{i}o.png', visible = True)
+                                    # print(pkmn.held_item_num)
                                     for move in pkmn.moves:
                                         stab = ''
                                         movetyp=movetype(pkmn,move,pkmn.held_item_num)
+                                        # print(move, movetyp)
                                         for type in pkmn.types:
                                             if move['type'] == type[0]:
                                                 stab = move['type']
