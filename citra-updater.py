@@ -1308,6 +1308,8 @@ def run():
                             continue
                     elif event == '-clearnotes-':
                         confirm = sg.popup_ok_cancel('Load next seed?\nAfter clicking yes, wait 1 sec then Citra > Emulation > Restart.', title='Confirm')
+                        prevmon = party1[0].species_num()
+                        # print(prevmon)
                         if confirm == 'OK':
                             seed = notesclear()
                             trackdata=json.load(open(trackadd,"r+"))
@@ -1345,7 +1347,19 @@ def run():
                                 window['-mv{}bp-e-'.format(ct)].update(visible = False)
                                 window['-mv{}acc-e-'.format(ct)].update(visible = False)
                                 window['-mv{}ctc-e-'.format(ct)].update(visible = False)
-                            time.sleep(8)
+                            time.sleep(5)
+                            print('Waiting for new mon, tracker may be unresponsive...')
+                            b = 0
+                            while b == 0:
+                                time.sleep(5) # retesting every 5 seconds
+                                partyadd,enemyadd,ppadd,curoppnum,enctype,mongap,badgeaddress=getaddresses(c)
+                                try:
+                                    party1=read_party(c,partyadd)
+                                except:
+                                    b = 0
+                                if (party1[0].species_num() != None) and (party1[0].species_num() != 0) and (party1[0].species_num() != prevmon):
+                                    b = 1
+                                # print(prevmon, ';;;', party1[0].species_num(), ';;;', b)
                             try:
                                 # need to fire up the log for the next one
                                 pkmn_srch = 0
@@ -1601,8 +1615,9 @@ def run():
                         continue
 
                     #print('reading party')
-                    party1=read_party(c,partyadd)
+                    party1=read_party(c,partyadd) 
                     party2=read_party(c,enemyadd)
+                    # print(party1[0].species_num())
                     party=party1+party2
                     pk=1
                     #print('read party... performing loop')
