@@ -313,6 +313,12 @@ class Pokemon:
                         query+= " and pokemonsuffix = 'sky'"
             case 550: ### Basculin
                 query+= SUFFIXES["PKMN_SUFFIX_NULL"]
+                # match form:
+                #     case 0 | 2:
+                #         # query+= " and pokemonsuffix = 'red-striped'"
+                #         query+= SUFFIXES["PKMN_SUFFIX_NULL"]
+                #     case 8 | 10:
+                #         query+= " and pokemonsuffix = 'blue-striped'"
             case 555: ### Darmanitan
                 match form:
                     case 0 | 2:
@@ -403,7 +409,7 @@ class Pokemon:
             case 720: ### Hoopa
                 match form:
                     case 4:
-                        query+= SUFFIXES["PKMN_SUFFIX_NULL"]
+                        query+= " and pokemonsuffix = 'confined'"
                     case 12:
                         query+= " and pokemonsuffix = 'unbound'"
             case 741: ### Oricorio
@@ -953,20 +959,21 @@ def calcAcc(move, pkmn1lvl, pkmn2lvl):
     return int(move['acc'])
 
 def movetype(pkmn,move,item):
-    if move=="Revelation Dance":
+    # print(move['name'], ';;', item)
+    if move['name']=="Revelation Dance":
         return (pkmn.types)[0]
-    if move=="Hidden Power":
+    if move['name']=="Hidden Power":
         return "Null"
-    if move=="Natural Gift":
+    if move['name']=="Natural Gift":
         return "Normal"
-    if move=="Judgement":
+    if move['name']=="Judgment":
         if item=="298":
             return "Fire"
         if item=="299":
             return "Water"
         if item=="300":
             return "Electric"
-        if item=="301":
+        if item=='301':
             return "Grass"
         if item=="302":
             return "Ice"
@@ -995,7 +1002,7 @@ def movetype(pkmn,move,item):
         if item=="644":
             return "Fairy"
         return "Normal"
-    if move=="Techno Blast":
+    if move['name']=="Techno Blast":
         if item=="116":
             return "Water"
         if item=="117":
@@ -1005,7 +1012,7 @@ def movetype(pkmn,move,item):
         if item=="119":
             return "Ice"
         return "Normal"
-    if move=="Multi-Attack":
+    if move['name']=="Multi-Attack":
         if item=="912":
             return "Fire"
         if item=="913":
@@ -1216,6 +1223,7 @@ def run():
             with open('errorlog.txt','a+') as f: #print to log, but don't print the error to console
                 errorLog = str(datetime.now())+": "+str(e)+'\n'
                 f.write(errorLog)
+            print((batch_folder / f'{prefix}{str(seed)}.log'))
             print('Log not found - if using LayeredFS and tracker seed advancement, check your batch gen.')
             print('Log viewer will be disabled.')
             time.sleep(5)
@@ -1287,7 +1295,8 @@ def run():
                         h1 = f'HP Heals:\n{str(h).replace("'", '').replace('{', '').replace('}', '').title()}'
                         h2 = f'Status Heals:\n{str(statushl).replace("'", '').replace('{', '').replace('}', '').title()}'
                         h3 = f'PP Heals:\n{str(pphl).replace("'", '').replace('{', '').replace('}', '').title()}'
-                        sg.popup_ok(h1, h2, h3, title='Healing Items')
+                        h4 = f'\n-----\n\nMisc Items:\n{str(miscitems).replace("'", '').replace('{', '').replace('}', '').title()}\n'
+                        sg.popup_ok(h1, h2, h3, h4, title='Items')
                     elif event == '-settings-':
                         autoload_settings()
                     elif event == '-clearnotes-solo-':
@@ -1299,6 +1308,8 @@ def run():
                             continue
                     elif event == '-clearnotes-':
                         confirm = sg.popup_ok_cancel('Load next seed?\nAfter clicking yes, wait 1 sec then Citra > Emulation > Restart.', title='Confirm')
+                        prevmon = party1[0].species_num()
+                        # print(prevmon)
                         if confirm == 'OK':
                             seed = notesclear()
                             trackdata=json.load(open(trackadd,"r+"))
@@ -1336,7 +1347,19 @@ def run():
                                 window['-mv{}bp-e-'.format(ct)].update(visible = False)
                                 window['-mv{}acc-e-'.format(ct)].update(visible = False)
                                 window['-mv{}ctc-e-'.format(ct)].update(visible = False)
-                            time.sleep(8)
+                            time.sleep(5)
+                            print('Waiting for new mon, tracker may be unresponsive...')
+                            b = 0
+                            while b == 0:
+                                time.sleep(5) # retesting every 5 seconds
+                                partyadd,enemyadd,ppadd,curoppnum,enctype,mongap,badgeaddress=getaddresses(c)
+                                try:
+                                    party1=read_party(c,partyadd)
+                                except:
+                                    b = 0
+                                if (party1[0].species_num() != None) and (party1[0].species_num() != 0) and (party1[0].species_num() != prevmon):
+                                    b = 1
+                                # print(prevmon, ';;;', party1[0].species_num(), ';;;', b)
                             try:
                                 # need to fire up the log for the next one
                                 pkmn_srch = 0
@@ -1592,8 +1615,9 @@ def run():
                         continue
 
                     #print('reading party')
-                    party1=read_party(c,partyadd)
+                    party1=read_party(c,partyadd) 
                     party2=read_party(c,enemyadd)
+                    # print(party1[0].species_num())
                     party=party1+party2
                     pk=1
                     #print('read party... performing loop')
@@ -1657,7 +1681,7 @@ def run():
                                     # print(pkmn.species_num())
                             window['-slotdrop-'].Update(values=slot, value=slotchoice, visible=True)
                             # print(c, ';;;', getGame(c), ';;;', pkmn, ';;;', items)
-                            hphl, statushl, pphl, badgect = bagitems(c, getGame(c), pkmn, items, badgeaddress)
+                            hphl, statushl, pphl, badgect, miscitems = bagitems(c, getGame(c), pkmn, items, badgeaddress)
                             # print(enctype, ';;;', pkmn.name, ';;;', party.index(pkmn)+1, ';;;', pkmnindex+12)
                             # print(badgect)
                             if enctype!='p':
@@ -1755,7 +1779,10 @@ def run():
                                     # window['-level-'].set_tooltip('Seen at {}'.format(trackdata[pkmn.name]["levels"]))
                                     window['-ability-'].Update(str(pkmn.ability['name']), text_color="#f0f080")
                                     window['-ability-'].set_tooltip(str(pkmn.ability['description']))
-                                    window['-item-'].Update('Held: {}'.format(pkmn.held_item_name))
+                                    if pkmn.held_item_name != 'None':
+                                        window['-item-'].Update('{}'.format(pkmn.held_item_name))
+                                    else:
+                                        window['-item-'].Update('--')
                                     window['-item-'].set_tooltip(itemdesc)
                                     if gen == 6:
                                         window['-hpheals-'].update("Heals: "+str(hphl["percent"])+"% ("+str(hphl["total"])+")", visible = True, text_color="#f0f080")
@@ -1828,9 +1855,11 @@ def run():
                                         else:
                                             # window[f'-badge{i}-'].Update(resize(f'images/badges{gameabbr}/{i}o.png', (badgesize,badgesize)), visible = True)
                                             window[f'-badge{i}-'].Update(f'images/badges{gameabbr}/{i}o.png', visible = True)
+                                    # print(pkmn.held_item_num)
                                     for move in pkmn.moves:
                                         stab = ''
                                         movetyp=movetype(pkmn,move,pkmn.held_item_num)
+                                        # print(move, movetyp)
                                         for type in pkmn.types:
                                             if move['type'] == type[0]:
                                                 stab = move['type']
@@ -2248,7 +2277,10 @@ def run():
                                 window['-bc6-'].update(visible = True)
                                 window['-ability-'].update(str(pkmn.ability['name']), text_color="#f0f080")
                                 window['-ability-'].set_tooltip(str(pkmn.ability['description']))
-                                window['-item-'].update('Held: {}'.format(pkmn.held_item_name))
+                                if pkmn.held_item_name != 'None':
+                                    window['-item-'].Update('{}'.format(pkmn.held_item_name))
+                                else:
+                                    window['-item-'].Update('--')
                                 window['-item-'].set_tooltip(itemdesc)
                                 if gen == 6:
                                     window['-hpheals-'].update("Heals: "+str(hphl["percent"])+"% ("+str(hphl["total"])+")", visible = True, text_color="#f0f080")
