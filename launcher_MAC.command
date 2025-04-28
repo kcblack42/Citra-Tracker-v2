@@ -1,6 +1,9 @@
 #!/bin/bash
 # MAC launcher for the citra tracker
 
+# Change directory to the launcher file directory
+cd "$( dirname "$0" )"
+
 # Run the version check script to test if 3.12 is installed
 python util/python-version-check.py
 
